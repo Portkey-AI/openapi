@@ -12388,6 +12388,7 @@ paths:
                         enum:
                           - admin
                           - member
+                          - manager
               example:
                 users:
                   - id: 419641fb-1458-47d6-94d0-e308159b3ec2
@@ -12632,6 +12633,7 @@ paths:
                   enum:
                     - admin
                     - member
+                    - manager
               example:
                 role: member
       parameters:
