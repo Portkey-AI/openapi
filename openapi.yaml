@@ -10501,19 +10501,18 @@ paths:
         - Virtual-keys
       parameters:
         - in: query
-          name: page
+          name: current_page
           schema:
             type: integer
           required: true
-          default: 1
-          description: Current page
+          description: Current page, defaults to 0
         - in: query
-          name: limit
-          default: 10
+          name: page_size
           schema:
             type: integer
           required: true
-          description: Current page
+          description: Page size, default to 50
+          
       responses:
         "200":
           description: Successful response
