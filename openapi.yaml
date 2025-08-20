@@ -4636,65 +4636,150 @@ paths:
             main();
 
   /models:
+    servers: *DataPlaneServers
     get:
       operationId: listModels
       tags:
         - Models
-      summary: Lists the currently available models, and provides basic information about each one such as the owner and availability.
+      summary: List Available Models
+      description: >-
+        Lists the currently available models that can be used through Portkey, and provides basic information about each one.
+      parameters:
+        - in: query
+          name: ai_service
+          required: false
+          description: Filter models by the AI service (e.g., 'openai', 'anthropic').
+          schema:
+            type: string
+        - in: query
+          name: provider
+          required: false
+          description: Filter models by the provider.
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          description: The maximum number of models to return.
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          required: false
+          description: The number of models to skip before starting to collect the result set.
+          schema:
+            type: integer
+        - in: query
+          name: sort
+          required: false
+          description: The field to sort the results by.
+          schema:
+            type: string
+            enum: [name, provider, ai_service]
+            default: name
+        - in: query
+          name: order
+          required: false
+          description: The order to sort the results in.
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListModelsResponse"
-
+                $ref: '#/components/schemas/ListModelsResponse'
+              example:
+                object: "list"
+                total: 500
+                data:
+                  - id: "@ai-provider-slug/gpt-5"
+                    slug: "gpt-5"
+                    canonical_slug: "gpt-5"
+                    object: "model"
       security:
         - Portkey-Key: []
-          Virtual-Key: []
-        - Portkey-Key: []
-          Provider-Auth: []
-          Provider-Name: []
-        - Portkey-Key: []
-          Config: []
-        - Portkey-Key: []
-          Provider-Auth: []
-          Provider-Name: []
-          Custom-Host: []
-
       x-code-samples:
         - lang: curl
+          label: Default
           source: |
-            curl https://api.portkey.ai/v1/models \
-              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
-              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY"
+            # Example of sending a query parameter in the URL
+            curl 'https://api.portkey.ai/v1/models?provider=openai' \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            # Example of sending a query parameter in the URL
+            curl 'https://YOUR_SELF_HOSTED_URL/models?provider=openai' \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY"
         - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+              api_key = "PORTKEY_API_KEY"
+            )
+
+            # Example of sending query parameters via extra_query
+            models = client.models.list(
+              extra_query={"provider": "openai"}
+            )
+            print(models)
+        - lang: python
+          label: Self-Hosted
           source: |
             from portkey_ai import Portkey
 
             client = Portkey(
               api_key = "PORTKEY_API_KEY",
-              virtual_key = "PROVIDER_VIRTUAL_KEY"
+              base_url = "https://YOUR_SELF_HOSTED_URL"
             )
 
-            client.models.list()
+            # Example of sending query parameters via extra_query
+            models = client.models.list(
+              extra_query={"provider": "openai"}
+            )
+            print(models)
         - lang: javascript
+          label: Default
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY'
+            });
+
+            async function main() {
+              // Example of sending query parameters in the list method
+              const list = await client.models.list({
+                provider: "openai"
+              });
+              console.log(list);
+            }
+            main();
+        - lang: javascript
+          label: Self-Hosted
           source: |
             import Portkey from 'portkey-ai';
 
             const client = new Portkey({
               apiKey: 'PORTKEY_API_KEY',
-              virtualKey: 'PROVIDER_VIRTUAL_KEY'
+              baseUrl: 'https://YOUR_SELF_HOSTED_URL'
             });
 
             async function main() {
-              const list = await client.models.list();
-
-              for await (const model of list) {
-                console.log(model);
-              }
+              // Example of sending query parameters in the list method
+              const list = await client.models.list({
+                provider: "openai"
+              });
+              console.log(list);
             }
-            main();
+            main();     
+
 
   /models/{model}:
     get:
