@@ -13248,6 +13248,12 @@ paths:
           schema:
             type: integer
           example: "0"
+        - name: name
+          in: query
+          schema:
+            type: string
+          example: "workspace"
+          description: "Workspace name to filter results, case insensitive"
       responses:
         "200":
           description: OK
