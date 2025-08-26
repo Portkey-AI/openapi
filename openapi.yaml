@@ -28997,13 +28997,10 @@ components:
       properties:
         type:
           type: string
-          enum: ["requests"]
+          enum: ["requests", "tokens"]
         unit:
           type: string
           enum: ["rpd", "rph", "rpm"]
-        type:
-          type: string
-          enum: ["requests", "tokens"]
         value:
           type: integer
     UsageLimits:
