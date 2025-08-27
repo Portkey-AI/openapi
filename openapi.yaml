@@ -10751,7 +10751,7 @@ paths:
 
             const integration = await portkey.integrations.create({
                 name:"openai-production",
-                aiProviderId:"openai",
+                ai_provider_id:"openai",
                 key:"sk-...",
             })
             console.log(integration);
@@ -10797,7 +10797,7 @@ paths:
 
             const integration = await portkey.integrations.create({
                 name: "openai-production",
-                aiProviderId: "openai",
+                ai_provider_id: "openai",
                 key: "sk-...",
             })
             console.log(integration);
@@ -11085,7 +11085,7 @@ paths:
 
             # Delete a specific integration
             result = portkey.integrations.delete(
-                slug="INTEAGRATION_SLUG"
+                slug="INTEGRATION_SLUG"
             )
 
             print(result)
@@ -11326,7 +11326,7 @@ paths:
             })
 
             const providers = await portkey.providers.list({
-              workspaceId: "" // Optional
+              workspace_id: "" // Optional
             })
             console.log(providers);
         - lang: curl
@@ -11427,8 +11427,8 @@ paths:
 
             const provider = await portkey.providers.create({
                 name: "openai provider",
-                integrationId: "",
-                workspaceId: ""
+                integration_id: "",
+                workspace_id: ""
             })
             console.log(provider);
         - lang: curl
@@ -11473,8 +11473,8 @@ paths:
 
             const newProvider = await portkey.providers.create({
                 name: "openai provider",
-                integrationId: "",
-                workspaceId: ""
+                integration_id: "",
+                workspace_id: ""
             })
             console.log(newProvider);
         - lang: curl
@@ -11543,7 +11543,7 @@ paths:
 
             const provider = await portkey.providers.retrieve({
                 slug:"PROVIDER_SLUG",
-                workspaceId: ""
+                workspace_id: ""
             })
             console.log(provider);
         - lang: curl
@@ -11586,7 +11586,7 @@ paths:
 
             const provider = await portkey.providers.retrieve({
                 slug: "PROVIDER_SLUG",
-                workspaceId: ""
+                workspace_id: ""
             })
             console.log(provider);
 
@@ -11675,7 +11675,7 @@ paths:
                 slug: "PROVIDER_SLUG",
                 name:"updated-name",
                 note: "updated-note",
-                workspaceId: ""
+                workspace_id: ""
             })
             console.log(updatedProvider);
         - lang: curl
@@ -11732,7 +11732,7 @@ paths:
                 slug: "PROVIDER_SLUG",
                 name:"updated-name",
                 note: "updated-note",
-                workspaceId: ""
+                workspace_id: ""
             })
             console.log(updatedProvider);
 
@@ -11788,7 +11788,7 @@ paths:
 
             const result = await portkey.providers.delete({
                 slug: "PROVIDER_SLUG",
-                workspaceId: ""
+                workspace_id: ""
             })
             console.log(result);
         - lang: curl
@@ -11829,7 +11829,7 @@ paths:
 
             const result = await portkey.providers.delete({
                 slug: "PROVIDER_SLUG",
-                workspaceId: ""
+                workspace_id: ""
             })
             console.log(result);
     
