@@ -71,6 +71,14 @@ tags:
     description: Send and Update any feedback.
   - name: Logs
     description: Custom Logger to add external logs to Portkey.
+  - name: Integrations
+    description: Create, List, Retrieve, Update, and Delete your Portkey Integrations.
+  - name: Integrations > Workspaces
+    description: Manage workspace access for your Portkey Integrations.
+  - name: Integrations > Models
+    description: Manage model access for your Portkey Integrations.
+  - name: Providers
+    description: Create, List, Retrieve, Update, and Delete your Portkey Providers.
   - name: Virtual-keys
     description: Create, List, Retrieve, Update, and Delete your Portkey Virtual keys.
   - name: Users
@@ -10578,6 +10586,1253 @@ paths:
             -H "Content-Type: application/json" \
             -d '{"value":1}'
 
+  /integrations:
+    servers: *ControlPlaneServers
+    get:
+      summary: List All Integrations
+      tags:
+        - Integrations
+      parameters:
+        - in: query
+          name: current_page
+          schema:
+            type: integer
+          description: Current page, defaults to 0
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Page size, default to 100
+        - in: query
+          name: workspace_id
+          schema:
+            type: string
+          description: Filter integrations accessible by a specific workspace. When using workspace API keys, this value will be enforced based on the API key details
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [workspace, organisation, all]
+            default: all
+          description: For type=workspace, the API will only return Workpace-Scoped integrations. For type=organisation, the API will only return Global (organisation level) integrations. For type=all, both types of integrations will be returned.
+          
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total number of integrations
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/IntegrationList"
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # List integrations
+            integrations = portkey.integrations.list()
+
+            print(integrations)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const integrations = await portkey.integrations.list({})
+            console.log(integrations);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/integrations \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # List integrations
+            integrations = portkey.integrations.list()
+
+            print(integrations)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const integrations = await portkey.integrations.list({})
+            console.log(integrations);
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/integrations \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    post:
+      summary: Create a Integration
+      tags:
+        - Integrations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIntegrationRequest'
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: UUID
+                  slug:
+                    type: string
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Add a new integration
+            integration = portkey.integrations.create(
+                name="openai-production",
+                ai_provider_id="openai",
+                key="sk-..."
+            )
+
+            print(integration)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const integration = await portkey.integrations.create({
+                name:"openai-production",
+                aiProviderId:"openai",
+                key:"sk-...",
+            })
+            console.log(integration);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/integrations \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "openai-production",
+                "ai_provider_id": "openai",
+                "key": "sk-..."
+            }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Add a new integration
+            integration = portkey.integrations.create(
+                name="openai-production",
+                ai_provider_id="openai",
+                key="sk-..."
+            )
+
+            print(integration)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const integration = await portkey.integrations.create({
+                name: "openai-production",
+                aiProviderId: "openai",
+                key: "sk-...",
+            })
+            console.log(integration);
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/integrations \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "openai-production",
+                "ai_provider_id": "openai",
+                "key": "sk-..."
+            }'
+
+  /integrations/{slug}:
+    servers: *ControlPlaneServers
+    get:
+      summary: Get a Integration
+      tags:
+        - Integrations
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrationDetailResponse"
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Get a specific virtual key
+            virtual_key = portkey.virtual_keys.retrieve(
+                slug='VIRTUAL_KEY_SLUG'
+            )
+
+            print(virtual_key)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const vKey=await portkey.virtualKeys.retrieve({
+                slug:'VIRTUAL_KEY_SLUG'
+            })
+            console.log(vKey);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/virtual-keys/VIRTUAL_KEY_SLUG \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/virtual-keys/VIRTUAL_KEY_SLUG \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Get a specific virtual key
+            virtual_key = portkey.virtual_keys.retrieve(
+                slug='VIRTUAL_KEY_SLUG'
+            )
+
+            print(virtual_key)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const vKey=await portkey.virtualKeys.retrieve({
+                slug:'VIRTUAL_KEY_SLUG'
+            })
+            console.log(vKey);
+
+    put:
+      summary: Update a Integration
+      tags:
+        - Integrations
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIntegrationRequest'
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Update a specific integration
+            integration = portkey.integrations.update(
+                slug="INTEGRATION_SLUG',
+                name="updated-name",
+                note="hello"
+            )
+
+            print(integration)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const integration = await portkey.integrations.update({
+                slug:"INTEGRATION_SLUG",
+                name:"updated-name",
+                note:"hello"
+            })
+            console.log(integration);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X PUT "https://api.portkey.ai/v1/integrations/INTEGRATION_SLUG" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "updated-name",
+                "note": "hello"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X PUT "SELF_HOSTED_CONTROL_PLANE_URL/integrations/INTEGRATION_SLUG" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "updated-name",
+                "note": "hello"
+            }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Update a specific integration
+            integration = portkey.integrations.update(
+                slug="INTEGRATION_SLUG',
+                name="updated-name",
+                note="hello"
+            )
+
+            print(integration)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const integration = await portkey.integrations.update({
+                slug:'INTEGRATION_SLUG',
+                name:"updated-name",
+                note:"hello"
+            })
+            console.log(integration);
+
+    delete:
+      summary: Delete a Integration
+      tags:
+        - Integrations
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Delete a specific integration
+            result = portkey.integrations.delete(
+                slug="INTEGRATION_SLUG"
+            )
+
+            print(result)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const result=await portkey.integrations.delete({
+                slug:'INTEGRATION_SLUG',
+            })
+            console.log(result);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/integrations/INTEGRATION_SLUG
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE https://SELF_HOSTED_CONTROL_PLANE_URL/integrations/INTEGRATION_SLUG
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Delete a specific integration
+            result = portkey.integrations.delete(
+                slug="INTEAGRATION_SLUG"
+            )
+
+            print(result)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const result=await portkey.integrations.delete({
+                slug:"INTEGRATION_SLUG",
+            })
+            console.log(result);
+
+  /integrations/{slug}/models:
+    get:
+      summary: List integration models
+      description: Retrieves all model access for a specific integration with their configuration and pricing details.
+      tags:
+        - Integrations > Models
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of integration models
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationModelsResponse'
+
+    put:
+      summary: Bulk update integration models
+      description: |
+        Updates model access, pricing configuration, and settings for multiple models in an integration.
+        Can enable/disable models and configure custom pricing.
+      tags:
+        - Integrations > Models
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkUpdateModelsRequest'
+      responses:
+        '200':
+          description: Models updated successfully
+          content:
+            application/json:
+              schema:
+                  type: object
+
+    delete:
+      summary: Bulk delete integration custom models
+      description: Removes multiple custom models from an integration by their slugs.
+      tags:
+        - Integrations > Models
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+        - name: slugs
+          in: query
+          required: true
+          description: Comma-separated list of model slugs to delete
+          schema:
+            type: string
+            example: "gpt-4,gpt-3.5-turbo"
+      responses:
+        '200':
+          description: Models deleted successfully
+          content:
+            application/json:
+              schema:
+                  type: object
+
+  /integrations/{slug}/workspaces:
+    get:
+      summary: List integration workspace access
+      description: Retrieves workspace access configuration for an integration, including usage limits and rate limits.
+      tags:
+        - Integrations > Workspaces
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of workspace access configurations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationWorkspacesResponse'
+
+    put:
+      summary: Bulk update workspace access
+      description: |
+        Updates workspace access permissions, usage limits, and rate limits for an integration.
+        Can configure global workspace access or per-workspace settings.
+      tags:
+        - Integrations > Workspaces
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkUpdateWorkspacesRequest'
+      responses:
+        '200':
+          description: Workspace access updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /providers:
+    servers: *ControlPlaneServers
+    get:
+      summary: List All Providers
+      tags:
+        - Providers
+      parameters:
+        - in: query
+          name: current_page
+          schema:
+            type: integer
+          description: Current page, defaults to 0
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Page size, default to 50
+        - in: query
+          name: workspace_id
+          schema:
+            type: string
+          description: Not required when using workspace API keys. Required when using organisation admin keys
+          
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total number of providers
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Providers"
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY"
+            )
+
+            # List providers
+            # Optional workspace_id
+            providers = portkey.providers.list(workspace_id="")
+
+            print(providers)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const providers = await portkey.providers.list({
+              workspaceId: "" // Optional
+            })
+            console.log(providers);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/providers?workspace_id= \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # List virtual keys
+            # Optional workspace_id
+            providers = portkey.providers.list(workspace_id="")
+
+            print(providers)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const providers = await portkey.providers.list({
+              workspaceId: "" // Optional
+            })
+            console.log(providers);
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/providers?workspace_id= \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    post:
+      summary: Create a Provider
+      tags:
+        - Providers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                integration_id:
+                  type: string
+                  description: Integration slug used for the provider creation.
+                workspace_id:
+                  type: string
+                  format: uuid
+                  description: optional, needed when using organisation admin API keys
+                slug:
+                  type: string
+                  description: Slug for the provider. If not passed, slug will be created by adding a random suffix to the name.
+                note:
+                  type: string
+                  nullable: true
+                usage_limits:
+                  $ref: "#/components/schemas/UsageLimits"
+                rate_limits:
+                  $ref: "#/components/schemas/RateLimits"
+                expires_at:
+                  type: string
+                  format: date-time
+              required:
+                - name
+                - integration_id
+            examples:
+              generic:
+                value:
+                  name: "My first provider"
+                  note: "Provider description"
+                  integration_id: "my-openai-integration"
+                  usage_limits:
+                    {
+                      "credit_limit": 10,
+                      "periodic_reset": "monthly",
+                      "alert_threshold": 9,
+                    }
+                  workspace_id: ""
+                  slug: "first-openai-provider"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  slug:
+                    type: string
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Add a new provider
+            new_provider = portkey.providers.create(
+                name="openai provider",
+                integration_id="",
+                workspace_id=""
+            )
+
+            print(new_provider)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const provider = await portkey.providers.create({
+                name: "openai provider",
+                integrationId: "",
+                workspaceId: ""
+            })
+            console.log(provider);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/providers \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "openai provider",
+                "integration_id": "",
+                "workspace_id": ""
+            }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Add a new provider
+            new_provider = portkey.providers.create(
+                name="openai provider",
+                integration_id="",
+                workspace_id=""
+            )
+
+            print(new_provider)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const newProvider = await portkey.providers.create({
+                name: "openai provider",
+                integrationId: "",
+                workspaceId: ""
+            })
+            console.log(newProvider);
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/providers \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "openai provider",
+                "integrationId": "",
+                "workspaceId": ""
+            }'
+  
+  /providers/{slug}:
+    servers: *ControlPlaneServers
+    get:
+      summary: Get a Provider
+      tags:
+        - Providers
+      parameters:
+        - in: query
+          name: workspace_id
+          schema:
+            type: string
+          description: optional, needed when using organisation admin keys
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+          description: Provider slug
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Providers"
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Get a specific provider
+            provider = portkey.providers.retrieve(
+                slug="PROVIDER_SLUG",
+                workspace_id=""
+            )
+
+            print(provider)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const provider = await portkey.providers.retrieve({
+                slug:"PROVIDER_SLUG",
+                workspaceId: ""
+            })
+            console.log(provider);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/providers/PROVIDER_SLUG?workspace_id= \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/providers/PROVIDER_SLUG?workspace_id= \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Get a specific provider
+            provider = portkey.providers.retrieve(
+                slug="PROVIDER_SLUG",
+                workspace_id=""
+            )
+
+            print(provider)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const provider = await portkey.providers.retrieve({
+                slug: "PROVIDER_SLUG",
+                workspaceId: ""
+            })
+            console.log(provider);
+
+    put:
+      summary: Update a Provider
+      tags:
+        - Providers
+      parameters:
+        - in: query
+          name: workspace_id
+          schema:
+            type: string
+          description: optional, needed when using organisation admin keys
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+          description: Provider slug
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                note:
+                  type: string
+                usage_limits:
+                  $ref: "#/components/schemas/UsageLimits"
+                  nullable: true
+                rate_limits:
+                  $ref: "#/components/schemas/RateLimits"
+                expires_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                reset_usage:
+                  type: boolean
+                
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: UUID
+                  slug:
+                    type: string
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Update a specific provider
+            updated_provider = portkey.providers.update(
+                slug="PROVIDER_SLUG",
+                name="updated-name",
+                note="updated-note",
+                workspace_id=""
+            )
+
+            print(updated_provider)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const updatedProvider = await portkey.providers.update({
+                slug: "PROVIDER_SLUG",
+                name:"updated-name",
+                note: "updated-note",
+                workspaceId: ""
+            })
+            console.log(updatedProvider);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X PUT "https://api.portkey.ai/v1/providers/PROVIDER_SLUG?workspace_id=" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "updated-name",
+                "note": "updated-note"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X PUT "SELF_HOSTED_CONTROL_PLANE_URL/providers/PROVIDER_SLUG?workspace_id=" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "updated-name",
+                "note": "updated-note"
+            }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Update a specific provider
+            updated_provider = portkey.providers.update(
+                slug="PROVIDER_SLUG",
+                name="updated-name",
+                note="updated-note",
+                workspace_id=""
+            )
+
+            print(updated_provider)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const updatedProvider = await portkey.providers.update({
+                slug: "PROVIDER_SLUG",
+                name:"updated-name",
+                note: "updated-note",
+                workspaceId: ""
+            })
+            console.log(updatedProvider);
+
+    delete:
+      summary: Delete a Provider
+      tags:
+        - Providers
+      parameters:
+        - in: query
+          name: workspace_id
+          schema:
+            type: string
+          description: optional, needed when using organisation admin keys
+        - in: path
+          name: slug
+          schema:
+            type: string
+          required: true
+          description: Provider slug
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+      x-code-samples:
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Delete a specific virtual key
+            result = portkey.providers.delete(
+                slug="PROVIDER_SLUG",
+                workspace_id=""
+            )
+
+            print(result)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const result = await portkey.providers.delete({
+                slug: "PROVIDER_SLUG",
+                workspaceId: ""
+            })
+            console.log(result);
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/providers/PROVIDER_SLUG?workspace_id=
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE https://SELF_HOSTED_CONTROL_PLANE_URL/providers/PROVIDER_SLUG?workspace_id
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            # Delete a specific provider
+            result = portkey.providers.delete(
+                slug="PROVIDER_SLUG",
+                workspace_id=""
+            )
+
+            print(result)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+                baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            })
+
+            const result = await portkey.providers.delete({
+                slug: "PROVIDER_SLUG",
+                workspaceId: ""
+            })
+            console.log(result);
+    
   /virtual-keys:
     servers: *ControlPlaneServers
     get:
@@ -27742,10 +28997,10 @@ components:
       properties:
         type:
           type: string
-          enum: ["requests"]
+          enum: ["requests", "tokens"]
         unit:
           type: string
-          enum: ["rpm"]
+          enum: ["rpd", "rph", "rpm"]
         value:
           type: integer
     UsageLimits:
@@ -27756,6 +29011,10 @@ components:
           description: Credit Limit. Used for tracking usage
           minimum: 1
           default: null
+        type:
+          type: string
+          description: Type of credit limit
+          enum: ["cost", "tokens"]
         alert_threshold:
           type: integer
           description: Alert Threshold. Used for alerting when usage reaches more than this
@@ -27764,11 +29023,650 @@ components:
         periodic_reset:
           type: string
           description: Reset the usage periodically.
-          enum: ["monthly"]
+          enum: ["monthly", "weekly"]
       example:
         credit_limit: 10
         periodic_reset: monthly
         alert_threshold: 8
+
+    CreateIntegrationRequest:
+      type: object
+      required:
+        - name
+        - ai_provider_id
+      properties:
+        name:
+          type: string
+          description: Human-readable name for the integration
+          example: "Production OpenAI"
+        slug:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+$'
+          description: URL-friendly identifier (auto-generated if not provided)
+          example: "production-openai"
+        ai_provider_id:
+          type: string
+          description: ID of the base AI provider
+          example: "openai"
+        key:
+          type: string
+          description: API key for the provider (if required)
+          example: "sk-..."
+        description:
+          type: string
+          description: Optional description of the integration
+          example: "Production OpenAI integration for customer-facing applications"
+        workspace_id:
+          type: string
+          description: Workspace ID (for workspace-scoped integrations)
+          example: ws-my-team-1234
+        configurations:
+          type: object
+          description: Provider-specific configuration object
+          oneOf:
+            - $ref: '#/components/schemas/OpenAIConfiguration'
+              title: OpenAI
+            - $ref: '#/components/schemas/AzureOpenAIConfiguration'
+              title: Azure OpenAI
+            - $ref: '#/components/schemas/BedrockConfiguration'
+              title: AWS Bedrock
+            - $ref: '#/components/schemas/VertexAIConfiguration'
+              title: Vertex AI
+            - $ref: '#/components/schemas/AzureAIConfiguration'
+              title: Azure AI
+            - $ref: '#/components/schemas/WorkersAIConfiguration'
+              title: Workers AI
+            - $ref: '#/components/schemas/SageMakerConfiguration'
+              title: AWS Sagemaker
+            - $ref: '#/components/schemas/HuggingFaceConfiguration'
+              title: Hugginface
+            - $ref: '#/components/schemas/CortexConfiguration'
+              title: Cortex
+            - $ref: '#/components/schemas/CustomHostConfiguration'
+              title: Custom Base URL
+
+    UpdateIntegrationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Human-readable name for the integration
+          example: "Production OpenAI"
+        key:
+          type: string
+          description: API key for the provider (if required)
+          example: "sk-..."
+        description:
+          type: string
+          description: Optional description of the integration
+          example: "Production OpenAI integration for customer-facing applications"
+        configurations:
+          type: object
+          description: Provider-specific configuration object
+          oneOf:
+            - $ref: '#/components/schemas/OpenAIConfiguration'
+              title: OpenAI
+            - $ref: '#/components/schemas/AzureOpenAIConfiguration'
+              title: Azure OpenAI
+            - $ref: '#/components/schemas/BedrockConfiguration'
+              title: AWS Bedrock
+            - $ref: '#/components/schemas/VertexAIConfiguration'
+              title: Vertex AI
+            - $ref: '#/components/schemas/AzureAIConfiguration'
+              title: Azure AI
+            - $ref: '#/components/schemas/WorkersAIConfiguration'
+              title: Workers AI
+            - $ref: '#/components/schemas/SageMakerConfiguration'
+              title: AWS Sagemaker
+            - $ref: '#/components/schemas/HuggingFaceConfiguration'
+              title: Hugginface
+            - $ref: '#/components/schemas/CortexConfiguration'
+              title: Cortex
+            - $ref: '#/components/schemas/CustomHostConfiguration'
+              title: Custom Base URL
+
+    IntegrationDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/IntegrationList'
+        - type: object
+          properties:
+            masked_key:
+              type: string
+              description: Masked API key
+            configurations:
+              type: object
+              description: |
+                Provider-specific configuration object
+                
+                **⚠️ Security Note - Response Masking:**
+                When retrieving integration details, sensitive fields are automatically masked:
+                - Sensitive fields get a `masked_` prefix (e.g., `client_secret` → `masked_client_secret`)
+                - Non-sensitive fields (IDs, URLs, regions, etc.) remain unchanged
+              oneOf:
+                - $ref: '#/components/schemas/OpenAIConfiguration'
+                  title: OpenAI
+                - $ref: '#/components/schemas/AzureOpenAIConfiguration'
+                  title: Azure OpenAI
+                - $ref: '#/components/schemas/BedrockConfiguration'
+                  title: AWS Bedrock
+                - $ref: '#/components/schemas/VertexAIConfiguration'
+                  title: Vertex AI
+                - $ref: '#/components/schemas/AzureAIConfiguration'
+                  title: Azure AI
+                - $ref: '#/components/schemas/WorkersAIConfiguration'
+                  title: Workers AI
+                - $ref: '#/components/schemas/SageMakerConfiguration'
+                  title: AWS Sagemaker
+                - $ref: '#/components/schemas/HuggingFaceConfiguration'
+                  title: Hugginface
+                - $ref: '#/components/schemas/CortexConfiguration'
+                  title: Cortex
+                - $ref: '#/components/schemas/CustomHostConfiguration'
+                  title: Custom Base URL
+            global_workspace_access_settings:
+              type: object
+              nullable: true
+              $ref: '#/components/schemas/GlobalWorkspaceAccess'
+              description: Global workspace access configuration
+            allow_all_models:
+              type: boolean
+              description: Whether new models will be enabled by default
+            workspace_count:
+              type: integer
+              description: Number of workspaces with access to this integration
+  
+    GlobalWorkspaceAccess:
+      type: object
+      required:
+        - enabled
+      properties:
+        enabled:
+          type: boolean
+          description: Whether global workspace access is enabled. When enabled, the integration will be enabled for all workspaces that are created in future.
+        usage_limits:
+          type: array
+          nullable: true
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/UsageLimits'
+        rate_limits:
+          type: array
+          nullable: true
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/RateLimits'
+
+    OpenAIConfiguration:
+      type: object
+      properties:
+        openai_organization:
+          type: string
+          description: OpenAI organization ID
+        openai_project:
+          type: string
+          description: OpenAI project ID
+
+    AzureOpenAIConfiguration:
+      type: object
+      required:
+        - azure_resource_name
+        - azure_deployment_config
+        - azure_auth_mode
+      properties:
+        azure_auth_mode:
+          type: string
+          enum: [default, entra, managed]
+          description: Authentication mode for Azure
+        azure_resource_name:
+          type: string
+          description: Azure OpenAI resource name
+        azure_deployment_config:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AzureDeploymentConfig'
+        # Entra-specific fields
+        azure_entra_tenant_id:
+          type: string
+          description: Azure AD tenant ID (required for entra auth)
+        azure_entra_client_id:
+          type: string
+          description: Azure AD client ID (required for entra auth)
+        azure_entra_client_secret:
+          type: string
+          description: Azure AD client secret (required for entra auth)
+        # Managed identity fields
+        azure_managed_client_id:
+          type: string
+          description: Managed identity client ID (optional for managed auth)
+
+    AzureDeploymentConfig:
+      type: object
+      required:
+        - azure_api_version
+        - azure_deployment_name
+        - azure_model_slug
+      properties:
+        alias:
+          type: string
+          description: Alias for the deployment
+        azure_api_version:
+          type: string
+          maxLength: 30
+          description: Azure API version
+        azure_deployment_name:
+          type: string
+          description: Azure deployment name
+        is_default:
+          type: boolean
+          default: false
+          description: Whether this is the default deployment
+        azure_model_slug:
+          type: string
+          description: Azure model slug
+
+    BedrockConfiguration:
+      type: object
+      required:
+        - aws_auth_type
+        - aws_region
+      properties:
+        aws_auth_type:
+          type: string
+          enum: [accessKey, assumedRole]
+          description: AWS authentication type
+        aws_region:
+          type: string
+          description: AWS region
+        # Access key fields
+        aws_access_key_id:
+          type: string
+          description: AWS access key ID (required for accessKey auth)
+        aws_secret_access_key:
+          type: string
+          description: AWS secret access key (required for accessKey auth)
+        # Assumed role fields
+        aws_role_arn:
+          type: string
+          description: AWS role ARN (required for assumedRole auth)
+        aws_external_id:
+          type: string
+          nullable: true
+          description: AWS external ID (optional for assumedRole auth)
+
+    SageMakerConfiguration:
+      allOf:
+        - $ref: '#/components/schemas/BedrockConfiguration'
+        - type: object
+          properties:
+            amzn_sagemaker_custom_attributes:
+              type: string
+              description: Custom attributes for SageMaker
+            amzn_sagemaker_target_model:
+              type: string
+              description: Target model for SageMaker
+            amzn_sagemaker_target_variant:
+              type: string
+              description: Target variant for SageMaker
+            amzn_sagemaker_target_container_hostname:
+              type: string
+              description: Target container hostname
+            amzn_sagemaker_inference_id:
+              type: string
+              description: Inference ID
+            amzn_sagemaker_enable_explanations:
+              type: string
+              description: Enable explanations
+            amzn_sagemaker_inference_component:
+              type: string
+              description: Inference component
+            amzn_sagemaker_session_id:
+              type: string
+              description: Session ID
+            amzn_sagemaker_model_name:
+              type: string
+              description: Model name
+
+    VertexAIConfiguration:
+      type: object
+      required:
+        - vertex_auth_type
+        - vertex_region
+      properties:
+        vertex_auth_type:
+          type: string
+          enum: [basic, serviceAccount]
+          description: Vertex AI authentication type
+        vertex_region:
+          type: string
+          description: GCP region
+        # Basic auth fields
+        vertex_project_id:
+          type: string
+          description: GCP project ID (required for basic auth)
+        # Service account fields
+        vertex_service_account_json:
+          type: object
+          description: Service account JSON (required for serviceAccount auth)
+
+    AzureAIConfiguration:
+      type: object
+      required:
+        - azure_foundry_url
+        - azure_auth_mode
+      properties:
+        azure_auth_mode:
+          type: string
+          enum: [default, entra, managed]
+          description: Authentication mode for Azure AI
+        azure_foundry_url:
+          type: string
+          description: Azure AI Foundry URL
+        azure_api_version:
+          type: string
+          maxLength: 30
+          description: Azure API version
+        azure_deployment_name:
+          type: string
+          description: Azure deployment name
+        # Entra-specific fields
+        azure_entra_tenant_id:
+          type: string
+          description: Azure AD tenant ID (required for entra auth)
+        azure_entra_client_id:
+          type: string
+          description: Azure AD client ID (required for entra auth)
+        azure_entra_client_secret:
+          type: string
+          description: Azure AD client secret (required for entra auth)
+        # Managed identity fields
+        azure_managed_client_id:
+          type: string
+          description: Managed identity client ID (optional for managed auth)
+
+    WorkersAIConfiguration:
+      type: object
+      required:
+        - workers_ai_account_id
+      properties:
+        workers_ai_account_id:
+          type: string
+          description: Cloudflare Workers AI account ID
+
+    HuggingFaceConfiguration:
+      type: object
+      properties:
+        huggingface_base_url:
+          type: string
+          description: Custom Hugging Face base URL
+
+    CortexConfiguration:
+      type: object
+      required:
+        - snowflake_account
+      properties:
+        snowflake_account:
+          type: string
+          description: Snowflake account identifier
+
+    CustomHostConfiguration:
+      type: object
+      properties:
+        custom_host:
+          type: string
+          description: Custom host URL (can be used along with other provider specific configuration fields)
+        custom_headers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom headers to send with requests (can be used along with other provider specific configuration fields)
+
+    IntegrationList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: UUID
+        organisation_id:
+          type: string
+          format: UUID
+        ai_provider_id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, archived]
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+          nullable: true
+        slug:
+          type: string
+        description:
+          type: string
+        object:
+          type: string
+          enum: [integration]
+  
+    IntegrationModelsResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of models
+        models:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationModel'
+
+    IntegrationModel:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: Model slug identifier
+        name:
+          type: string
+          description: Human-readable model name
+        enabled:
+          type: boolean
+          description: Whether the model is enabled
+        is_custom:
+          type: boolean
+          nullable: true
+          description: Whether this is a custom model
+        is_finetune:
+          type: boolean
+          nullable: true
+          description: Whether this is a fine-tuned model
+        base_model_slug:
+          type: string
+          nullable: true
+          description: Base model slug for fine-tuned models
+        pricing_config:
+          $ref: '#/components/schemas/PricingConfig'
+
+    PricingConfig:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [static]
+          description: Pricing type
+        pay_as_you_go:
+          $ref: '#/components/schemas/PayAsYouGoPricing'
+
+    PayAsYouGoPricing:
+      type: object
+      properties:
+        request_token:
+          $ref: '#/components/schemas/TokenPricing'
+        response_token:
+          $ref: '#/components/schemas/TokenPricing'
+
+    TokenPricing:
+      type: object
+      properties:
+        price:
+          type: number
+          format: float
+          description: Price per token
+
+    BulkUpdateModelsRequest:
+      type: object
+      required:
+        - models
+      properties:
+        models:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelUpdateRequest'
+        allow_all_models:
+          type: boolean
+          description: Whether to allow all models by default
+
+    ModelUpdateRequest:
+      type: object
+      required:
+        - slug
+        - enabled
+      properties:
+        slug:
+          type: string
+          description: Model slug identifier
+        enabled:
+          type: boolean
+          description: Whether to enable the model
+        is_custom:
+          type: boolean
+          nullable: true
+          description: Whether this is a custom model
+        is_finetune:
+          type: boolean
+          nullable: true
+          description: Whether this is a fine-tuned model
+        base_model_slug:
+          type: string
+          nullable: true
+          description: Base model slug for fine-tuned models
+        pricing_config:
+          $ref: '#/components/schemas/PricingConfig'
+
+    IntegrationWorkspacesResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of workspaces
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationWorkspace'
+
+    IntegrationWorkspace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Workspace ID
+          example: "ws-my-team-1234"
+        enabled:
+          type: boolean
+          description: Whether the workspace has access
+        usage_limits:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/UsageLimits'
+        rate_limits:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/RateLimits'
+
+    BulkUpdateWorkspacesRequest:
+      type: object
+      properties:
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceUpdateRequest'
+        global_workspace_access:
+          $ref: '#/components/schemas/GlobalWorkspaceAccess'
+        override_existing_workspace_access:
+          type: boolean
+          description: Whether to override existing workspace access settings
+
+    WorkspaceUpdateRequest:
+      type: object
+      required:
+        - id
+        - enabled
+      properties:
+        id:
+          type: string
+          description: Workspace ID
+          example: ws-my-team-1234
+        enabled:
+          type: boolean
+          description: Whether to enable workspace access
+        usage_limits:
+          type: array
+          nullable: true
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/UsageLimits'
+        rate_limits:
+          type: array
+          nullable: true
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/RateLimits'
+        reset_usage:
+          type: boolean
+          description: Whether to reset current usage. If the current status is exhausted, this will change it back to active.
+
+    Providers:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Open AI Workspace"
+        integration_id:
+          type: string
+        note:
+          type: string
+          nullable: true
+          example: "randomness"
+        status:
+          type: string
+          enum: [active, exhausted, expired]
+        usage_limits:
+          $ref: "#/components/schemas/UsageLimits"
+        reset_usage:
+          type: number
+          nullable: true
+          example: 0
+        created_at:
+          type: string
+          format: date-time
+        slug:
+          type: string
+        rate_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/RateLimits"
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+        object:
+          type: string
+          enum: [provider]
 
     VirtualKeys:
       type: object
