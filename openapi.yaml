@@ -14508,7 +14508,7 @@ paths:
           schema:
             type: string
           example: "workspace"
-          description: "Workspace name to filter results, case insensitive"
+          description: "Workspace name to filter results, case sensitive"
       responses:
         "200":
           description: OK
