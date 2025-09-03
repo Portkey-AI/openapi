@@ -14347,6 +14347,11 @@ paths:
                   type: array
                   items:
                     type: string
+                usage_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/UsageLimits"
+
               example:
                 name: My Workspace
                 description: My Description
@@ -14631,6 +14636,11 @@ paths:
                       type: array
                       items: 
                         type: string
+                usage_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/UsageLimits"
+                  
               example:
                 name: My Workspace
                 description: My Description
@@ -29914,6 +29924,10 @@ components:
               type: string
               enum:
                 - workspace
+        usage_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/UsageLimits"
 
     WorkspaceList:
       type: object
