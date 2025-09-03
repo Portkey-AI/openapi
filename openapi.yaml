@@ -14351,6 +14351,10 @@ paths:
                   type: array
                   items:
                     $ref: "#/components/schemas/UsageLimits"
+                rate_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/RateLimits"
 
               example:
                 name: My Workspace
@@ -14640,6 +14644,10 @@ paths:
                   type: array
                   items:
                     $ref: "#/components/schemas/UsageLimits"
+                rate_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/RateLimits"
                   
               example:
                 name: My Workspace
@@ -29928,6 +29936,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UsageLimits"
+        rate_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/RateLimits"
 
     WorkspaceList:
       type: object
@@ -29998,6 +30010,14 @@ components:
           items:
             type: object
             $ref: "#/components/schemas/WorkspaceMember"
+        usage_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/UsageLimits"
+        rate_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/RateLimits"
 
     Collection:
       type: object
