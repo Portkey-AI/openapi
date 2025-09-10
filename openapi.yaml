@@ -30589,6 +30589,13 @@ components:
           type: string
         prompt_slug:
           type: string
+        page_size:
+          type: number
+          description: "max: 50000, default: 50000"
+          example: 50000
+        current_page:
+          type: number
+          example: 0
 
     LogExportsRequestedData:
       type: array
