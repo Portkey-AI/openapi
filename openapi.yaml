@@ -14519,6 +14519,11 @@ paths:
             type: string
           example: "workspace"
           description: "Workspace name to filter results, case sensitive"
+        - name: exact_name
+          in: query
+          schema:
+            type: string
+          description: "Workspace name filter with strict check"
       responses:
         "200":
           description: OK
