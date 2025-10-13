@@ -26,6 +26,8 @@ x-server-groups:
 x-mint:
   mcp:
     enabled: true
+    name: Portkey MCP
+    description: Official MCP Server for Portkey Docs & APIs
 
 servers:
   - url: https://api.portkey.ai/v1
