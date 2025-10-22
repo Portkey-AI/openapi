@@ -10379,6 +10379,111 @@ paths:
 
             console.log(config);
 
+  /configs/{slug}/versions:
+    servers: *ControlPlaneServers
+    get:
+      summary: List versions for a config
+      tags:
+        - Configs
+      operationId: listConfigVersions
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of config versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  total:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        workspace_id:
+                          type: string
+                          format: uuid
+                        slug:
+                          type: string
+                        organisation_id:
+                          type: string
+                          format: uuid
+                        is_default:
+                          type: integer
+                        status:
+                          type: string
+                        owner_id:
+                          type: string
+                          format: uuid
+                        updated_by:
+                          type: string
+                          format: uuid
+                        created_at:
+                          type: string
+                          format: date-time
+                        last_updated_at:
+                          type: string
+                          format: date-time
+                        config:
+                          type: string
+                          description: Serialized configuration for this version
+                        format:
+                          type: string
+                        type:
+                          type: string
+                        version_id:
+                          type: string
+                          format: uuid
+                        object:
+                          type: string
+              examples:
+                example-1:
+                  value:
+                    {
+                      "object": "list",
+                      "total": 1,
+                      "data": [
+                        {
+                          "id": "daab995b-8d3b-42c5-a490-47217fbf4e0e",
+                          "name": "PII Redaction Guardrail",
+                          "workspace_id": "8610029e-692a-4df6-9052-3fa3eff69911",
+                          "slug": "pc-pii-re-7f1051",
+                          "organisation_id": "472d2804-d054-4226-b4ae-9d4e2e61e69e",
+                          "is_default": 0,
+                          "status": "active",
+                          "owner_id": "c4c7996d-be62-429d-b787-5d48fe94da86",
+                          "updated_by": "c4c7996d-be62-429d-b787-5d48fe94da86",
+                          "created_at": "2025-10-17T19:11:47.000Z",
+                          "last_updated_at": "2025-10-17T19:11:47.000Z",
+                          "config": "{\"input_guardrails\":[\"pg-patron-1d0224\"]}",
+                          "format": "json",
+                          "type": "ORG_CONFIG",
+                          "version_id": "8c1a4fbf-26d9-49df-82ca-ab772ba397d2",
+                          "object": "config"
+                        }
+                      ]
+                    }
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl --location 'https://api.portkey.ai/v1/configs/pc-pii-re-7f1051/versions' \
+            --header 'x-portkey-api-key: PORTKEY_API_KEY'
+
   /feedback:
     servers: *ControlPlaneServers
     post:
