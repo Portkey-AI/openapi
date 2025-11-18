@@ -17143,6 +17143,454 @@ paths:
             })
             console.log(apiKey);
 
+  /policies/usage-limits:
+    post:
+      tags:
+        - Usage Limits Policies
+      summary: Create Usage Limits Policy
+      description: Create a new usage limits policy to control total usage (cost or tokens) over a period.
+      operationId: createUsageLimitsPolicy
+      security:
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUsageLimitsPolicyRequest'
+            examples:
+              monthlyCostLimit:
+                summary: Monthly Cost Limit per API Key
+                value:
+                  name: Monthly Cost Limit per API Key
+                  conditions:
+                    - key: workspace_id
+                      value: workspace-123
+                  group_by:
+                    - key: api_key
+                  type: cost
+                  credit_limit: 1000.0
+                  alert_threshold: 800.0
+                  periodic_reset: monthly
+              tokenLimit:
+                summary: Token Limit per User
+                value:
+                  name: Token Limit per User
+                  conditions:
+                    - key: workspace_id
+                      value: workspace-123
+                  group_by:
+                    - key: metadata.user_id
+                  type: tokens
+                  credit_limit: 1000000
+                  periodic_reset: weekly
+      responses:
+        '200':
+          description: Policy created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePolicyResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+    get:
+      tags:
+        - Usage Limits Policies
+      summary: List Usage Limits Policies
+      description: List all usage limits policies with optional filtering.
+      operationId: listUsageLimitsPolicies
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceIdQuery'
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum: [active, archived]
+            default: active
+        - name: type
+          in: query
+          description: Filter by policy type
+          required: false
+          schema:
+            type: string
+            enum: [cost, tokens]
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/CurrentPage'
+      responses:
+        '200':
+          description: List of usage limits policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageLimitsPolicyListResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+  /policies/usage-limits/{policyUsageLimitsId}:
+    get:
+      tags:
+        - Usage Limits Policies
+      summary: Get Usage Limits Policy
+      description: Get a single usage limits policy by ID.
+      operationId: getUsageLimitsPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum: [active, archived]
+            default: active
+        - name: include_usage
+          in: query
+          description: Include usage information for each value key
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Usage limits policy details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageLimitsPolicyResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+    put:
+      tags:
+        - Usage Limits Policies
+      summary: Update Usage Limits Policy
+      description: Update an existing usage limits policy.
+      operationId: updateUsageLimitsPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUsageLimitsPolicyRequest'
+            example:
+              credit_limit: 2000.0
+              alert_threshold: 1500.0
+              reset_usage_for_value: api-key-123
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+    delete:
+      tags:
+        - Usage Limits Policies
+      summary: Delete Usage Limits Policy
+      description: Archive (soft delete) a usage limits policy.
+      operationId: deleteUsageLimitsPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+  /policies/rate-limits:
+    post:
+      tags:
+        - Rate Limits Policies
+      summary: Create Rate Limits Policy
+      description: Create a new rate limits policy to control the rate of requests or tokens consumed per minute, hour, or day.
+      operationId: createRateLimitsPolicy
+      security:
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRateLimitsPolicyRequest'
+            examples:
+              requestsPerMinute:
+                summary: 100 Requests per Minute per API Key
+                value:
+                  name: 100 RPM per API Key
+                  conditions:
+                    - key: workspace_id
+                      value: workspace-123
+                  group_by:
+                    - key: api_key
+                  type: requests
+                  unit: rpm
+                  value: 100
+              tokensPerHour:
+                summary: 10K Tokens per Hour per User
+                value:
+                  name: 10K Tokens per Hour per User
+                  conditions:
+                    - key: workspace_id
+                      value: workspace-123
+                  group_by:
+                    - key: metadata.user_id
+                  type: tokens
+                  unit: rph
+                  value: 10000
+      responses:
+        '200':
+          description: Policy created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePolicyResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Server error
+
+    get:
+      tags:
+        - Rate Limits Policies
+      summary: List Rate Limits Policies
+      description: List all rate limits policies with optional filtering.
+      operationId: listRateLimitsPolicies
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceIdQuery'
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum: [active, archived]
+            default: active
+        - name: type
+          in: query
+          description: Filter by policy type
+          required: false
+          schema:
+            type: string
+            enum: [requests, tokens]
+        - name: unit
+          in: query
+          description: Filter by rate unit
+          required: false
+          schema:
+            type: string
+            enum: [rpm, rph, rpd]
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/CurrentPage'
+      responses:
+        '200':
+          description: List of rate limits policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitsPolicyListResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+  /policies/rate-limits/{rateLimitsPolicyId}:
+    get:
+      tags:
+        - Rate Limits Policies
+      summary: Get Rate Limits Policy
+      description: Get a single rate limits policy by ID.
+      operationId: getRateLimitsPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/RateLimitsPolicyId'
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum: [active, archived]
+            default: active
+      responses:
+        '200':
+          description: Rate limits policy details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitsPolicyResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+    put:
+      tags:
+        - Rate Limits Policies
+      summary: Update Rate Limits Policy
+      description: Update an existing rate limits policy.
+      operationId: updateRateLimitsPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/RateLimitsPolicyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRateLimitsPolicyRequest'
+            example:
+              value: 200
+              unit: rph
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+    delete:
+      tags:
+        - Rate Limits Policies
+      summary: Delete Rate Limits Policy
+      description: Delete a rate limits policy.
+      operationId: deleteRateLimitsPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/RateLimitsPolicyId'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
   /analytics/graphs/requests:
     servers: *ControlPlaneServers
     get:
@@ -18803,457 +19251,6 @@ paths:
                   - object
                   - data
 
-  /policies/usage-limits:
-    post:
-      tags:
-        - Usage Limits Policies
-      summary: Create Usage Limits Policy
-      description: Create a new usage limits policy to control total usage (cost or tokens) over a period.
-      operationId: createUsageLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUsageLimitsPolicyRequest'
-            examples:
-              monthlyCostLimit:
-                summary: Monthly Cost Limit per API Key
-                value:
-                  name: Monthly Cost Limit per API Key
-                  conditions:
-                    - key: workspace_id
-                      value: workspace-123
-                  group_by:
-                    - key: api_key
-                  type: cost
-                  credit_limit: 1000.0
-                  alert_threshold: 800.0
-                  periodic_reset: monthly
-              tokenLimit:
-                summary: Token Limit per User
-                value:
-                  name: Token Limit per User
-                  conditions:
-                    - key: workspace_id
-                      value: workspace-123
-                  group_by:
-                    - key: metadata.user_id
-                  type: tokens
-                  credit_limit: 1000000
-                  periodic_reset: weekly
-      responses:
-        '200':
-          description: Policy created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreatePolicyResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-    get:
-      tags:
-        - Usage Limits Policies
-      summary: List Usage Limits Policies
-      description: List all usage limits policies with optional filtering.
-      operationId: listUsageLimitsPolicies
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/WorkspaceIdQuery'
-        - name: status
-          in: query
-          description: Filter by status
-          required: false
-          schema:
-            type: string
-            enum: [active, archived]
-            default: active
-        - name: type
-          in: query
-          description: Filter by policy type
-          required: false
-          schema:
-            type: string
-            enum: [cost, tokens]
-        - $ref: '#/components/parameters/PageSize'
-        - $ref: '#/components/parameters/CurrentPage'
-      responses:
-        '200':
-          description: List of usage limits policies
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsageLimitsPolicyListResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-  /policies/usage-limits/{policyUsageLimitsId}:
-    get:
-      tags:
-        - Usage Limits Policies
-      summary: Get Usage Limits Policy
-      description: Get a single usage limits policy by ID.
-      operationId: getUsageLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/PolicyUsageLimitsId'
-        - name: status
-          in: query
-          description: Filter by status
-          required: false
-          schema:
-            type: string
-            enum: [active, archived]
-            default: active
-        - name: include_usage
-          in: query
-          description: Include usage information for each value key
-          required: false
-          schema:
-            type: boolean
-            default: false
-      responses:
-        '200':
-          description: Usage limits policy details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsageLimitsPolicyResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-    put:
-      tags:
-        - Usage Limits Policies
-      summary: Update Usage Limits Policy
-      description: Update an existing usage limits policy.
-      operationId: updateUsageLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/PolicyUsageLimitsId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUsageLimitsPolicyRequest'
-            example:
-              credit_limit: 2000.0
-              alert_threshold: 1500.0
-              reset_usage_for_value: api-key-123
-      responses:
-        '200':
-          description: Policy updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-    delete:
-      tags:
-        - Usage Limits Policies
-      summary: Delete Usage Limits Policy
-      description: Archive (soft delete) a usage limits policy.
-      operationId: deleteUsageLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/PolicyUsageLimitsId'
-      responses:
-        '200':
-          description: OK
-          headers:
-            Content-Type:
-              schema:
-                type: string
-                example: application/json
-          content:
-            application/json:
-              schema:
-                type: object
-              example: {}
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-  /policies/rate-limits:
-    post:
-      tags:
-        - Rate Limits Policies
-      summary: Create Rate Limits Policy
-      description: Create a new rate limits policy to control the rate of requests or tokens consumed per minute, hour, or day.
-      operationId: createRateLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateRateLimitsPolicyRequest'
-            examples:
-              requestsPerMinute:
-                summary: 100 Requests per Minute per API Key
-                value:
-                  name: 100 RPM per API Key
-                  conditions:
-                    - key: workspace_id
-                      value: workspace-123
-                  group_by:
-                    - key: api_key
-                  type: requests
-                  unit: rpm
-                  value: 100
-              tokensPerHour:
-                summary: 10K Tokens per Hour per User
-                value:
-                  name: 10K Tokens per Hour per User
-                  conditions:
-                    - key: workspace_id
-                      value: workspace-123
-                  group_by:
-                    - key: metadata.user_id
-                  type: tokens
-                  unit: rph
-                  value: 10000
-      responses:
-        '200':
-          description: Policy created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreatePolicyResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '500':
-          description: Server error
-
-    get:
-      tags:
-        - Rate Limits Policies
-      summary: List Rate Limits Policies
-      description: List all rate limits policies with optional filtering.
-      operationId: listRateLimitsPolicies
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/WorkspaceIdQuery'
-        - name: status
-          in: query
-          description: Filter by status
-          required: false
-          schema:
-            type: string
-            enum: [active, archived]
-            default: active
-        - name: type
-          in: query
-          description: Filter by policy type
-          required: false
-          schema:
-            type: string
-            enum: [requests, tokens]
-        - name: unit
-          in: query
-          description: Filter by rate unit
-          required: false
-          schema:
-            type: string
-            enum: [rpm, rph, rpd]
-        - $ref: '#/components/parameters/PageSize'
-        - $ref: '#/components/parameters/CurrentPage'
-      responses:
-        '200':
-          description: List of rate limits policies
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RateLimitsPolicyListResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-  /policies/rate-limits/{rateLimitsPolicyId}:
-    get:
-      tags:
-        - Rate Limits Policies
-      summary: Get Rate Limits Policy
-      description: Get a single rate limits policy by ID.
-      operationId: getRateLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/RateLimitsPolicyId'
-        - name: status
-          in: query
-          description: Filter by status
-          required: false
-          schema:
-            type: string
-            enum: [active, archived]
-            default: active
-      responses:
-        '200':
-          description: Rate limits policy details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RateLimitsPolicyResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-    put:
-      tags:
-        - Rate Limits Policies
-      summary: Update Rate Limits Policy
-      description: Update an existing rate limits policy.
-      operationId: updateRateLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/RateLimitsPolicyId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateRateLimitsPolicyRequest'
-            example:
-              value: 200
-              unit: rph
-      responses:
-        '200':
-          description: OK
-          headers:
-            Content-Type:
-              schema:
-                type: string
-                example: application/json
-          content:
-            application/json:
-              schema:
-                type: object
-              example: {}
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
-
-    delete:
-      tags:
-        - Rate Limits Policies
-      summary: Delete Rate Limits Policy
-      description: Delete a rate limits policy.
-      operationId: deleteRateLimitsPolicy
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
-      parameters:
-        - $ref: '#/components/parameters/RateLimitsPolicyId'
-      responses:
-        '200':
-          description: OK
-          headers:
-            Content-Type:
-              schema:
-                type: string
-                example: application/json
-          content:
-            application/json:
-              schema:
-                type: object
-              example: {}
-        '400':
-          description: Bad request
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Policy not found
-        '500':
-          description: Server error
 
 components:
   securitySchemes:
