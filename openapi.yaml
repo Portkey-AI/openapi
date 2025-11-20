@@ -9486,6 +9486,117 @@ paths:
 
             main();
 
+  /batches/{batch_id}/output:
+    servers: *DataPlaneServers
+    get:
+      operationId: getBatchOutput
+      tags:
+        - Batch
+      summary: Returns batch output as stream.
+      parameters:
+        - in: path
+          name: batch_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the batch to retrieve output for.
+      responses:
+        "200":
+          description: Batch output returned successfully.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+
+      security:
+        - Portkey-Key: []
+          Virtual-Key: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+        - Portkey-Key: []
+          Config: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+          Custom-Host: []
+
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl https://api.portkey.ai/v1/batches/batch_abc123/output \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -H "Content-Type: application/json" \
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+              api_key = "PORTKEY_API_KEY",
+              virtual_key = "PROVIDER_VIRTUAL_KEY"
+            )
+
+            client.batches.output("batch_abc123")
+        - lang: javascript
+          label: Default
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY'
+            });
+
+            async function main() {
+              const batch = await client.batches.output("batch_abc123");
+
+              console.log(batch);
+            }
+
+            main();
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl SELF_HOSTED_GATEWAY_URL/batches/batch_abc123/output \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -H "Content-Type: application/json" \
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+              api_key = "PORTKEY_API_KEY",
+              base_url = "SELF_HOSTED_GATEWAY_URL",
+              virtual_key = "PROVIDER_VIRTUAL_KEY"
+            )
+
+            client.batches.output("batch_abc123")
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              baseUrl: 'SELF_HOSTED_GATEWAY_URL',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY'
+            });
+
+            async function main() {
+              const batch = await client.batches.output("batch_abc123");
+
+              console.log(batch);
+            }
+
+            main();
+
   /batches/{batch_id}:
     servers: *DataPlaneServers
     get:
