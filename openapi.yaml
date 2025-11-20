@@ -15378,6 +15378,25 @@ paths:
 
             main();
 
+  /logs/{logId}:
+    servers: *DataPlaneServers
+    get:
+      tags:
+        - Logs
+      summary: Get a specific log
+      parameters:
+        - name: logId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogObject"
   /logs/exports/{exportId}:
     servers: *ControlPlaneServers
     get:
@@ -31241,6 +31260,7 @@ components:
           description: A pre-signed URL for downloading the exported logs
       required:
         - signed_url
+
     GenerationsFilterSchema:
       type: object
       properties:
@@ -31297,6 +31317,441 @@ components:
         current_page:
           type: number
           example: 0
+
+    LogObject:
+      type: object
+      required:
+        - _id
+        - request
+        - response
+        - organisation_id
+        - created_at
+      properties:
+        _id:
+          type: string
+          format: uuid
+          description: Unique identifier for the log entry
+          nullable: true
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        
+        request:
+          $ref: '#/components/schemas/LogRequest'
+        
+        response:
+          $ref: '#/components/schemas/LogResponse'
+        
+        organisation_id:
+          type: string
+          description: Organization identifier
+          nullable: true
+          example: "org-123"
+        
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the log was created
+          nullable: true
+          example: "2024-01-15T10:30:00.000Z"
+        
+        metrics:
+          $ref: '#/components/schemas/AnalyticsMetrics'
+          description: Analytics metrics object containing detailed metrics about the request
+        
+        finalUntransformedRequest:
+          $ref: '#/components/schemas/RequestResponseObject'
+          description: The original request before any transformations (only present when debug logging is enabled)
+        
+        originalResponse:
+          $ref: '#/components/schemas/RequestResponseObject'
+          description: The original response from the provider (only present when debug logging is enabled or request failed)
+        
+        transformedRequest:
+          $ref: '#/components/schemas/RequestResponseObject'
+          description: The request after transformations (only present when debug logging is enabled)
+
+    LogRequest:
+      type: object
+      required:
+        - url
+        - method
+        - portkeyHeaders
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Sanitized request URL
+          example: "https://api.openai.com/v1/chat/completions"
+        
+        method:
+          type: string
+          description: HTTP method
+          enum: [GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD]
+          example: "POST"
+        
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Request headers (only present when debug logging is enabled)
+          example:
+            "Content-Type": "application/json"
+            "Authorization": "Bearer hashed_value"
+        
+        body:
+          type: object
+          additionalProperties: true
+          description: Request body (only present when debug logging is enabled)
+        
+        portkeyHeaders:
+          type: object
+          additionalProperties:
+            type: string
+          description: Portkey-specific headers
+          example:
+            "x-portkey-trace-id": "trace-123"
+            "x-portkey-span-id": "span-456"
+            "x-portkey-metadata": "{\"key\":\"value\"}"
+
+    LogResponse:
+      type: object
+      required:
+        - status
+        - responseTime
+        - lastUsedOptionJsonPath
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: HTTP response status code
+          example: 200
+        
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Response headers (only present when debug logging is enabled or request failed)
+          example:
+            "Content-Type": "application/json"
+        
+        body:
+          type: object
+          additionalProperties: true
+          description: Response body (only present when debug logging is enabled or request failed). May be redacted for certain embedding models.
+          example:
+            id: "chatcmpl-123"
+            object: "chat.completion"
+            created: 1677652288
+        
+        responseTime:
+          type: integer
+          format: int64
+          description: Response time in milliseconds
+          example: 1234
+        
+        lastUsedOptionJsonPath:
+          type: string
+          description: JSON path to the last used option in the config
+          example: "$.config.options[0]"
+
+    RequestResponseObject:
+      type: object
+      properties:
+        body:
+          type: object
+          additionalProperties: true
+          description: The body content
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Headers if present
+        url:
+          type: string
+          format: uri
+          description: URL if present
+        method:
+          type: string
+          description: HTTP method if present
+
+    AnalyticsMetrics:
+      type: object
+      description: Analytics metrics extracted from the log entry
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the log entry
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        
+        organisation_id:
+          type: string
+          description: Organization identifier
+          example: "org-123"
+        
+        organisation_name:
+          type: string
+          description: Organization name
+          example: "Acme Corp"
+        
+        prompt_id:
+          type: string
+          description: Prompt identifier
+          example: "prompt-789"
+        
+        prompt_version_id:
+          type: string
+          description: Prompt version identifier
+          example: "prompt-v1"
+        
+        config_id:
+          type: string
+          description: Configuration identifier
+          example: "config-123"
+        
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the log was created
+          example: "2024-01-15T10:30:00.000"
+        
+        is_success:
+          type: boolean
+          description: Whether the request was successful (status code 200-299)
+          example: true
+        
+        ai_org:
+          type: string
+          description: AI provider organization (e.g., openai, anthropic)
+          example: "openai"
+        
+        ai_model:
+          type: string
+          description: AI model used
+          example: "gpt-4o"
+        
+        req_units:
+          type: number
+          format: float
+          description: Request token units
+          example: 100
+        
+        res_units:
+          type: number
+          format: float
+          description: Response token units
+          example: 50
+        
+        total_units:
+          type: number
+          format: float
+          description: Total token units (req_units + res_units)
+          example: 150
+        
+        cost:
+          type: number
+          format: float
+          description: Cost in the specified currency
+          example: 0.002
+        
+        cost_currency:
+          type: string
+          description: Currency code for the cost
+          default: "USD"
+          example: "USD"
+        
+        request_url:
+          type: string
+          format: uri
+          description: Sanitized request URL
+          example: "https://api.openai.com/v1/chat/completions"
+        
+        request_method:
+          type: string
+          description: HTTP method
+          example: "POST"
+        
+        response_status_code:
+          type: integer
+          format: int32
+          description: HTTP response status code
+          example: 200
+        
+        response_time:
+          type: integer
+          format: int64
+          description: Response time in milliseconds
+          example: 1234
+        
+        is_proxy_call:
+          type: boolean
+          description: Whether this was a proxy call
+          example: true
+        
+        cache_status:
+          type: string
+          nullable: true
+          description: Cache status (e.g., HIT, MISS, DISABLED, SEMANTIC HIT)
+          example: "MISS"
+        
+        cache_type:
+          type: string
+          nullable: true
+          description: Type of cache used
+          example: "semantic"
+        
+        stream_mode:
+          type: integer
+          nullable: true
+          description: Whether streaming was enabled (1) or not (0)
+          example: 1
+        
+        retry_success_count:
+          type: integer
+          description: Number of successful retries
+          example: 0
+        
+        trace_id:
+          type: string
+          description: Distributed tracing trace ID
+          example: "trace-123"
+        
+        span_id:
+          type: string
+          description: Distributed tracing span ID
+          example: "span-456"
+        
+        span_name:
+          type: string
+          description: Name of the span
+          example: "llm"
+        
+        parent_span_id:
+          type: string
+          description: Parent span ID in distributed tracing
+          example: "span-789"
+        
+        mode:
+          type: string
+          description: Request mode (e.g., single, loadbalance, fallback)
+          example: "single"
+        
+        virtual_key:
+          type: string
+          description: Virtual key identifier
+          example: "vk-123"
+        
+        source:
+          type: string
+          description: Source of the request (e.g., rubeus, proxy)
+          example: "rubeus"
+        
+        runtime:
+          type: string
+          description: Runtime environment
+          example: "node"
+        
+        runtime_version:
+          type: string
+          description: Runtime version
+          example: "18.0.0"
+        
+        sdk_version:
+          type: string
+          description: SDK version
+          example: "1.0.0"
+        
+        config:
+          type: string
+          description: Configuration slug or ID
+          example: "pc-config-123"
+        
+        internal_trace_id:
+          type: string
+          description: Internal trace ID for gateway tracking
+          example: "internal-trace-123"
+        
+        last_used_option_index:
+          type: integer
+          description: Index of the last used option in the config
+          example: 0
+        
+        config_version_id:
+          type: string
+          description: Configuration version identifier
+          example: "config-v1"
+        
+        prompt_slug:
+          type: string
+          description: Prompt slug
+          example: "my-prompt"
+        
+        workspace_slug:
+          type: string
+          nullable: true
+          description: Workspace slug
+          example: "my-workspace"
+        
+        log_store_file_path_format:
+          type: string
+          description: Path format version for log storage
+          example: "v1"
+        
+        metadata.key:
+          type: array
+          items:
+            type: string
+            nullable: true
+          description: Array of metadata keys
+          example: ["key1", "key2"]
+        
+        metadata.value:
+          type: array
+          items:
+            type: string
+            nullable: true
+          description: Array of metadata values
+          example: ["value1", "value2"]
+        
+        api_key_id:
+          type: string
+          description: API key identifier
+          example: "api-key-123"
+        
+        request_parsing_time:
+          type: integer
+          format: int64
+          description: Time taken to parse the request in milliseconds
+          example: 5
+        
+        pre_processing_time:
+          type: integer
+          format: int64
+          description: Time taken for pre-processing in milliseconds
+          example: 10
+        
+        cache_processing_time:
+          type: integer
+          format: int64
+          description: Time taken for cache processing in milliseconds
+          example: 2
+        
+        response_parsing_time:
+          type: integer
+          format: int64
+          description: Time taken to parse the response in milliseconds
+          example: 8
+        
+        gateway_processing_time:
+          type: integer
+          format: int64
+          description: Total gateway processing time in milliseconds
+          example: 50
+        
+        upstream_response_time:
+          type: integer
+          format: int64
+          description: Upstream provider response time in milliseconds
+          example: 1200
 
     LogExportsRequestedData:
       type: array
