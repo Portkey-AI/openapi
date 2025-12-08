@@ -93,7 +93,7 @@ tags:
   - name: Workspaces > Members
     description: Create and manage workspace members.
   - name: Api-Keys
-    description: Create, List, Retrieve, Update, and Delete your Portkey Api keys.
+    description: Create, List, Retrieve, Update, and Delete your Portkey API keys.
   - name: Logs Export
     description: Exports logs service.
   - name: Audit Logs
@@ -16355,7 +16355,9 @@ paths:
     post:
       tags:
         - Api-Keys
-      summary: Create Api Keys
+      summary: Create API Keys
+      description: |
+        Creates a new API key.
       parameters:
         - name: type
           in: path
@@ -16588,6 +16590,68 @@ paths:
                 ]
             )
             print(api_key)
+        - lang: python
+          label: User API Key
+          source: |
+            from portkey_ai import Portkey
+
+            # Initialize the Portkey client
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+            )
+
+            # Create a user API key (requires user_id)
+            api_key = portkey.api_keys.create(
+                name="User API Key",
+                type="workspace",
+                sub_type="user",
+                workspace_id="WORKSPACE_ID",
+                user_id="USER_ID",  # Required for user API keys
+                scopes=[
+                    "completions.write",
+                    "logs.view"
+                ]
+            )
+
+            print(api_key)
+        - lang: javascript
+          label: User API Key
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+                apiKey: "PORTKEY_API_KEY",
+            })
+
+            const apiKey = await portkey.apiKeys.create({
+                name: "User API Key",
+                type: "workspace",
+                "sub-type": "user",
+                workspace_id: "WORKSPACE_ID",
+                user_id: "USER_ID",  // Required for user API keys
+                "scopes": [
+                    "completions.write",
+                    "logs.view"
+                ]
+            })
+            console.log(apiKey);
+        - lang: curl
+          label: User API Key
+          source: |
+            curl -X POST https://api.portkey.ai/v1/api-keys/workspace/user
+              -H "x-portkey-api-key: PORTKEY_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "name":"User API Key",
+                "type":"workspace",
+                "sub-type":"user",
+                "workspace_id":"WORKSPACE_ID",
+                "user_id":"USER_ID",
+                "scopes":[
+                  "completions.write",
+                  "logs.view"
+                ]
+              }'
 
   /api-keys:
     servers:
@@ -16700,7 +16764,9 @@ paths:
     put:
       tags:
         - Api-Keys
-      summary: Update Api Keys
+      summary: Update API Keys
+      description: |
+        Updates an existing API key. The API key type (user vs service) and associated user_id cannot be changed after creation.
       requestBody:
         content:
           application/json:
@@ -17083,7 +17149,7 @@ paths:
     get:
       tags:
         - Api-Keys
-      summary: Get Api Keys
+      summary: Get API Keys
       parameters:
         - name: id
           in: path
@@ -17180,7 +17246,7 @@ paths:
     delete:
       tags:
         - Api-Keys
-      summary: Remove a Api Key
+      summary: Remove an API Key
       parameters:
         - name: id
           in: path
@@ -31974,6 +32040,7 @@ components:
         user_id:
           type: string
           format: uuid
+          description: "**Required** when sub-type path parameter is 'user'. Not required when sub-type is 'service'."
           example: "c3d4e5f6-a7b8-6c7d-0e1f-2a3b4c5d6e7f"
         rate_limits:
           type: array
