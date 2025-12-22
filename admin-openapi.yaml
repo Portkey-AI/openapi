@@ -1,8 +1,7 @@
 openapi: 3.0.0
 info:
   title: Portkey Admin API
-  description: The Portkey Admin REST API for managing users, workspaces, configs, integrations, providers, prompts, API keys,
-    guardrails, policies, and audit logs. Please see https://portkey.ai/docs/api-reference for more details.
+  description: The Portkey Admin REST API for managing users, workspaces, configs, integrations, providers, prompts, API keys, guardrails, policies, and audit logs. Please see https://portkey.ai/docs/api-reference for more details.
   version: 2.0.0
   termsOfService: https://portkey.ai/terms
   contact:
@@ -85,25 +84,25 @@ paths:
                   type: string
                   description: Prompt template in string format
                 parameters:
-                  type: object
-                  additionalProperties: true
-                  description: Parameters for the prompt
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded parameters for the prompt
                 functions:
                   type: array
                   description: Functions for the prompt
                   items:
-                    type: object
-                    additionalProperties: true
+                    type: string
+                    x-stainless-json-encoded: true
                 tools:
                   type: array
                   description: Tools for the prompt
                   items:
-                    type: object
-                    additionalProperties: true
+                    type: string
+                    x-stainless-json-encoded: true
                 tool_choice:
-                  type: object
-                  additionalProperties: true
-                  description: Tool Choice for the prompt
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded tool choice for the prompt
                 model:
                   type: string
                   description: The model to use for the prompt
@@ -114,9 +113,9 @@ paths:
                   type: string
                   description: The description of the prompt version
                 template_metadata:
-                  type: object
-                  additionalProperties: true
-                  description: Metadata for the prompt
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded metadata for the prompt
       responses:
         '200':
           description: Prompt created successfully
@@ -254,8 +253,9 @@ paths:
                 string:
                   type: string
                 parameters:
-                  type: object
-                  additionalProperties: true
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded parameters
                 model:
                   type: string
                 virtual_key:
@@ -265,24 +265,26 @@ paths:
                 functions:
                   type: array
                   items:
-                    type: object
-                    additionalProperties: true
+                    type: string
+                    x-stainless-json-encoded: true
                 tools:
                   type: array
                   items:
-                    type: object
-                    additionalProperties: true
+                    type: string
+                    x-stainless-json-encoded: true
                 tool_choice:
-                  type: object
-                  additionalProperties: true
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded tool choice
                 is_raw_template:
                   type: integer
                   enum:
                   - 0
                   - 1
                 prompt_metadata:
-                  type: object
-                  additionalProperties: true
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded prompt metadata
       responses:
         '200':
           description: Prompt updated successfully
@@ -329,7 +331,10 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
         '400':
           description: Bad request
         '401':
@@ -448,7 +453,13 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
         '400':
           description: Bad request
         '401':
@@ -493,7 +504,13 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
         '400':
           description: Bad request
         '401':
@@ -689,7 +706,10 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
         '400':
           description: Bad request
         '401':
@@ -768,7 +788,13 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
         '400':
           description: Bad request
         '401':
@@ -1581,9 +1607,9 @@ paths:
                 name:
                   type: string
                 config:
-                  type: object
-                  additionalProperties: true
-                  description: The config object containing routing and other settings
+                  type: string
+                  x-stainless-json-encoded: true
+                  description: JSON-encoded config object
                 isDefault:
                   type: integer
                 workspace_id:
@@ -1607,24 +1633,25 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      version_id:
-                        type: string
-                        format: uuid
+                  id:
+                    type: string
+                    format: uuid
+                  version_id:
+                    type: string
+                    format: uuid
+                  slug:
+                    type: string
+                  object:
+                    type: string
+                    enum:
+                    - config
               examples:
                 example-1:
                   value:
-                    success: true
-                    data:
-                      id: f3d8d070-f29d-43a3-bf97-3159c60f4ce0
-                      version_id: 0db4065b-ead2-4daa-bf5e-7e9106585133
+                    id: f3d8d070-f29d-43a3-bf97-3159c60f4ce0
+                    version_id: 0db4065b-ead2-4daa-bf5e-7e9106585133
+                    slug: pc-my-config-abc123
+                    object: config
       x-code-samples:
       - lang: python
         label: Default
@@ -1743,6 +1770,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               examples:
                 example-1:
                   value: {}
@@ -1815,65 +1846,62 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      config:
-                        type: object
-                        properties:
-                          retry:
-                            type: object
-                            properties:
-                              attempts:
-                                type: integer
-                              on_status_codes:
-                                type: array
-                                items:
-                                  type: integer
-                          cache:
-                            type: object
-                            properties:
-                              mode:
-                                type: string
-                              max_age:
-                                type: integer
-                          strategy:
-                            type: object
-                            properties:
-                              mode:
-                                type: string
-                          targets:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                provider:
-                                  type: string
-                                virtual_key:
-                                  type: string
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  workspace_id:
+                    type: string
+                    format: uuid
+                  slug:
+                    type: string
+                  organisation_id:
+                    type: string
+                    format: uuid
+                  is_default:
+                    type: integer
+                  status:
+                    type: string
+                  owner_id:
+                    type: string
+                    format: uuid
+                  updated_by:
+                    type: string
+                    format: uuid
+                  created_at:
+                    type: string
+                    format: date-time
+                  last_updated_at:
+                    type: string
+                    format: date-time
+                  config:
+                    type: string
+                    description: JSON-encoded config object
+                  format:
+                    type: string
+                  type:
+                    type: string
+                  version_id:
+                    type: string
+                    format: uuid
+                  object:
+                    type: string
+                    enum:
+                    - config
               examples:
                 example-1:
                   value:
-                    success: true
-                    data:
-                      config:
-                        retry:
-                          attempts: 5
-                          on_status_codes:
-                          - 429
-                          - 529
-                        cache:
-                          mode: simple
-                          max_age: 3600
-                        strategy:
-                          mode: fallback
-                        targets:
-                        - provider: openai
-                          virtual_key: main-258f4d
-                        - provider: azure-openai
-                          virtual_key: azure-test-4110dd
+                    id: f3d8d070-f29d-43a3-bf97-3159c60f4ce0
+                    name: my-config
+                    workspace_id: 878632ce-4ac0-451e-8ed4-0703f3944a07
+                    slug: pc-my-config-abc123
+                    organisation_id: c34223e8-d419-4ee6-8f46-f7f5675da424
+                    is_default: 0
+                    status: active
+                    config: '{"retry":{"attempts":3}}'
+                    version_id: 0db4065b-ead2-4daa-bf5e-7e9106585133
+                    object: config
       x-code-samples:
       - lang: python
         label: Default
@@ -1980,20 +2008,18 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      version_id:
-                        type: string
-                        format: uuid
+                  version_id:
+                    type: string
+                    format: uuid
+                  object:
+                    type: string
+                    enum:
+                    - config
               examples:
                 example-1:
                   value:
-                    success: true
-                    data:
-                      version_id: abe447e2-f6aa-4229-93b7-8ee3183b6667
+                    version_id: abe447e2-f6aa-4229-93b7-8ee3183b6667
+                    object: config
       x-code-samples:
       - lang: python
         label: Default
@@ -2210,8 +2236,7 @@ paths:
         name: workspace_id
         schema:
           type: string
-        description: Filter integrations accessible by a specific workspace. When using workspace API keys, this value will
-          be enforced based on the API key details
+        description: Filter integrations accessible by a specific workspace. When using workspace API keys, this value will be enforced based on the API key details
       - in: query
         name: type
         schema:
@@ -2221,9 +2246,7 @@ paths:
           - organisation
           - all
           default: all
-        description: For type=workspace, the API will only return Workpace-Scoped integrations. For type=organisation, the
-          API will only return Global (organisation level) integrations. For type=all, both types of integrations will be
-          returned.
+        description: For type=workspace, the API will only return Workpace-Scoped integrations. For type=organisation, the API will only return Global (organisation level) integrations. For type=all, both types of integrations will be returned.
       responses:
         '200':
           description: Successful response
@@ -2318,11 +2341,17 @@ paths:
               $ref: '#/components/schemas/CreateIntegrationRequest'
       responses:
         '200':
-          description: Integration created successfully
+          description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateIntegrationResponse'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: UUID
+                  slug:
+                    type: string
       x-code-samples:
       - lang: python
         label: Default
@@ -2527,6 +2556,18 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Integration ID
+                  slug:
+                    type: string
+                    description: Integration slug
+                  object:
+                    type: string
+                    enum:
+                    - integration
       x-code-samples:
       - lang: python
         label: Default
@@ -2633,6 +2674,14 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
+                  object:
+                    type: string
+                    enum:
+                    - integration
       x-code-samples:
       - lang: python
         label: Default
@@ -2747,6 +2796,14 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
+                  object:
+                    type: string
+                    enum:
+                    - integration_models
     delete:
       summary: Bulk delete integration custom models
       description: Removes multiple custom models from an integration by their slugs.
@@ -2772,6 +2829,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
   /integrations/{slug}/workspaces:
     get:
       summary: List integration workspace access
@@ -2817,6 +2878,14 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
+                  object:
+                    type: string
+                    enum:
+                    - integration_workspaces
   /providers:
     servers: *id001
     get:
@@ -2949,8 +3018,7 @@ paths:
                   description: optional, needed when using organisation admin API keys
                 slug:
                   type: string
-                  description: Slug for the provider. If not passed, slug will be created by adding a random suffix to the
-                    name.
+                  description: Slug for the provider. If not passed, slug will be created by adding a random suffix to the name.
                 note:
                   type: string
                   nullable: true
@@ -3346,6 +3414,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
       x-code-samples:
       - lang: python
         label: Default
@@ -3880,6 +3952,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -4320,6 +4396,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -4429,6 +4509,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -4558,6 +4645,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    description: Created resource ID
+                  success:
+                    type: boolean
+                    description: Whether the creation was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -4809,6 +4903,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -4918,6 +5019,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -5466,6 +5571,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -6285,6 +6397,15 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: API key ID
+                  object:
+                    type: string
+                    enum:
+                    - api-key
               example: {}
       x-code-samples:
       - lang: python
@@ -6758,6 +6879,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               example: {}
       x-code-samples:
       - lang: python
@@ -7013,6 +7138,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
               example: {}
         '400':
           description: Bad request
@@ -7046,6 +7178,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               example: {}
         '400':
           description: Bad request
@@ -7062,8 +7198,7 @@ paths:
       tags:
       - Rate Limits Policies
       summary: Create Rate Limits Policy
-      description: Create a new rate limits policy to control the rate of requests or tokens consumed per minute, hour, or
-        day.
+      description: Create a new rate limits policy to control the rate of requests or tokens consumed per minute, hour, or day.
       operationId: createRateLimitsPolicy
       security:
       - Portkey-Key: []
@@ -7240,6 +7375,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  id:
+                    type: string
+                    description: Resource ID
+                  success:
+                    type: boolean
+                    description: Whether the update was successful
               example: {}
         '400':
           description: Bad request
@@ -7273,6 +7415,10 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the deletion was successful
               example: {}
         '400':
           description: Bad request
@@ -7322,7 +7468,9 @@ components:
           type: string
           format: uuid
         prompt_template:
-          type: object
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded data
         prompt_version:
           type: number
         prompt_description:
@@ -7343,9 +7491,9 @@ components:
           enum:
           - prompt
     BasicParameters:
-      type: object
-      description: Basic parameters with no specific requirements
-      additionalProperties: true
+      type: string
+      description: JSON-encoded basic parameters with no specific requirements
+      x-stainless-json-encoded: true
     PatronusParameters:
       type: object
       properties:
@@ -8262,8 +8410,9 @@ components:
         string:
           type: string
         parameters:
-          type: object
-          additionalProperties: true
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded parameters
         prompt_version:
           type: number
         prompt_version_id:
@@ -8286,19 +8435,21 @@ components:
         functions:
           type: array
           items:
-            type: object
-            additionalProperties: true
+            type: string
+            x-stainless-json-encoded: true
         tools:
           type: array
           items:
-            type: object
-            additionalProperties: true
+            type: string
+            x-stainless-json-encoded: true
         tool_choice:
-          type: object
-          additionalProperties: true
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded tool choice
         template_metadata:
-          type: object
-          additionalProperties: true
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded template metadata
         is_raw_template:
           type: boolean
         status:
@@ -8925,8 +9076,7 @@ components:
           type: object
           additionalProperties:
             type: string
-          description: Custom headers to send with requests (can be used along with other provider specific configuration
-            fields)
+          description: Custom headers to send with requests (can be used along with other provider specific configuration fields)
     PromptPartialVersion:
       type: object
       properties:
@@ -8965,9 +9115,9 @@ components:
           type: string
           description: Identifier of the guardrail check type (e.g., "default.regexMatch", "portkey.pii", "bedrock.guard")
         parameters:
-          type: object
-          additionalProperties: true
-          description: Configuration parameters specific to the check type
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded configuration parameters specific to the check type
         name:
           type: string
           description: Custom name for this specific check instance
@@ -8982,7 +9132,7 @@ components:
           type: integer
           description: Credit Limit. Used for tracking usage
           minimum: 1
-          default: null
+          default:
         type:
           type: string
           description: Type of credit limit
@@ -8993,7 +9143,7 @@ components:
           type: integer
           description: Alert Threshold. Used for alerting when usage reaches more than this
           minimum: 1
-          default: null
+          default:
         periodic_reset:
           type: string
           description: Reset the usage periodically.
@@ -9015,8 +9165,7 @@ components:
           items:
             $ref: '#/components/schemas/IntegrationWorkspace'
     ParallelToolCalls:
-      description: Whether to enable [parallel function calling](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling)
-        during tool use.
+      description: Whether to enable [parallel function calling](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling) during tool use.
       type: boolean
       default: true
     SentenceCountParameters:
@@ -9080,9 +9229,9 @@ components:
       - schema
       properties:
         schema:
-          type: object
-          additionalProperties: true
-          description: JSON schema to validate against
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded schema to validate against
         not:
           type: boolean
           description: If true, the verdict will be inverted
@@ -9148,9 +9297,9 @@ components:
           type: string
           description: GCP project ID (required for basic auth)
         vertex_service_account_json:
-          type: object
-          additionalProperties: true
-          description: Service account JSON (required for serviceAccount auth)
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded service account credentials (required for serviceAccount auth)
     CreatePolicyResponse:
       type: object
       properties:
@@ -9294,7 +9443,7 @@ components:
         description:
           type: string
           nullable: true
-          example: null
+          example:
         created_at:
           type: string
           format: date-time
@@ -9504,9 +9653,9 @@ components:
           format: uri
           description: Webhook URL to call
         headers:
-          type: object
-          additionalProperties: true
-          description: Headers to send with the request
+          type: string
+          x-stainless-json-encoded: true
+          description: JSON-encoded headers to send with the request
         timeout:
           type: number
           description: Timeout in milliseconds
@@ -9618,8 +9767,7 @@ components:
           description: Reset period. Set to null to remove periodic reset.
         reset_usage_for_value:
           type: string
-          description: Reset usage for a specific value key (e.g., API key). This will reset the usage counter for that key
-            to 0.
+          description: Reset usage for a specific value key (e.g., API key). This will reset the usage counter for that key to 0.
     GlobalWorkspaceAccess:
       type: object
       required:
@@ -9627,8 +9775,7 @@ components:
       properties:
         enabled:
           type: boolean
-          description: Whether global workspace access is enabled. When enabled, the integration will be enabled for all workspaces
-            that are created in future.
+          description: Whether global workspace access is enabled. When enabled, the integration will be enabled for all workspaces that are created in future.
         usage_limits:
           type: array
           nullable: true
@@ -9914,7 +10061,7 @@ components:
         description:
           type: string
           nullable: true
-          example: null
+          example:
         created_at:
           type: string
           format: date-time
@@ -10158,16 +10305,6 @@ components:
             title: Cortex
           - $ref: '#/components/schemas/CustomHostConfiguration'
             title: Custom Base URL
-    CreateIntegrationResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the created integration
-        slug:
-          type: string
-          description: URL-friendly identifier for the integration
     JWTParameters:
       type: object
       required:
