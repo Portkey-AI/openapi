@@ -2317,28 +2317,6 @@ paths:
                     onFail: "block"
                     message: "Mistral moderation flagged content"
 
-              pangea_security:
-                summary: "[PARTNER] Pangea Security Suite"
-                value:
-                  name: "Pangea Text & PII Guard"
-                  workspace_id: "550e8400-e29b-41d4-a716-446655440000"
-                  checks:
-                    - id: "pangea.textGuard"
-                      parameters:
-                        recipe: "default_text_recipe"
-                        debug: true
-                        overrides:
-                          prompt_guard:
-                            state: "enabled"
-                        timeout: 5000
-                    - id: "pangea.pii"
-                      parameters:
-                        redact: true
-                        timeout: 5000
-                  actions:
-                    onFail: "block"
-                    message: "Pangea security scan failed"
-
               bedrock_enterprise:
                 summary: "[PARTNER] AWS Bedrock Guardrails"
                 value:
@@ -9832,8 +9810,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  object:
+                    type: string
+                    description: Object type identifier
+                    example: list
+                  total:
+                    type: integer
+                    description: Total number of configs
                   data:
                     type: array
                     items:
@@ -9868,6 +9851,9 @@ paths:
                         last_updated_at:
                           type: string
                           format: date-time
+                        object:
+                          type: string
+                          example: config
               examples:
                 example-1:
                   value:
@@ -9990,27 +9976,29 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
-                      version_id:
-                        type: string
-                        format: uuid
+                  id:
+                    type: string
+                    format: uuid
+                    description: Unique identifier for the config
+                  version_id:
+                    type: string
+                    format: uuid
+                    description: Version identifier for the config
+                  slug:
+                    type: string
+                    description: URL-friendly identifier for the config
+                  object:
+                    type: string
+                    description: Object type identifier
+                    example: config
               examples:
                 example-1:
                   value:
                     {
-                      "success": true,
-                      "data":
-                        {
-                          "id": "f3d8d070-f29d-43a3-bf97-3159c60f4ce0",
-                          "version_id": "0db4065b-ead2-4daa-bf5e-7e9106585133",
-                        },
+                      "id": "f3d8d070-f29d-43a3-bf97-3159c60f4ce0",
+                      "version_id": "0db4065b-ead2-4daa-bf5e-7e9106585133",
+                      "slug": "pc-my-config-abc123",
+                      "object": "config"
                     }
       x-code-samples:
         - lang: python
@@ -10204,73 +10192,66 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      config:
-                        type: object
-                        properties:
-                          retry:
-                            type: object
-                            properties:
-                              attempts:
-                                type: integer
-                              on_status_codes:
-                                type: array
-                                items:
-                                  type: integer
-                          cache:
-                            type: object
-                            properties:
-                              mode:
-                                type: string
-                              max_age:
-                                type: integer
-                          strategy:
-                            type: object
-                            properties:
-                              mode:
-                                type: string
-                          targets:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                provider:
-                                  type: string
-                                virtual_key:
-                                  type: string
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  slug:
+                    type: string
+                  organisation_id:
+                    type: string
+                    format: uuid
+                  workspace_id:
+                    type: string
+                    format: uuid
+                  is_default:
+                    type: integer
+                  status:
+                    type: string
+                  owner_id:
+                    type: string
+                    format: uuid
+                  updated_by:
+                    type: string
+                    format: uuid
+                  created_at:
+                    type: string
+                    format: date-time
+                  last_updated_at:
+                    type: string
+                    format: date-time
+                  version_id:
+                    type: string
+                    format: uuid
+                  format:
+                    type: string
+                  type:
+                    type: string
+                  object:
+                    type: string
+                    example: config
+                  config:
+                    type: string
+                    description: JSON string containing the config object
               examples:
                 example-1:
                   value:
                     {
-                      "success": true,
-                      "data":
-                        {
-                          "config":
-                            {
-                              "retry":
-                                {
-                                  "attempts": 5,
-                                  "on_status_codes": [429, 529],
-                                },
-                              "cache": { "mode": "simple", "max_age": 3600 },
-                              "strategy": { "mode": "fallback" },
-                              "targets":
-                                [
-                                  {
-                                    "provider": "openai",
-                                    "virtual_key": "main-258f4d",
-                                  },
-                                  {
-                                    "provider": "azure-openai",
-                                    "virtual_key": "azure-test-4110dd",
-                                  },
-                                ],
-                            },
-                        },
+                      "id": "f3d8d070-f29d-43a3-bf97-3159c60f4ce0",
+                      "name": "My Config",
+                      "slug": "pc-my-config-abc123",
+                      "organisation_id": "c34223e8-d419-4ee6-8f46-f7f5675da424",
+                      "workspace_id": "878632ce-4ac0-451e-8ed4-0703f3944a07",
+                      "is_default": 0,
+                      "status": "active",
+                      "created_at": "2025-01-01T00:00:00.000Z",
+                      "last_updated_at": "2025-01-01T00:00:00.000Z",
+                      "version_id": "0db4065b-ead2-4daa-bf5e-7e9106585133",
+                      "format": "json",
+                      "type": "ORG_CONFIG",
+                      "object": "config",
+                      "config": "{\"strategy\":{\"mode\":\"single\"},\"targets\":[{\"provider\":\"openai\"}]}"
                     }
       x-code-samples:
         - lang: python
@@ -32311,8 +32292,6 @@ components:
             - "patronus.toxicity"
             - "patronus.custom"
             - "mistral.moderateContent"
-            - "pangea.textGuard"
-            - "pangea.pii"
             - "bedrock.guard"
             - "promptfoo.guard"
             - "promptfoo.pii"
@@ -32348,8 +32327,6 @@ components:
             - $ref: '#/components/schemas/PortkeyLanguageParameters'
             - $ref: '#/components/schemas/PortkeyPIIParameters'
             - $ref: '#/components/schemas/MistralModerationParameters'
-            - $ref: '#/components/schemas/PangeaTextGuardParameters'
-            - $ref: '#/components/schemas/PangeaPIIParameters'
             - $ref: '#/components/schemas/BedrockGuardParameters'
             - $ref: '#/components/schemas/PromptfooParameters'
             - $ref: '#/components/schemas/AcuvityScanParameters'
@@ -32969,38 +32946,6 @@ components:
               - "law"
               - "pii"
           description: Categories that should NOT be allowed
-        timeout:
-          type: number
-          description: Timeout in milliseconds
-          default: 5000
-
-    PangeaTextGuardParameters:
-      type: object
-      required:
-        - recipe
-      properties:
-        recipe:
-          type: string
-          description: Recipe key for Pangea configuration
-        debug:
-          type: boolean
-          description: Enable detailed analysis
-        overrides:
-          type: object
-          additionalProperties: true
-          description: Pangea overrides
-        timeout:
-          type: number
-          description: Timeout in milliseconds
-          default: 5000
-
-    PangeaPIIParameters:
-      type: object
-      properties:
-        redact:
-          type: boolean
-          description: Whether to redact detected PII
-          default: false
         timeout:
           type: number
           description: Timeout in milliseconds
