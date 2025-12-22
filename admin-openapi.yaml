@@ -1607,9 +1607,9 @@ paths:
                 name:
                   type: string
                 config:
-                  type: string
-                  x-stainless-json-encoded: true
-                  description: JSON-encoded config object
+                  type: object
+                  additionalProperties: true
+                  description: Configuration object with routing and other settings
                 isDefault:
                   type: integer
                 workspace_id:
