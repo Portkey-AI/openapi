@@ -1582,6 +1582,8 @@ paths:
                   type: string
                 config:
                   type: object
+                  additionalProperties: true
+                  description: The config object containing routing and other settings
                 isDefault:
                   type: integer
                 workspace_id:
@@ -2316,17 +2318,11 @@ paths:
               $ref: '#/components/schemas/CreateIntegrationRequest'
       responses:
         '200':
-          description: Successful response
+          description: Integration created successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: UUID
-                  slug:
-                    type: string
+                $ref: '#/components/schemas/CreateIntegrationResponse'
       x-code-samples:
       - lang: python
         label: Default
@@ -9153,6 +9149,7 @@ components:
           description: GCP project ID (required for basic auth)
         vertex_service_account_json:
           type: object
+          additionalProperties: true
           description: Service account JSON (required for serviceAccount auth)
     CreatePolicyResponse:
       type: object
@@ -10161,6 +10158,16 @@ components:
             title: Cortex
           - $ref: '#/components/schemas/CustomHostConfiguration'
             title: Custom Base URL
+    CreateIntegrationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the created integration
+        slug:
+          type: string
+          description: URL-friendly identifier for the integration
     JWTParameters:
       type: object
       required:
