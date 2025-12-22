@@ -86,19 +86,23 @@ paths:
                   description: Prompt template in string format
                 parameters:
                   type: object
+                  additionalProperties: true
                   description: Parameters for the prompt
                 functions:
                   type: array
                   description: Functions for the prompt
                   items:
                     type: object
+                    additionalProperties: true
                 tools:
                   type: array
                   description: Tools for the prompt
                   items:
                     type: object
+                    additionalProperties: true
                 tool_choice:
                   type: object
+                  additionalProperties: true
                   description: Tool Choice for the prompt
                 model:
                   type: string
@@ -111,6 +115,7 @@ paths:
                   description: The description of the prompt version
                 template_metadata:
                   type: object
+                  additionalProperties: true
                   description: Metadata for the prompt
       responses:
         '200':
@@ -250,6 +255,7 @@ paths:
                   type: string
                 parameters:
                   type: object
+                  additionalProperties: true
                 model:
                   type: string
                 virtual_key:
@@ -260,12 +266,15 @@ paths:
                   type: array
                   items:
                     type: object
+                    additionalProperties: true
                 tools:
                   type: array
                   items:
                     type: object
+                    additionalProperties: true
                 tool_choice:
                   type: object
+                  additionalProperties: true
                 is_raw_template:
                   type: integer
                   enum:
@@ -273,6 +282,7 @@ paths:
                   - 1
                 prompt_metadata:
                   type: object
+                  additionalProperties: true
       responses:
         '200':
           description: Prompt updated successfully
@@ -8257,6 +8267,7 @@ components:
           type: string
         parameters:
           type: object
+          additionalProperties: true
         prompt_version:
           type: number
         prompt_version_id:
@@ -8280,14 +8291,18 @@ components:
           type: array
           items:
             type: object
+            additionalProperties: true
         tools:
           type: array
           items:
             type: object
+            additionalProperties: true
         tool_choice:
           type: object
+          additionalProperties: true
         template_metadata:
           type: object
+          additionalProperties: true
         is_raw_template:
           type: boolean
         status:
