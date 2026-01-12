@@ -19477,10 +19477,10 @@ paths:
           description: |
             Model identifier. Use the exact model name as specified by the provider.
             
-            Examples: `gpt-4`, `gpt-4o`, `claude-3-5-sonnet-20241022`, `gemini-2.0-flash-001`
+            Examples: `gpt-5`, `gpt-5.2`, `claude-opus-4-5-20251101`, `gemini-3.0-pro`
           schema:
             type: string
-            example: gpt-4
+            example: gpt-5
       responses:
         '200':
           description: Pricing configuration for the specified model
