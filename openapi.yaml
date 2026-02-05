@@ -34593,6 +34593,27 @@ components:
           nullable: true
         configurations:
           type: object
+          description: Auth/config key-value pairs (e.g. headers, client credentials)
+          properties:
+            custom_headers:
+              type: object
+              additionalProperties: true
+              description: Custom headers to send to the MCP server.
+              example:
+                Authorization: Bearer some-token
+                x-foo: bar
+            passthrough_header:
+              type: object
+              additionalProperties: true
+              description: Headers to pass through from the incoming request to the MCP server.
+              example:
+                x-user-id:
+                  type: string
+                  example: abc123
+                x-request-id:
+                  type: string
+                  example: req-0001
+          additionalProperties: true
         url:
           type: string
           format: uri
@@ -34600,7 +34621,6 @@ components:
           type: string
           enum:
             - oauth_auto
-            - oauth_client_credentials
             - headers
             - none
         transport:
@@ -34608,7 +34628,6 @@ components:
           enum:
             - http
             - sse
-            - interactive
 
     McpIntegrationWorkspaceItem:
       type: object
