@@ -15191,15 +15191,6 @@ paths:
                   url: "https://mcp.example.com/mcp"
                   auth_type: "none"
                   transport: "http"
-              with-workspace-scope:
-                summary: With workspace and organisation
-                value:
-                  name: "My MCP Server"
-                  url: "https://mcp.example.com/mcp"
-                  auth_type: "none"
-                  transport: "http"
-                  workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370"
-                  organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
       responses:
         "200":
           description: OK
@@ -15207,69 +15198,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/McpIntegrationCreateResponse"
-      x-code-samples:
-        - lang: python
-          label: Default
-          source: |
-            from portkey_ai import Portkey
-
-            portkey = Portkey(api_key="PORTKEY_API_KEY")
-
-            integration = portkey.mcp_integrations.create(
-                name="My MCP Server",
-                url="https://mcp.example.com/mcp",
-                auth_type="none",
-                transport="http"
-            )
-            print(integration)
-        - lang: python
-          label: Self-Hosted
-          source: |
-            from portkey_ai import Portkey
-
-            portkey = Portkey(
-                api_key="PORTKEY_API_KEY",
-                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
-            )
-
-            integration = portkey.mcp_integrations.create(
-                name="My MCP Server",
-                url="https://mcp.example.com/mcp",
-                auth_type="none",
-                transport="http"
-            )
-            print(integration)
-        - lang: javascript
-          label: Default
-          source: |
-            import { Portkey } from "portkey-ai";
-
-            const portkey = new Portkey({ apiKey: "PORTKEY_API_KEY" });
-
-            const integration = await portkey.mcpIntegrations.create({
-              name: "My MCP Server",
-              url: "https://mcp.example.com/mcp",
-              auth_type: "none",
-              transport: "http"
-            });
-            console.log(integration);
-        - lang: javascript
-          label: Self-Hosted
-          source: |
-            import { Portkey } from "portkey-ai";
-
-            const portkey = new Portkey({
-              apiKey: "PORTKEY_API_KEY",
-              baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
-            });
-
-            const integration = await portkey.mcpIntegrations.create({
-              name: "My MCP Server",
-              url: "https://mcp.example.com/mcp",
-              auth_type: "none",
-              transport: "http"
-            });
-            console.log(integration);
     get:
       operationId: McpIntegrations_list
       tags:
@@ -15481,7 +15409,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/McpIntegrationCapabilitiesBulkUpdateResponse"
-
   /mcp-integrations/{mcpIntegrationId}/metadata:
     servers: *ControlPlaneServers
     parameters:
@@ -34541,7 +34468,6 @@ components:
           type: string
           enum:
             - oauth_auto
-            - oauth_client_credentials
             - headers
             - none
         transport:
