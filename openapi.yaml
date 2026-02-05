@@ -15214,24 +15214,14 @@ paths:
             curl -X POST https://api.portkey.ai/v1/mcp-integrations \
             -H "x-portkey-api-key: PORTKEY_API_KEY" \
             -H "Content-Type: application/json" \
-            -d '{
-              "name": "My MCP Server",
-              "url": "https://mcp.example.com/mcp",
-              "auth_type": "none",
-              "transport": "http"
-            }'
+            -d '{}'
         - lang: curl
           label: Self-Hosted
           source: |
             curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/mcp-integrations \
             -H "x-portkey-api-key: PORTKEY_API_KEY" \
             -H "Content-Type: application/json" \
-            -d '{
-              "name": "My MCP Server",
-              "url": "https://mcp.example.com/mcp",
-              "auth_type": "none",
-              "transport": "http"
-            }'
+            -d '{}'
         - lang: python
           label: Default
           source: |
@@ -15315,6 +15305,7 @@ paths:
               - workspace
               - organisation
               - all
+              - interactive
         - name: workspace_id
           in: query
           schema:
@@ -34424,9 +34415,6 @@ components:
         - auth_type
         - transport
       properties:
-        workspace_id:
-          type: string
-          description: Workspace ID or slug (optional; when provided, integration is workspace-scoped)
         organisation_id:
           type: string
           format: uuid
@@ -34444,6 +34432,26 @@ components:
         configurations:
           type: object
           description: Auth/config key-value pairs (e.g. headers, client credentials)
+          properties:
+            custom_headers:
+              type: object
+              additionalProperties: true
+              description: Custom headers to send to the MCP server.
+              example:
+                Authorization: Bearer some-token
+                x-foo: bar
+            passthrough_header:
+              type: object
+              additionalProperties: true
+              description: Headers to pass through from the incoming request to the MCP server.
+              example:
+                x-user-id:
+                  type: string
+                  example: abc123
+                x-request-id:
+                  type: string
+                  example: req-0001
+          additionalProperties: true
         url:
           type: string
           format: uri
@@ -34452,7 +34460,6 @@ components:
           type: string
           enum:
             - oauth_auto
-            - oauth_client_credentials
             - headers
             - none
         transport:
@@ -34518,6 +34525,7 @@ components:
           enum:
             - http
             - sse
+            - interactive
         type:
           type: string
           enum:
@@ -34556,6 +34564,7 @@ components:
           enum:
             - http
             - sse
+            - interactive
         created_at:
           type: string
           format: date-time
@@ -34609,6 +34618,7 @@ components:
           enum:
             - http
             - sse
+            - interactive
 
     McpIntegrationWorkspaceItem:
       type: object
