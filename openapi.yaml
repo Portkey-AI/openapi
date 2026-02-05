@@ -34,7 +34,7 @@ x-mint:
     description: Official MCP Server for Portkey Docs & APIs
 
 servers:
-  - url: https://api.portkey.ai/v2
+  - url: https://api.portkey.ai/v1
     description: Portkey API Public Endpoint
 
 tags:
