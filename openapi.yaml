@@ -15291,7 +15291,6 @@ paths:
               - workspace
               - organisation
               - all
-              - interactive
         - name: workspace_id
           in: query
           schema:
@@ -34551,6 +34550,8 @@ components:
             - http
             - sse
             - interactive
+        configurations:
+          type: object
         created_at:
           type: string
           format: date-time
@@ -34564,6 +34565,9 @@ components:
           nullable: true
         description:
           type: string
+          nullable: true
+        workspaces_count: 
+          type: number
           nullable: true
 
     McpIntegrationListResponse:
