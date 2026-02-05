@@ -15183,6 +15183,13 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateMcpIntegration"
+            example:
+              name: "My MCP Server"
+              url: "https://mcp.example.com/mcp"
+              auth_type: "none"
+              transport: "http"
+              workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370"
+              organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
       responses:
         "200":
           description: OK
@@ -15190,6 +15197,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/McpIntegrationCreateResponse"
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/mcp-integrations \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "My MCP Server",
+              "url": "https://mcp.example.com/mcp",
+              "auth_type": "none",
+              "transport": "http",
+              "workspace_id": "50c04b57-32d0-4c90-8945-65a9ef8aa370",
+              "organisation_id": "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/mcp-integrations \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "My MCP Server",
+              "url": "https://mcp.example.com/mcp",
+              "auth_type": "none",
+              "transport": "http",
+              "workspace_id": "50c04b57-32d0-4c90-8945-65a9ef8aa370",
+              "organisation_id": "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            }'
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            portkey = Portkey(api_key="PORTKEY_API_KEY")
+
+            integration = portkey.mcp_integrations.create(
+                name="My MCP Server",
+                url="https://mcp.example.com/mcp",
+                auth_type="none",
+                transport="http",
+                workspace_id="50c04b57-32d0-4c90-8945-65a9ef8aa370",
+                organisation_id="3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            )
+            print(integration)
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            portkey = Portkey(
+                api_key="PORTKEY_API_KEY",
+                base_url="SELF_HOSTED_CONTROL_PLANE_URL"
+            )
+
+            integration = portkey.mcp_integrations.create(
+                name="My MCP Server",
+                url="https://mcp.example.com/mcp",
+                auth_type="none",
+                transport="http",
+                workspace_id="50c04b57-32d0-4c90-8945-65a9ef8aa370",
+                organisation_id="3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            )
+            print(integration)
+        - lang: javascript
+          label: Default
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({ apiKey: "PORTKEY_API_KEY" });
+
+            const integration = await portkey.mcpIntegrations.create({
+              name: "My MCP Server",
+              url: "https://mcp.example.com/mcp",
+              auth_type: "none",
+              transport: "http",
+              workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370",
+              organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            });
+            console.log(integration);
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import { Portkey } from "portkey-ai";
+
+            const portkey = new Portkey({
+              apiKey: "PORTKEY_API_KEY",
+              baseUrl: "SELF_HOSTED_CONTROL_PLANE_URL"
+            });
+
+            const integration = await portkey.mcpIntegrations.create({
+              name: "My MCP Server",
+              url: "https://mcp.example.com/mcp",
+              auth_type: "none",
+              transport: "http",
+              workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370",
+              organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            });
+            console.log(integration);
     get:
       operationId: McpIntegrations_list
       tags:
@@ -34313,6 +34419,7 @@ components:
 
     CreateMcpIntegration:
       type: object
+      description: Only include optional fields (slug, description, configurations) when you have values for them. The example and code samples show required fields plus workspace_id and organisation_id when scoping.
       required:
         - name
         - url
