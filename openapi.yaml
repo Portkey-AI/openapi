@@ -15208,20 +15208,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpIntegrationCreateResponse"
       x-code-samples:
-        - lang: curl
-          label: Default
-          source: |
-            curl -X POST https://api.portkey.ai/v1/mcp-integrations \
-            -H "x-portkey-api-key: PORTKEY_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{}'
-        - lang: curl
-          label: Self-Hosted
-          source: |
-            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/mcp-integrations \
-            -H "x-portkey-api-key: PORTKEY_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{}'
         - lang: python
           label: Default
           source: |
