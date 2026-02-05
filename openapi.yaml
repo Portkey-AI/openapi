@@ -12,7 +12,7 @@ info:
     url: https://github.com/Portkey-AI/portkey-openapi/blob/master/LICENSE
 x-server-groups:
   ControlPlaneServers: &ControlPlaneServers
-    - url: https://api.portkeydev.com/v2
+    - url: https://api.portkey.ai/v1
       description: Portkey API Public Endpoint
     - url: SELF_HOSTED_CONTROL_PLANE_URL
       description: Self-Hosted Control Plane URL
