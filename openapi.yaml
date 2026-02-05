@@ -15183,13 +15183,23 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateMcpIntegration"
-            example:
-              name: "My MCP Server"
-              url: "https://mcp.example.com/mcp"
-              auth_type: "none"
-              transport: "http"
-              workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370"
-              organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+            examples:
+              default:
+                summary: Minimal (required fields only)
+                value:
+                  name: "My MCP Server"
+                  url: "https://mcp.example.com/mcp"
+                  auth_type: "none"
+                  transport: "http"
+              with-workspace-scope:
+                summary: With workspace and organisation
+                value:
+                  name: "My MCP Server"
+                  url: "https://mcp.example.com/mcp"
+                  auth_type: "none"
+                  transport: "http"
+                  workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370"
+                  organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
       responses:
         "200":
           description: OK
@@ -15208,9 +15218,7 @@ paths:
               "name": "My MCP Server",
               "url": "https://mcp.example.com/mcp",
               "auth_type": "none",
-              "transport": "http",
-              "workspace_id": "50c04b57-32d0-4c90-8945-65a9ef8aa370",
-              "organisation_id": "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+              "transport": "http"
             }'
         - lang: curl
           label: Self-Hosted
@@ -15222,9 +15230,7 @@ paths:
               "name": "My MCP Server",
               "url": "https://mcp.example.com/mcp",
               "auth_type": "none",
-              "transport": "http",
-              "workspace_id": "50c04b57-32d0-4c90-8945-65a9ef8aa370",
-              "organisation_id": "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+              "transport": "http"
             }'
         - lang: python
           label: Default
@@ -15237,9 +15243,7 @@ paths:
                 name="My MCP Server",
                 url="https://mcp.example.com/mcp",
                 auth_type="none",
-                transport="http",
-                workspace_id="50c04b57-32d0-4c90-8945-65a9ef8aa370",
-                organisation_id="3c90c3cc-0d44-4b50-8888-8dd25736052a"
+                transport="http"
             )
             print(integration)
         - lang: python
@@ -15256,9 +15260,7 @@ paths:
                 name="My MCP Server",
                 url="https://mcp.example.com/mcp",
                 auth_type="none",
-                transport="http",
-                workspace_id="50c04b57-32d0-4c90-8945-65a9ef8aa370",
-                organisation_id="3c90c3cc-0d44-4b50-8888-8dd25736052a"
+                transport="http"
             )
             print(integration)
         - lang: javascript
@@ -15272,9 +15274,7 @@ paths:
               name: "My MCP Server",
               url: "https://mcp.example.com/mcp",
               auth_type: "none",
-              transport: "http",
-              workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370",
-              organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+              transport: "http"
             });
             console.log(integration);
         - lang: javascript
@@ -15291,9 +15291,7 @@ paths:
               name: "My MCP Server",
               url: "https://mcp.example.com/mcp",
               auth_type: "none",
-              transport: "http",
-              workspace_id: "50c04b57-32d0-4c90-8945-65a9ef8aa370",
-              organisation_id: "3c90c3cc-0d44-4b50-8888-8dd25736052a"
+              transport: "http"
             });
             console.log(integration);
     get:
