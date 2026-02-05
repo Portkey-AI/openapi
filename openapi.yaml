@@ -34331,6 +34331,10 @@ components:
           type: string
           format: uuid
           description: Organisation ID (optional; required when using org admin API key without workspace_id)
+        workspace_id:
+          type: string
+          format: uuid
+          description: Workspace ID (optional; to create at workspace level)
         slug:
           type: string
           pattern: '^[a-zA-Z0-9_-]+$'
