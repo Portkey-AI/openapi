@@ -96,6 +96,20 @@ tags:
     description: Create and manage workspaces.
   - name: Workspaces > Members
     description: Create and manage workspace members.
+  - name: MCP Integrations
+    description: Create, List, Retrieve, Update, and Delete MCP Integrations.
+  - name: MCP Integrations > Workspaces
+    description: Manage workspace access for MCP Integrations.
+  - name: MCP Integrations > Capabilities
+    description: List and manage capabilities for MCP Integrations.
+  - name: MCP Integrations > Metadata
+    description: Get MCP Integration metadata and sync info.
+  - name: MCP Servers
+    description: Create, List, Retrieve, Update, and Delete MCP Servers (workspace instances of MCP Integrations).
+  - name: MCP Servers > Capabilities
+    description: List and manage capabilities for MCP Servers.
+  - name: MCP Servers > User Access
+    description: List and manage user access for MCP Servers.
   - name: Api-Keys
     description: Create, List, Retrieve, Update, and Delete your Portkey API keys.
   - name: Logs Export
@@ -15160,6 +15174,533 @@ paths:
                 workspaceId: 'WORKSPACE_SLUG',
             })
             console.log(workspace);
+
+  /mcp-integrations:
+    servers: *ControlPlaneServers
+    post:
+      operationId: McpIntegrations_create
+      tags:
+        - MCP Integrations
+      summary: Create MCP Integration
+      description: Create a new MCP Integration. Requires either organisation_id (with admin API key) or workspace_id in body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMcpIntegration"
+            examples:
+              default:
+                summary: Minimal (required fields only)
+                value:
+                  name: "My MCP Server"
+                  url: "https://mcp.example.com/mcp"
+                  auth_type: "none"
+                  transport: "http"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpIntegrationCreateResponse"
+    get:
+      operationId: McpIntegrations_list
+      tags:
+        - MCP Integrations
+      summary: List MCP Integrations
+      description: List MCP Integrations for the organisation or workspace. Requires organisation_id (when using org admin API key) or x-portkey-api-key header.
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Organisation ID (required when using org admin API key)
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - workspace
+              - organisation
+              - all
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpIntegrationListResponse"
+
+  /mcp-integrations/{mcpIntegrationId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Integration ID (UUID) or slug
+    get:
+      operationId: McpIntegrations_retrieve
+      tags:
+        - MCP Integrations
+      summary: Get MCP Integration
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpIntegration"
+    put:
+      operationId: McpIntegrations_update
+      tags:
+        - MCP Integrations
+      summary: Update MCP Integration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMcpIntegration"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      operationId: McpIntegrations_delete
+      tags:
+        - MCP Integrations
+      summary: Delete MCP Integration
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /mcp-integrations/{mcpIntegrationId}/workspaces:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Integration ID (UUID) or slug
+    get:
+      operationId: McpIntegrationWorkspaces_list
+      tags:
+        - MCP Integrations > Workspaces
+      summary: List MCP Integration Workspaces
+      parameters:
+        - name: version
+          in: query
+          schema:
+            type: string
+          description: When set, response uses data/total shape instead of workspaces
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/McpIntegrationWorkspacesListResponse"
+                  - $ref: "#/components/schemas/McpIntegrationWorkspacesLegacyResponse"
+    put:
+      operationId: McpIntegrationWorkspaces_bulkUpdate
+      tags:
+        - MCP Integrations > Workspaces
+      summary: Bulk Update MCP Integration Workspaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUpdateMcpIntegrationWorkspaces"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /mcp-integrations/{mcpIntegrationId}/capabilities:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Integration ID (UUID) or slug
+    get:
+      operationId: McpIntegrationCapabilities_list
+      tags:
+        - MCP Integrations > Capabilities
+      summary: List MCP Integration Capabilities
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - tool
+              - prompt
+              - resource
+              - resource_template
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpIntegrationCapabilitiesListResponse"
+    put:
+      operationId: McpIntegrationCapabilities_bulkUpdate
+      tags:
+        - MCP Integrations > Capabilities
+      summary: Bulk Update MCP Integration Capabilities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUpdateMcpIntegrationCapabilities"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpIntegrationCapabilitiesBulkUpdateResponse"
+  /mcp-integrations/{mcpIntegrationId}/metadata:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Integration ID (UUID) or slug
+    get:
+      operationId: McpIntegrationMetadata_retrieve
+      tags:
+        - MCP Integrations > Metadata
+      summary: Get MCP Integration Metadata
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpIntegrationMetadata"
+
+  /mcp-servers:
+    servers: *ControlPlaneServers
+    post:
+      operationId: McpServers_create
+      tags:
+        - MCP Servers
+      summary: Create MCP Server
+      description: Create a new MCP Server (workspace instance of an MCP Integration). Requires workspace_id or x-portkey-api-key header.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMcpServer"
+            examples:
+              default:
+                summary: Minimal (required fields only)
+                value:
+                  name: "My MCP Server"
+                  mcp_integration_id: "MCP_INTEGRATION_ID_OR_SLUG"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerCreateResponse"
+    get:
+      operationId: McpServers_list
+      tags:
+        - MCP Servers
+      summary: List MCP Servers
+      description: List MCP Servers for the workspace. Requires workspace_id or x-portkey-api-key header.
+      parameters:
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+          description: Workspace ID or slug. Required when using org admin API key; optional when API key is workspace-scoped.
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 100
+        - name: id
+          in: query
+          schema:
+            type: string
+          description: Filter by MCP Server ID(s), comma-separated
+        - name: search
+          in: query
+          schema:
+            type: string
+            maxLength: 255
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerListResponse"
+
+  /mcp-servers/{mcpServerId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServers_retrieve
+      tags:
+        - MCP Servers
+      summary: Get MCP Server
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServer"
+    put:
+      operationId: McpServers_update
+      tags:
+        - MCP Servers
+      summary: Update MCP Server
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMcpServer"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      operationId: McpServers_delete
+      tags:
+        - MCP Servers
+      summary: Delete MCP Server
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /mcp-servers/{mcpServerId}/test:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID (UUID) or slug
+    post:
+      operationId: McpServers_test
+      tags:
+        - MCP Servers
+      summary: Test MCP Server Connection
+      description: Test connectivity to the MCP server via its integration URL.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerTestResponse"
+
+  /mcp-servers/{mcpServerId}/capabilities:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServerCapabilities_list
+      tags:
+        - MCP Servers > Capabilities
+      summary: List MCP Server Capabilities
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - tool
+              - prompt
+              - resource
+              - resource_template
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerCapabilitiesListResponse"
+    put:
+      operationId: McpServerCapabilities_bulkUpdate
+      tags:
+        - MCP Servers > Capabilities
+      summary: Bulk Update MCP Server Capabilities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUpdateMcpServerCapabilities"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerCapabilitiesBulkUpdateResponse"
+
+  /mcp-servers/{mcpServerId}/user-access:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServerUserAccess_list
+      tags:
+        - MCP Servers > User Access
+      summary: List MCP Server User Access
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by user name or email
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerUserAccessListResponse"
+    put:
+      operationId: McpServerUserAccess_bulkUpdate
+      tags:
+        - MCP Servers > User Access
+      summary: Bulk Update MCP Server User Access
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUpdateMcpServerUserAccess"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerUserAccessBulkUpdateResponse"
 
   /logs:
     servers: *DataPlaneServers
@@ -34047,6 +34588,862 @@ components:
             object:
               type: string
               example: policy_rate_limits
+
+    CreateMcpIntegration:
+      type: object
+      description: Only include optional fields (slug, description, configurations) when you have values for them. The example and code samples show required fields plus workspace_id and organisation_id when scoping.
+      required:
+        - name
+        - url
+        - auth_type
+        - transport
+      properties:
+        organisation_id:
+          type: string
+          format: uuid
+          description: Organisation ID (optional; required when using org admin API key without workspace_id)
+        workspace_id:
+          type: string
+          format: uuid
+          description: Workspace ID (optional; to create at workspace level)
+        slug:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+$'
+          description: Optional slug; must be unique within organisation
+        name:
+          type: string
+          description: Display name of the MCP integration
+        description:
+          type: string
+          nullable: true
+        configurations:
+          type: object
+          description: Auth/config key-value pairs (e.g. headers, client credentials)
+          properties:
+            custom_headers:
+              type: object
+              additionalProperties: true
+              description: Custom headers to send to the MCP server.
+              example:
+                Authorization: Bearer some-token
+                x-foo: bar
+            passthrough_header:
+              type: object
+              additionalProperties: true
+              description: Headers to pass through from the incoming request to the MCP server.
+              example:
+                x-user-id:
+                  type: string
+                  example: abc123
+                x-request-id:
+                  type: string
+                  example: req-0001
+          additionalProperties: true
+        url:
+          type: string
+          format: uri
+          description: MCP server URL
+        auth_type:
+          type: string
+          enum:
+            - oauth_auto
+            - headers
+            - none
+        transport:
+          type: string
+          enum:
+            - http
+            - sse
+
+    McpIntegrationCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+
+    McpIntegration:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        owner_id:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        configurations:
+          type: object
+          nullable: true
+        global_workspace_access:
+          type: object
+          nullable: true
+        workspace_id:
+          type: string
+          nullable: true
+          description: Workspace ID or slug (when workspace-scoped)
+        slug:
+          type: string
+        url:
+          type: string
+          format: uri
+        auth_type:
+          type: string
+          enum:
+            - oauth_auto
+            - oauth_client_credentials
+            - headers
+            - none
+        transport:
+          type: string
+          enum:
+            - http
+            - sse
+            - interactive
+        type:
+          type: string
+          enum:
+            - workspace
+            - organisation
+
+    McpIntegrationListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        owner_id:
+          type: string
+        status:
+          type: string
+        type:
+          type: string
+          enum:
+            - workspace
+            - organisation
+        url:
+          type: string
+          format: uri
+        auth_type:
+          type: string
+          enum:
+            - oauth_auto
+            - headers
+            - none
+        transport:
+          type: string
+          enum:
+            - http
+            - sse
+            - interactive
+        configurations:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        slug:
+          type: string
+        workspace_id:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        workspaces_count: 
+          type: number
+          nullable: true
+
+    McpIntegrationListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpIntegrationListItem"
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    UpdateMcpIntegration:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        configurations:
+          type: object
+          description: Auth/config key-value pairs (e.g. headers, client credentials)
+          properties:
+            custom_headers:
+              type: object
+              additionalProperties: true
+              description: Custom headers to send to the MCP server.
+              example:
+                Authorization: Bearer some-token
+                x-foo: bar
+            passthrough_header:
+              type: object
+              additionalProperties: true
+              description: Headers to pass through from the incoming request to the MCP server.
+              example:
+                x-user-id:
+                  type: string
+                  example: abc123
+                x-request-id:
+                  type: string
+                  example: req-0001
+          additionalProperties: true
+        url:
+          type: string
+          format: uri
+        auth_type:
+          type: string
+          enum:
+            - oauth_auto
+            - headers
+            - none
+        transport:
+          type: string
+          enum:
+            - http
+            - sse
+
+    McpIntegrationWorkspaceItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Workspace ID or slug (slug when using workspace API key)
+        enabled:
+          type: boolean
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+
+    McpIntegrationWorkspacesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpIntegrationWorkspaceItem"
+        global_workspace_access:
+          type: object
+          nullable: true
+        total:
+          type: integer
+
+    McpIntegrationWorkspacesLegacyResponse:
+      type: object
+      properties:
+        workspaces:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpIntegrationWorkspaceItem"
+        global_workspace_access:
+          type: object
+          nullable: true
+
+    BulkUpdateMcpIntegrationWorkspaces:
+      type: object
+      required:
+        - workspaces
+      properties:
+        workspaces:
+          type: array
+          minItems: 0
+          items:
+            type: object
+            required:
+              - id
+              - enabled
+            properties:
+              id:
+                type: string
+                description: Workspace ID or slug
+              enabled:
+                type: boolean
+        global_workspace_access:
+          type: object
+          nullable: true
+          properties:
+            enabled:
+              type: boolean
+        override_existing_workspace_access:
+          type: boolean
+          default: false
+
+    McpIntegrationCapabilityItem:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - tool
+            - prompt
+            - resource
+            - resource_template
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        icons:
+          type: array
+          nullable: true
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        input_schema:
+          type: object
+          nullable: true
+        output_schema:
+          type: object
+          nullable: true
+        execution:
+          type: object
+          nullable: true
+        annotations:
+          type: object
+          nullable: true
+        arguments:
+          type: array
+          nullable: true
+        uri:
+          type: string
+          nullable: true
+        uri_template:
+          type: string
+          nullable: true
+        mime_type:
+          type: string
+          nullable: true
+        size:
+          type: number
+          nullable: true
+
+    McpIntegrationCapabilitiesCounts:
+      type: object
+      properties:
+        tools:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+        prompts:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+        resources:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+        resource_templates:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+
+    McpIntegrationCapabilitiesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpIntegrationCapabilityItem"
+        counts:
+          $ref: "#/components/schemas/McpIntegrationCapabilitiesCounts"
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    BulkUpdateMcpIntegrationCapabilities:
+      type: object
+      required:
+        - capabilities
+      properties:
+        capabilities:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - name
+              - type
+              - enabled
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                  - tool
+                  - prompt
+                  - resource
+              enabled:
+                type: boolean
+
+    McpIntegrationCapabilitiesBulkUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    McpIntegrationMetadata:
+      type: object
+      properties:
+        server_name:
+          type: string
+          nullable: true
+        server_version:
+          type: string
+          nullable: true
+        protocol_version:
+          type: string
+          nullable: true
+        capability_flags:
+          type: object
+          nullable: true
+        sync_status:
+          type: string
+          nullable: true
+          example: pending
+        last_synced_at:
+          type: string
+          format: date-time
+          nullable: true
+        sync_error:
+          type: string
+          nullable: true
+
+    CreateMcpServer:
+      type: object
+      description: Create an MCP Server (workspace instance of an MCP Integration).
+      required:
+        - name
+        - mcp_integration_id
+      properties:
+        workspace_id:
+          type: string
+          format: uuid
+          description: Workspace ID or slug (optional; required when using org admin API key)
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Display name of the MCP server
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+        mcp_integration_id:
+          type: string
+          description: MCP Integration ID (UUID) or slug
+        slug:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+$'
+          minLength: 3
+          maxLength: 50
+          description: Optional slug; must be unique within organisation
+
+    McpServerCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+
+    McpServer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        mcp_integration_id:
+          type: string
+          description: MCP Integration ID or slug
+        mcp_integration_details:
+          type: object
+          nullable: true
+          description: Present for system/service auth
+          properties:
+            id:
+              type: string
+            slug:
+              type: string
+            status:
+              type: string
+            configurations:
+              type: object
+              nullable: true
+            url:
+              type: string
+              format: uri
+            transport:
+              type: string
+            auth_type:
+              type: string
+        workspace_id:
+          type: string
+          nullable: true
+          description: Present for system/service auth
+
+    McpServerListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organisation_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        owner_id:
+          type: string
+        slug:
+          type: string
+        workspace_id:
+          type: string
+          nullable: true
+        mcp_integration_id:
+          type: string
+        mcp_integration_slug:
+          type: string
+          nullable: true
+        mcp_integration_url:
+          type: string
+          format: uri
+          nullable: true
+        auth_type:
+          type: string
+        workspace_name:
+          type: string
+          nullable: true
+        workspace_slug:
+          type: string
+          nullable: true
+        url:
+          type: string
+          format: uri
+          description: Gateway URL for this MCP server (e.g. {gateway_base}/{slug}/mcp)
+
+    McpServerListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpServerListItem"
+        total:
+          type: integer
+
+    UpdateMcpServer:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+
+    McpServerTestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        status_code:
+          type: integer
+          nullable: true
+          description: HTTP status from upstream (when success)
+        response_time_ms:
+          type: integer
+          nullable: true
+        url:
+          type: string
+          format: uri
+          nullable: true
+        server_name:
+          type: string
+        error:
+          type: string
+          nullable: true
+          description: Error message when success is false
+
+    McpServerCapabilityItem:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - tool
+            - prompt
+            - resource
+            - resource_template
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        icons:
+          type: array
+          nullable: true
+        enabled:
+          type: boolean
+        integration_enabled:
+          type: boolean
+          nullable: true
+          description: Present for service users; indicates integration-level enabled state
+        input_schema:
+          type: object
+          nullable: true
+        output_schema:
+          type: object
+          nullable: true
+        execution:
+          type: object
+          nullable: true
+        annotations:
+          type: object
+          nullable: true
+        arguments:
+          type: array
+          nullable: true
+        uri:
+          type: string
+          nullable: true
+        uri_template:
+          type: string
+          nullable: true
+        mime_type:
+          type: string
+          nullable: true
+        size:
+          type: number
+          nullable: true
+
+    McpServerCapabilitiesCounts:
+      type: object
+      properties:
+        tools:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+        prompts:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+        resources:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+        resource_templates:
+          type: object
+          properties:
+            total:
+              type: integer
+            enabled:
+              type: integer
+
+    McpServerCapabilitiesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpServerCapabilityItem"
+        counts:
+          $ref: "#/components/schemas/McpServerCapabilitiesCounts"
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    BulkUpdateMcpServerCapabilities:
+      type: object
+      required:
+        - capabilities
+      properties:
+        capabilities:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - name
+              - type
+              - enabled
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                  - tool
+                  - prompt
+                  - resource
+              enabled:
+                type: boolean
+
+    McpServerCapabilitiesBulkUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    McpServerUserAccessItem:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: Global user ID or user_org_map_id depending on auth
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+        has_override:
+          type: boolean
+        connection_status:
+          type: string
+          enum:
+            - connected
+            - not_connected
+
+    McpServerUserAccessListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpServerUserAccessItem"
+        default_user_access:
+          type: string
+          enum:
+            - allow
+            - deny
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    BulkUpdateMcpServerUserAccess:
+      type: object
+      properties:
+        user_access:
+          type: array
+          items:
+            type: object
+            required:
+              - user_id
+              - enabled
+            properties:
+              user_id:
+                type: string
+                description: User ID (global user_id or user_org_map_id depending on API key)
+              enabled:
+                type: boolean
+        default_user_access:
+          type: string
+          enum:
+            - allow
+            - deny
+          description: Server default when user has no explicit override
+
+    McpServerUserAccessBulkUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
 
 security:
   - Portkey-Key: []
