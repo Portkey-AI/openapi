@@ -18090,6 +18090,88 @@ paths:
         '500':
           description: Server error
 
+  /policies/usage-limits/{policyUsageLimitsId}/entities:
+    get:
+      tags:
+        - Usage Limits Policies
+      summary: List Usage Limits Policy Entities
+      description: List entities tracked by a usage limits policy with their current usage.
+      operationId: listUsageLimitsPolicyEntities
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
+        - name: status
+          in: query
+          description: Filter by entity usage status
+          required: false
+          schema:
+            type: string
+            enum: [active, exhausted]
+        - name: search
+          in: query
+          description: Filter entities by value key
+          required: false
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - $ref: '#/components/parameters/CurrentPage'
+      responses:
+        '200':
+          description: List of entities for the policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageLimitsPolicyEntityListResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy not found
+        '500':
+          description: Server error
+
+  /policies/usage-limits/{policyUsageLimitsId}/entities/{entityId}/reset:
+    put:
+      tags:
+        - Usage Limits Policies
+      summary: Reset Usage Limits Policy Entity
+      description: Reset the current usage for a specific entity in a usage limits policy.
+      operationId: resetUsageLimitsPolicyEntity
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
+        - $ref: '#/components/parameters/UsageLimitsPolicyEntityId'
+      responses:
+        '200':
+          description: Entity usage reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Policy or entity not found
+        '500':
+          description: Server error
+
   /policies/rate-limits:
     post:
       tags:
@@ -20400,6 +20482,13 @@ components:
       schema:
         type: string
         format: uuid
+    UsageLimitsPolicyEntityId:
+      name: entityId
+      in: path
+      required: true
+      description: Usage limits policy entity ID
+      schema:
+        type: string
     RateLimitsPolicyId:
       name: rateLimitsPolicyId
       in: path
@@ -34565,6 +34654,33 @@ components:
             object:
               type: string
               example: policy_usage_limits
+
+    UsageLimitsPolicyEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Entity ID
+        value_key:
+          type: string
+          description: The value key identifying the entity (e.g. metadata._user:username)
+        current_usage:
+          type: number
+          description: Current usage value for this entity
+
+    UsageLimitsPolicyEntityListResponse:
+      type: object
+      properties:
+        object:
+          type: string
+          example: list
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UsageLimitsPolicyEntity'
+        total:
+          type: integer
+          description: Total number of entities
 
     RateLimitsPolicyListResponse:
       type: object
