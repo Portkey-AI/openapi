@@ -31311,6 +31311,13 @@ components:
         override_existing_workspace_access:
           type: boolean
           description: Whether to override existing workspace access settings
+        create_default_provider:
+          type: boolean
+          default: true
+          description: Whether to automatically create a default provider when granting workspace access. Defaults to true. Can be overridden per workspace.
+        default_provider_slug:
+          type: string
+          description: Custom slug for the auto-created default provider. Applies to all workspaces unless overridden per workspace. If the slug already exists, the request will fail with a validation error.
 
     WorkspaceUpdateRequest:
       type: object
@@ -31340,6 +31347,12 @@ components:
         reset_usage:
           type: boolean
           description: Whether to reset current usage. If the current status is exhausted, this will change it back to active.
+        create_default_provider:
+          type: boolean
+          description: Whether to automatically create a default provider for this workspace. Overrides the top-level create_default_provider setting.
+        default_provider_slug:
+          type: string
+          description: Custom slug for the auto-created default provider for this workspace. Overrides the top-level default_provider_slug. If the slug already exists, the request will fail with a validation error.
 
     Providers:
       type: object
