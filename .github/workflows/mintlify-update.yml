@@ -1,15 +1,12 @@
 name: Trigger Mintlify Update
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - master
 
 jobs:
   trigger-update:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     
     steps:
