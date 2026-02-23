@@ -2000,6 +2000,18 @@ paths:
                     onFail: "block"
                     message: "Model not in approved whitelist"
 
+              allowed_request_types:
+                summary: "[BASIC] Restrict to Chat and Embed Only"
+                value:
+                  name: "Restrict to Chat and Embed Only"
+                  checks:
+                    - id: "default.allowedRequestTypes"
+                      parameters:
+                        allowedTypes: ["chatComplete", "embed"]
+                  actions:
+                    on_fail: "deny"
+                    on_success: "continue"
+
               case_validation:
                 summary: "[BASIC] Case Validation Checks"
                 value:
@@ -32940,6 +32952,9 @@ components:
 
     CreateApiKeyObject:
       type: object
+      required:
+        - name
+        - scopes
       properties:
         name:
           type: string
@@ -33202,6 +33217,7 @@ components:
             - "default.endsWith"
             - "default.alluppercase"
             - "default.requiredMetadataKeys"
+            - "default.allowedRequestTypes"
             # PRO category guardrails
             - "portkey.moderateContent"
             - "portkey.language"
@@ -33250,6 +33266,7 @@ components:
             - $ref: '#/components/schemas/EndsWithParameters'
             - $ref: '#/components/schemas/UppercaseParameters'
             - $ref: '#/components/schemas/RequiredMetadataKeysParameters'
+            - $ref: '#/components/schemas/AllowedRequestTypesParameters'
             - $ref: '#/components/schemas/SydeGuardParameters'
             - $ref: '#/components/schemas/AporiaParameters'
             - $ref: '#/components/schemas/PillarScanParameters'
@@ -33389,6 +33406,7 @@ components:
 
 # Detailed parameter schemas for specific guardrail types
     JWTParameters:
+      title: JWT Parameters
       type: object
       required:
         - jwksUri
@@ -33421,6 +33439,7 @@ components:
           default: ["RS256"]
 
     RegexMatchParameters:
+      title: Regex Match Parameters
       type: object
       required:
         - rule
@@ -33434,6 +33453,7 @@ components:
           default: false
 
     ModelWhitelistParameters:
+      title: Model Whitelist Parameters
       type: object
       required:
         - models
@@ -33445,6 +33465,7 @@ components:
           description: List of allowed models
 
     WordCountParameters:
+      title: Word Count Parameters
       type: object
       properties:
         minWords:
@@ -33461,6 +33482,7 @@ components:
           default: false
 
     SentenceCountParameters:
+      title: Sentence Count Parameters
       type: object
       properties:
         minSentences:
@@ -33477,6 +33499,7 @@ components:
           default: false
 
     CharacterCountParameters:
+      title: Character Count Parameters
       type: object
       properties:
         minCharacters:
@@ -33493,6 +33516,7 @@ components:
           default: false
 
     JSONSchemaParameters:
+      title: JSON Schema Parameters
       type: object
       required:
         - schema
@@ -33507,6 +33531,7 @@ components:
           default: false
 
     JSONKeysParameters:
+      title: JSON Keys Parameters
       type: object
       required:
         - keys
@@ -33524,6 +33549,7 @@ components:
           default: "any"
 
     ContainsParameters:
+      title: Contains Parameters
       type: object
       required:
         - words
@@ -33541,6 +33567,7 @@ components:
           default: "any"
 
     ValidUrlsParameters:
+      title: Valid URLs Parameters
       type: object
       properties:
         onlyDNS:
@@ -33553,6 +33580,7 @@ components:
           default: false
 
     ContainsCodeParameters:
+      title: Contains Code Parameters
       type: object
       required:
         - format
@@ -33592,6 +33620,7 @@ components:
           default: false
 
     WebhookParameters:
+      title: Webhook Parameters
       type: object
       required:
         - webhookURL
@@ -33614,6 +33643,7 @@ components:
           default: false
 
     EndsWithParameters:
+      title: Ends With Parameters
       type: object
       required:
         - suffix
@@ -33627,6 +33657,7 @@ components:
           default: false
 
     UppercaseParameters:
+      title: Uppercase Parameters
       type: object
       properties:
         not:
@@ -33635,6 +33666,7 @@ components:
           default: false
 
     RequiredMetadataKeysParameters:
+      title: Required Metadata Keys Parameters
       type: object
       required:
         - metadataKeys
@@ -33651,7 +33683,86 @@ components:
           description: Operator to use for key checking
           default: "all"
 
+    AllowedRequestTypesParameters:
+      title: Allowed Request Types Parameters
+      type: object
+      description: Parameters for default.allowedRequestTypes check. Restrict which request types are allowed or blocked. You can use either or both; when both are specified, blocked types take precedence.
+      properties:
+        allowedTypes:
+          type: array
+          items:
+            type: string
+            enum:
+              - complete
+              - chatComplete
+              - embed
+              - rerank
+              - moderate
+              - proxy
+              - imageGenerate
+              - createSpeech
+              - createTranscription
+              - createTranslation
+              - realtime
+              - uploadFile
+              - listFiles
+              - retrieveFile
+              - deleteFile
+              - retrieveFileContent
+              - createBatch
+              - retrieveBatch
+              - cancelBatch
+              - listBatches
+              - getBatchOutput
+              - listFinetunes
+              - createFinetune
+              - retrieveFinetune
+              - cancelFinetune
+              - createModelResponse
+              - getModelResponse
+              - deleteModelResponse
+              - listResponseInputItems
+              - messages
+          description: Request types to allow (allowlist). When set, only these request types are permitted.
+        blockedTypes:
+          type: array
+          items:
+            type: string
+            enum:
+              - complete
+              - chatComplete
+              - embed
+              - rerank
+              - moderate
+              - proxy
+              - imageGenerate
+              - createSpeech
+              - createTranscription
+              - createTranslation
+              - realtime
+              - uploadFile
+              - listFiles
+              - retrieveFile
+              - deleteFile
+              - retrieveFileContent
+              - createBatch
+              - retrieveBatch
+              - cancelBatch
+              - listBatches
+              - getBatchOutput
+              - listFinetunes
+              - createFinetune
+              - retrieveFinetune
+              - cancelFinetune
+              - createModelResponse
+              - getModelResponse
+              - deleteModelResponse
+              - listResponseInputItems
+              - messages
+          description: Request types to block (blocklist). When set, these request types are denied.
+
     SydeGuardParameters:
+      title: SydeGuard Parameters
       type: object
       properties:
         prompt_injection_threshold:
@@ -33681,6 +33792,7 @@ components:
           default: 5000
 
     AporiaParameters:
+      title: Aporia Parameters
       type: object
       required:
         - projectID
@@ -33694,6 +33806,7 @@ components:
           default: 5000
 
     PillarScanParameters:
+      title: Pillar Scan Parameters
       type: object
       required:
         - scanners
@@ -33715,6 +33828,7 @@ components:
           default: 5000
 
     PatronusParameters:
+      title: Patronus Parameters
       type: object
       properties:
         redact:
@@ -33727,6 +33841,7 @@ components:
           default: 5000
 
     PatronusCustomParameters:
+      title: Patronus Custom Parameters
       type: object
       required:
         - profile
@@ -33740,6 +33855,7 @@ components:
           default: 15000
 
     PortkeyModerationParameters:
+      title: Portkey Moderation Parameters
       type: object
       required:
         - categories
@@ -33767,6 +33883,7 @@ components:
           default: 5000
 
     PortkeyLanguageParameters:
+      title: Portkey Language Parameters
       type: object
       properties:
         language:
@@ -33832,6 +33949,7 @@ components:
           default: 5000
 
     PortkeyPIIParameters:
+      title: Portkey PII Parameters
       type: object
       required:
         - categories
@@ -33859,6 +33977,7 @@ components:
           default: 5000
 
     MistralModerationParameters:
+      title: Mistral Moderation Parameters
       type: object
       required:
         - categories
@@ -33884,6 +34003,7 @@ components:
           default: 5000
 
     BedrockGuardParameters:
+      title: Bedrock Guard Parameters
       type: object
       required:
         - guardrailVersion
@@ -33905,6 +34025,7 @@ components:
           default: 5000
 
     PromptfooParameters:
+      title: Promptfoo Parameters
       type: object
       properties:
         redact:
@@ -33917,6 +34038,7 @@ components:
           default: 5000
 
     AcuvityScanParameters:
+      title: Acuvity Scan Parameters
       type: object
       properties:
         prompt_injection:
@@ -34057,6 +34179,7 @@ components:
           default: 5000
 
     AzureContentSafetyParameters:
+      title: Azure Content Safety Parameters
       type: object
       properties:
         blocklistNames:
@@ -34085,6 +34208,7 @@ components:
           default: 5000
 
     AzurePIIParameters:
+      title: Azure PII Parameters
       type: object
       properties:
         domain:
@@ -34110,6 +34234,7 @@ components:
           default: 5000
 
     PANWPrismaParameters:
+      title: PANW Prisma Parameters
       type: object
       required:
         - profile_name
@@ -34125,6 +34250,7 @@ components:
           description: Application user identifier
 
     BasicParameters:
+      title: Basic Parameters
       type: object
       description: Basic parameters with no specific requirements
       additionalProperties: true
