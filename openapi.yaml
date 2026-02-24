@@ -18413,6 +18413,7 @@ paths:
         - Analytics > Graphs
       summary: Get requests graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18428,7 +18429,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18488,6 +18488,7 @@ paths:
         - Analytics > Graphs
       summary: Get cost graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18503,7 +18504,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18571,6 +18571,7 @@ paths:
         - Analytics > Graphs
       summary: Get latency graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18586,7 +18587,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18671,6 +18671,7 @@ paths:
         - Analytics > Graphs
       summary: Get tokens graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18686,7 +18687,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18754,6 +18754,7 @@ paths:
         - Analytics > Graphs
       summary: Get users graph. Returns unique user count across different time buckets
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18769,7 +18770,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18829,6 +18829,7 @@ paths:
         - Analytics > Graphs
       summary: Get users requests graph. Returns average requests per user across different time buckets
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18844,7 +18845,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18912,6 +18912,7 @@ paths:
         - Analytics > Graphs
       summary: Get errors graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -18927,7 +18928,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -18987,6 +18987,7 @@ paths:
         - Analytics > Graphs
       summary: Get percentage error rate graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19002,7 +19003,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19062,6 +19062,7 @@ paths:
         - Analytics > Graphs
       summary: Get status code wise stacked error graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19077,7 +19078,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19223,6 +19223,7 @@ paths:
         - Analytics > Graphs
       summary: Get retry and fallback rescued requests graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19238,7 +19239,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19314,6 +19314,7 @@ paths:
         - Analytics > Graphs
       summary: Get cache hit rate graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19329,7 +19330,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19409,6 +19409,7 @@ paths:
         - Analytics > Graphs
       summary: Get cache hit latency graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19424,7 +19425,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19478,6 +19478,7 @@ paths:
         - Analytics > Graphs
       summary: Get feedbacks graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19493,7 +19494,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19553,6 +19553,7 @@ paths:
         - Analytics > Graphs
       summary: Get score-wise feedbacks distribution graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19568,7 +19569,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19627,6 +19627,7 @@ paths:
         - Analytics > Graphs
       summary: Get weighted feedbacks graph. Weighted feedback is (value * score)
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19642,7 +19643,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19702,6 +19702,7 @@ paths:
         - Analytics > Graphs
       summary: Get feedbacks per ai_models graph
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19717,7 +19718,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19774,6 +19774,7 @@ paths:
         - Analytics > Summary
       summary: Get cache summary data for the selected time period
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19789,7 +19790,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -19839,6 +19839,7 @@ paths:
         - Analytics > Groups
       summary: Get metadata users grouped data.
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19854,7 +19855,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/CurrentPage"
         - $ref: "#/components/parameters/PageSize"
@@ -19912,6 +19912,7 @@ paths:
         - Analytics > Groups
       summary: Get ai model grouped data.
       parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19927,7 +19928,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/CurrentPage"
         - $ref: "#/components/parameters/PageSize"
@@ -19987,6 +19987,7 @@ paths:
           schema:
             type: string
           required: true
+        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20002,7 +20003,6 @@ paths:
         - $ref: "#/components/parameters/WeightedFeedbackMax"
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
-        - $ref: "#/components/parameters/WorkspaceSlug"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/CurrentPage"
         - $ref: "#/components/parameters/PageSize"
@@ -20260,8 +20260,8 @@ components:
       schema:
         type: string
         format: date-time
-      description: Minimum time of generation (ISO8601 format)
-      example: "2024-08-23T15:50:23+05:30"
+        example: "2026-02-23T14:20:31+05:30"
+      description: Minimum time of generation in ISO8601 format (YYYY-MM-DDTHH:MM:SS±HH:MM).
     TimeOfGenerationMax:
       in: query
       name: time_of_generation_max
@@ -20269,8 +20269,8 @@ components:
       schema:
         type: string
         format: date-time
-      description: Maximum time of generation (ISO8601 format)
-      example: "2024-08-23T15:50:23+05:30"
+        example: "2026-02-24T14:20:31+05:30"
+      description: Maximum time of generation in ISO8601 format (YYYY-MM-DDTHH:MM:SS±HH:MM).
     TotalUnitsMin:
       in: query
       name: total_units_min
@@ -20393,6 +20393,7 @@ components:
     WorkspaceSlug:
       in: query
       name: workspace_slug
+      required: true
       schema:
         type: string
       description: Workspace slug filter. If a workspace API key is being used, this filter will not be taken into consideration. If an organisation API key is used and no workspace slug is passed, default workspace will be used.
