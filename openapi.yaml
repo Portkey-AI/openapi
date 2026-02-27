@@ -30808,6 +30808,15 @@ components:
               title: Cortex
             - $ref: '#/components/schemas/CustomHostConfiguration'
               title: Custom Base URL
+        create_default_provider:
+          type: boolean
+          default: true
+          description: Whether to automatically create a default provider when creating a workspace-scoped integration. Defaults to true.
+        default_provider_slug:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 255
+          description: Custom slug for the auto-created default provider. Only applicable for workspace-scoped integrations. If the slug already exists in the workspace, the request will fail with a validation error.
 
     UpdateIntegrationRequest:
       type: object
