@@ -1070,6 +1070,12 @@ paths:
     
     put:
       summary: Update a prompt
+      description: |
+        Update a prompt's metadata and/or create a new version with updated template content.
+
+        **Partial version updates:** Set `patch: true` to perform a partial update of version fields (`string`, `parameters`, `model`, `virtual_key`, `version_description`, `functions`, `tools`, `tool_choice`, `is_raw_template`, `prompt_metadata`). When enabled, any version fields omitted from the request are backfilled from the current latest version, allowing you to update only the fields you need. When `patch` is omitted or `false`, all version fields must be provided together (original strict validation).
+
+        **Metadata-only updates:** Fields like `name`, `collection_id`, `version_description`, and `virtual_key` can always be updated independently without affecting versioning.
       operationId: updatePrompt
       tags:
         - Prompts
@@ -1088,35 +1094,49 @@ paths:
             schema:
               type: object
               properties:
+                patch:
+                  type: boolean
+                  description: |
+                    When `true`, enables partial version updates. Missing version fields (`string`, `parameters`, `model`) are backfilled from the current latest version, so you only need to provide the fields you want to change. When `false` or omitted, the original strict validation is preserved for backward compatibility.
                 name:
                   type: string
                 collection_id:
                   type: string
                 string:
                   type: string
+                  description: The prompt template string. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 parameters:
                   type: object
+                  description: Model parameters (e.g. temperature, max_tokens). When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 model:
                   type: string
+                  description: The model identifier. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 virtual_key:
                   type: string
+                  description: The virtual key to associate with this version. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 version_description:
                   type: string
+                  description: A human-readable description for this version. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 functions:
                   type: array
                   items:
                     type: object
+                  description: Function definitions available to the model. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 tools:
                   type: array
                   items:
                     type: object
+                  description: Tool definitions available to the model. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 tool_choice:
                   type: object
+                  description: Controls which tool the model uses. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 is_raw_template:
                   type: integer
                   enum: [0, 1]
+                  description: Whether the template string is raw (1) or processed (0). When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 prompt_metadata:
                   type: object
+                  description: Additional metadata for the prompt version. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
       responses:
         '200':
           description: Prompt updated successfully
@@ -1252,6 +1272,10 @@ paths:
     
     put:
       summary: Update a specific version of a prompt
+      description: |
+        Updates metadata for a specific prompt version. **This endpoint only supports updating the `label_id` field.**
+
+        Prompt versions are immutable — their `string`, `parameters`, and `model` content cannot be changed after creation. To update prompt content, use `PUT /prompts/{promptId}` which creates a new version with the updated content.
       operationId: updatePromptVersion
       tags:
         - Prompts
@@ -1279,6 +1303,7 @@ paths:
                 label_id:
                   type: string
                   format: uuid
+                  description: The label to assign to this version.
       responses:
         '200':
           description: Prompt version updated successfully
