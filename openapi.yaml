@@ -14782,6 +14782,15 @@ paths:
           schema:
             type: string
           description: "Workspace name filter with strict check"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - active
+              - archived
+          example: "active,archived"
+          description: "Workspace status to filter results, comma separated"
       responses:
         "200":
           description: OK
