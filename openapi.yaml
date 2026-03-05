@@ -20100,6 +20100,153 @@ paths:
                   - object
                   - data
 
+  /analytics/groups/{groupBy}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: getAnalyticsGroupedData
+      tags:
+        - Analytics > Groups
+      summary: Get grouped analytics data by a specified dimension.
+      description: |
+        Returns analytics data grouped by the specified dimension. Supports configurable metric columns,
+        filtering by metadata, time range, and other standard analytics filters. Use the `columns` parameter
+        to specify which metrics to include in the response.
+      parameters:
+        - name: groupBy
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - ai_service
+              - model
+              - status_code
+              - api_key
+              - config
+              - workspace
+              - provider
+              - prompt
+          description: |
+            The dimension to group analytics data by.
+            - `ai_service` - Group by AI provider/service
+            - `model` - Group by AI model
+            - `status_code` - Group by response status code
+            - `api_key` - Group by API key
+            - `config` - Group by config
+            - `workspace` - Group by workspace
+            - `provider` - Group by virtual key / provider
+            - `prompt` - Group by prompt slug
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/TimeOfGenerationMin"
+        - $ref: "#/components/parameters/TimeOfGenerationMax"
+        - $ref: "#/components/parameters/TotalUnitsMin"
+        - $ref: "#/components/parameters/TotalUnitsMax"
+        - $ref: "#/components/parameters/CostMin"
+        - $ref: "#/components/parameters/CostMax"
+        - $ref: "#/components/parameters/PromptTokenMin"
+        - $ref: "#/components/parameters/PromptTokenMax"
+        - $ref: "#/components/parameters/CompletionTokenMin"
+        - $ref: "#/components/parameters/CompletionTokenMax"
+        - $ref: "#/components/parameters/StatusCode"
+        - $ref: "#/components/parameters/WeightedFeedbackMin"
+        - $ref: "#/components/parameters/WeightedFeedbackMax"
+        - $ref: "#/components/parameters/VirtualKeys"
+        - $ref: "#/components/parameters/Configs"
+        - $ref: "#/components/parameters/ApiKeyIds"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Metadata"
+        - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/TraceId"
+        - $ref: "#/components/parameters/SpanId"
+        - $ref: "#/components/parameters/PromptSlug"
+        - $ref: "#/components/parameters/Columns"
+        - $ref: "#/components/parameters/OrderBy"
+        - $ref: "#/components/parameters/OrderByType"
+        - $ref: "#/components/parameters/IncludeTotal"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total records present across all pages
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        group_key:
+                          type: string
+                          description: The value of the grouped dimension (e.g., model name, provider name)
+                        requests:
+                          type: integer
+                          description: Total number of requests
+                        cost:
+                          type: number
+                          description: Total cost in cents
+                        total_tokens:
+                          type: integer
+                          description: Total tokens across all requests
+                        avg_tokens:
+                          type: number
+                          description: Average tokens per request
+                        avg_input_tokens:
+                          type: number
+                          description: Average input tokens per request
+                        avg_output_tokens:
+                          type: number
+                          description: Average output tokens per request
+                        avg_latency:
+                          type: number
+                          description: Average latency in milliseconds
+                        p95_latency:
+                          type: number
+                          description: 95th percentile latency in milliseconds
+                        p99_latency:
+                          type: number
+                          description: 99th percentile latency in milliseconds
+                        success_rate:
+                          type: number
+                          description: Percentage of successful requests
+                        error_count:
+                          type: integer
+                          description: Total number of errored requests
+                        cache_hit_rate:
+                          type: number
+                          description: Percentage of requests served from cache
+                        last_seen:
+                          type: string
+                          format: date-time
+                          description: Timestamp of the most recent request
+                        first_seen:
+                          type: string
+                          format: date-time
+                          description: Timestamp of the earliest request
+                        object:
+                          type: string
+                          description: The type of object being returned
+                          enum: [analytics-group]
+                      required:
+                        - group_key
+                        - requests
+                required:
+                  - total
+                  - object
+                  - data
+
   /model-configs/pricing/{provider}/{model}:
     servers: *PublicServers
     get:
@@ -20473,6 +20620,22 @@ components:
         type: string
       description: Comma separated prompt slugs
       example: prompt-slug-1,prompt-slug-2
+    Columns:
+      in: query
+      name: columns
+      schema:
+        type: string
+      description: Comma separated list of metric columns to include in the response. Available columns are requests, cost, total_tokens, avg_tokens, avg_input_tokens, avg_output_tokens, avg_latency, p95_latency, p99_latency, success_rate, error_count, cache_hit_rate, last_seen, first_seen. The 'requests' column is always included.
+      example: requests,cost,avg_latency,success_rate
+    IncludeTotal:
+      in: query
+      name: include_total
+      schema:
+        type: string
+        enum:
+          - "true"
+          - "false"
+      description: Whether to include grand totals in the response
     PortkeyTraceId:
       in: header
       name: x-portkey-trace-id
