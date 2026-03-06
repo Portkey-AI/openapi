@@ -20160,10 +20160,22 @@ paths:
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
-        - $ref: "#/components/parameters/Columns"
+        - name: columns
+          in: query
+          schema:
+            type: string
+          description: Comma separated list of metric columns to include in the response. Available columns are requests, cost, total_tokens, avg_tokens, avg_input_tokens, avg_output_tokens, avg_latency, p95_latency, p99_latency, success_rate, error_count, cache_hit_rate, last_seen, first_seen. The 'requests' column is always included.
+          example: requests,cost,avg_latency,success_rate
         - $ref: "#/components/parameters/OrderBy"
         - $ref: "#/components/parameters/OrderByType"
-        - $ref: "#/components/parameters/IncludeTotal"
+        - name: include_total
+          in: query
+          schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+          description: Whether to include grand totals in the response
       responses:
         "200":
           description: OK
@@ -20620,22 +20632,7 @@ components:
         type: string
       description: Comma separated prompt slugs
       example: prompt-slug-1,prompt-slug-2
-    Columns:
-      in: query
-      name: columns
-      schema:
-        type: string
-      description: Comma separated list of metric columns to include in the response. Available columns are requests, cost, total_tokens, avg_tokens, avg_input_tokens, avg_output_tokens, avg_latency, p95_latency, p99_latency, success_rate, error_count, cache_hit_rate, last_seen, first_seen. The 'requests' column is always included.
-      example: requests,cost,avg_latency,success_rate
-    IncludeTotal:
-      in: query
-      name: include_total
-      schema:
-        type: string
-        enum:
-          - "true"
-          - "false"
-      description: Whether to include grand totals in the response
+
     PortkeyTraceId:
       in: header
       name: x-portkey-trace-id
