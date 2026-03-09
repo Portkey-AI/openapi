@@ -12303,6 +12303,11 @@ paths:
                 expires_at:
                   type: string
                   format: date-time
+                secret_mappings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SecretMapping'
+                  description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "model_config.<field>" (e.g. "model_config.awsSecretAccessKey"). Each target_field must be unique. When "key" is mapped, the key field becomes optional.
             examples:
               generic:
                 value:
@@ -12637,6 +12642,11 @@ paths:
                     required: ["apiVersion", "deploymentName"]
                 usage_limits:
                   $ref: "#/components/schemas/UsageLimits"
+                secret_mappings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SecretMapping'
+                  description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "model_config.<field>" (e.g. "model_config.awsSecretAccessKey"). Each target_field must be unique.
       responses:
         "200":
           description: Successful response
@@ -31121,6 +31131,11 @@ components:
           pattern: '^[a-zA-Z0-9_-]+$'
           maxLength: 255
           description: Custom slug for the auto-created default provider. Only applicable for workspace-scoped integrations. If the slug already exists in the workspace, the request will fail with a validation error.
+        secret_mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretMapping'
+          description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique. When "key" is mapped, the key body field can be omitted.
 
     UpdateIntegrationRequest:
       type: object
@@ -31161,6 +31176,11 @@ components:
               title: Cortex
             - $ref: '#/components/schemas/CustomHostConfiguration'
               title: Custom Base URL
+        secret_mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretMapping'
+          description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique.
 
     IntegrationDetailResponse:
       allOf:
@@ -31211,6 +31231,11 @@ components:
             workspace_count:
               type: integer
               description: Number of workspaces with access to this integration
+            secret_mappings:
+              type: array
+              items:
+                $ref: '#/components/schemas/SecretMapping'
+              description: Secret reference mappings for this integration. Valid target_field values are "key" or "configurations.<field>".
   
     GlobalWorkspaceAccess:
       type: object
@@ -31457,6 +31482,28 @@ components:
           additionalProperties:
             type: string
           description: Custom headers to send with requests (can be used along with other provider specific configuration fields)
+
+    SecretMapping:
+      type: object
+      required:
+        - target_field
+        - secret_reference_id
+      properties:
+        target_field:
+          type: string
+          description: |
+            The field on the entity to populate from the secret reference. Must be unique within the array.
+            - **Integrations**: `key` or `configurations.<field>` (e.g. `configurations.aws_secret_access_key`)
+            - **Virtual Keys**: `key` or `model_config.<field>` (e.g. `model_config.awsSecretAccessKey`)
+          example: "key"
+        secret_reference_id:
+          type: string
+          description: UUID or slug of the secret reference. Must belong to the same organisation and be accessible by the workspace.
+          example: "my-aws-secret"
+        secret_key:
+          type: string
+          nullable: true
+          description: Override the secret_key defined on the secret reference. Use to pick a specific key from a multi-value secret.
 
     CreateSecretReferenceRequest:
       type: object
@@ -32081,6 +32128,11 @@ components:
         expires_at:
           type: string
           format: date-time
+        secret_mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretMapping'
+          description: Secret reference mappings for this virtual key. Valid target_field values are "key" or "model_config.<field>".
         object:
           type: string
           enum: [virtual-key]
