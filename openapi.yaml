@@ -130,6 +130,8 @@ tags:
     description: Manage rate limits policies to control request or token rates
   - name: Model Pricing
     description: Model pricing configurations for 2300+ LLMs across 40+ providers
+  - name: Secret-References
+    description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
 
 
 paths:
@@ -20259,6 +20261,274 @@ paths:
                     type: string
                     example: Model not found
 
+  /secret-references:
+    servers: *ControlPlaneServers
+    get:
+      operationId: listSecretReferences
+      summary: List All Secret References
+      tags:
+        - Secret-References
+      parameters:
+        - in: query
+          name: manager_type
+          schema:
+            type: string
+            enum: [aws_sm, azure_kv, hashicorp_vault]
+          description: Filter by secret manager type
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: JSON-encoded object for tag filtering
+        - in: query
+          name: search
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          description: Search by name
+        - in: query
+          name: current_page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page index (0-based), defaults to 0
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page (1-100), defaults to 20
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SecretReferenceListItem"
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET "https://api.portkey.ai/v1/secret-references?current_page=0&page_size=20" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/secret-references?current_page=0&page_size=20" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    post:
+      operationId: createSecretReference
+      summary: Create a Secret Reference
+      tags:
+        - Secret-References
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSecretReferenceRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  slug:
+                    type: string
+                  object:
+                    type: string
+                    enum: [secret-reference]
+        "400":
+          description: Validation failure (schema, duplicate slug, invalid workspaces, conflicting allow_all_workspaces + allowed_workspaces)
+        "403":
+          description: secretReferences feature not enabled on subscription
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/secret-references \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "my-aws-secret",
+                "manager_type": "aws_sm",
+                "auth_config": {
+                    "aws_auth_type": "accessKey",
+                    "aws_access_key_id": "AKIA...",
+                    "aws_secret_access_key": "wJal...",
+                    "aws_region": "us-east-1"
+                },
+                "secret_path": "prod/api-keys/openai"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/secret-references \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "my-aws-secret",
+                "manager_type": "aws_sm",
+                "auth_config": {
+                    "aws_auth_type": "accessKey",
+                    "aws_access_key_id": "AKIA...",
+                    "aws_secret_access_key": "wJal...",
+                    "aws_region": "us-east-1"
+                },
+                "secret_path": "prod/api-keys/openai"
+            }'
+
+  /secret-references/{secretReferenceId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: getSecretReference
+      summary: Get a Secret Reference
+      tags:
+        - Secret-References
+      parameters:
+        - in: path
+          name: secretReferenceId
+          required: true
+          schema:
+            type: string
+          description: UUID or slug of the secret reference
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecretReferenceDetailResponse"
+        "404":
+          description: Secret reference not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/secret-references/SECRET_REFERENCE_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/secret-references/SECRET_REFERENCE_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    put:
+      operationId: updateSecretReference
+      summary: Update a Secret Reference
+      tags:
+        - Secret-References
+      parameters:
+        - in: path
+          name: secretReferenceId
+          required: true
+          schema:
+            type: string
+          description: UUID or slug of the secret reference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSecretReferenceRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Validation failure or no valid fields to update
+        "404":
+          description: Secret reference not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X PUT https://api.portkey.ai/v1/secret-references/SECRET_REFERENCE_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "updated-secret-name",
+                "secret_path": "prod/api-keys/updated"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X PUT SELF_HOSTED_CONTROL_PLANE_URL/secret-references/SECRET_REFERENCE_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "updated-secret-name",
+                "secret_path": "prod/api-keys/updated"
+            }'
+
+    delete:
+      operationId: deleteSecretReference
+      summary: Delete a Secret Reference
+      tags:
+        - Secret-References
+      parameters:
+        - in: path
+          name: secretReferenceId
+          required: true
+          schema:
+            type: string
+          description: UUID or slug of the secret reference
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Secret reference is in use by integrations or virtual keys
+        "404":
+          description: Secret reference not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/secret-references/SECRET_REFERENCE_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/secret-references/SECRET_REFERENCE_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
 
 components:
   securitySchemes:
@@ -31187,6 +31457,335 @@ components:
           additionalProperties:
             type: string
           description: Custom headers to send with requests (can be used along with other provider specific configuration fields)
+
+    CreateSecretReferenceRequest:
+      type: object
+      required:
+        - name
+        - manager_type
+        - auth_config
+        - secret_path
+      properties:
+        organisation_id:
+          type: string
+          format: uuid
+          description: Required if not using API key auth
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        slug:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 255
+          description: Auto-generated from name if omitted
+        description:
+          type: string
+          maxLength: 1024
+          nullable: true
+        manager_type:
+          type: string
+          enum: [aws_sm, azure_kv, hashicorp_vault]
+        auth_config:
+          oneOf:
+            - $ref: "#/components/schemas/AwsAccessKeyAuthConfig"
+            - $ref: "#/components/schemas/AwsAssumedRoleAuthConfig"
+            - $ref: "#/components/schemas/AwsServiceRoleAuthConfig"
+            - $ref: "#/components/schemas/AzureEntraAuthConfig"
+            - $ref: "#/components/schemas/AzureManagedAuthConfig"
+            - $ref: "#/components/schemas/AzureDefaultAuthConfig"
+            - $ref: "#/components/schemas/HashicorpTokenAuthConfig"
+            - $ref: "#/components/schemas/HashicorpAppRoleAuthConfig"
+            - $ref: "#/components/schemas/HashicorpKubernetesAuthConfig"
+          discriminator:
+            propertyName: aws_auth_type
+        secret_path:
+          type: string
+          maxLength: 1024
+        secret_key:
+          type: string
+          maxLength: 255
+          nullable: true
+        allow_all_workspaces:
+          type: boolean
+          default: true
+          description: Cannot be true when allowed_workspaces is provided
+        allowed_workspaces:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Array of workspace UUIDs or slugs. Mutually exclusive with allow_all_workspaces=true.
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+
+    UpdateSecretReferenceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1024
+          nullable: true
+        auth_config:
+          type: object
+          description: Merged with existing config, validated against existing manager_type
+        secret_path:
+          type: string
+          maxLength: 1024
+        secret_key:
+          type: string
+          maxLength: 255
+          nullable: true
+        allow_all_workspaces:
+          type: boolean
+          description: When true, all workspace-specific mappings are purged
+        allowed_workspaces:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Replaces existing workspace mappings. Automatically sets allow_all_workspaces to false.
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+
+    SecretReferenceListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        manager_type:
+          type: string
+          enum: [aws_sm, azure_kv, hashicorp_vault]
+        status:
+          type: string
+          enum: [ACTIVE]
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        object:
+          type: string
+          enum: [secret-reference]
+
+    SecretReferenceDetailResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organisation_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        manager_type:
+          type: string
+          enum: [aws_sm, azure_kv, hashicorp_vault]
+        secret_path:
+          type: string
+        secret_key:
+          type: string
+          nullable: true
+        allow_all_workspaces:
+          type: boolean
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+        status:
+          type: string
+          enum: [ACTIVE]
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        auth_config:
+          type: object
+          description: Sensitive fields are masked for non-system users
+        object:
+          type: string
+          enum: [secret-reference]
+
+    AwsAccessKeyAuthConfig:
+      type: object
+      required:
+        - aws_auth_type
+        - aws_access_key_id
+        - aws_secret_access_key
+        - aws_region
+      properties:
+        aws_auth_type:
+          type: string
+          enum: [accessKey]
+        aws_access_key_id:
+          type: string
+        aws_secret_access_key:
+          type: string
+        aws_region:
+          type: string
+
+    AwsAssumedRoleAuthConfig:
+      type: object
+      required:
+        - aws_auth_type
+        - aws_role_arn
+        - aws_region
+      properties:
+        aws_auth_type:
+          type: string
+          enum: [assumedRole]
+        aws_role_arn:
+          type: string
+        aws_external_id:
+          type: string
+          nullable: true
+        aws_region:
+          type: string
+
+    AwsServiceRoleAuthConfig:
+      type: object
+      required:
+        - aws_auth_type
+      properties:
+        aws_auth_type:
+          type: string
+          enum: [serviceRole]
+        aws_region:
+          type: string
+
+    AzureEntraAuthConfig:
+      type: object
+      required:
+        - azure_auth_mode
+        - azure_entra_tenant_id
+        - azure_entra_client_id
+        - azure_entra_client_secret
+        - azure_vault_url
+      properties:
+        azure_auth_mode:
+          type: string
+          enum: [entra]
+        azure_entra_tenant_id:
+          type: string
+        azure_entra_client_id:
+          type: string
+        azure_entra_client_secret:
+          type: string
+        azure_vault_url:
+          type: string
+          format: uri
+
+    AzureManagedAuthConfig:
+      type: object
+      required:
+        - azure_auth_mode
+        - azure_vault_url
+      properties:
+        azure_auth_mode:
+          type: string
+          enum: [managed]
+        azure_managed_client_id:
+          type: string
+        azure_vault_url:
+          type: string
+          format: uri
+
+    AzureDefaultAuthConfig:
+      type: object
+      required:
+        - azure_auth_mode
+        - azure_vault_url
+      properties:
+        azure_auth_mode:
+          type: string
+          enum: [default]
+        azure_vault_url:
+          type: string
+          format: uri
+
+    HashicorpTokenAuthConfig:
+      type: object
+      required:
+        - vault_auth_type
+        - vault_addr
+        - vault_token
+      properties:
+        vault_auth_type:
+          type: string
+          enum: [token]
+        vault_addr:
+          type: string
+          format: uri
+        vault_token:
+          type: string
+        vault_namespace:
+          type: string
+
+    HashicorpAppRoleAuthConfig:
+      type: object
+      required:
+        - vault_auth_type
+        - vault_addr
+        - vault_role_id
+        - vault_secret_id
+      properties:
+        vault_auth_type:
+          type: string
+          enum: [approle]
+        vault_addr:
+          type: string
+          format: uri
+        vault_role_id:
+          type: string
+        vault_secret_id:
+          type: string
+        vault_namespace:
+          type: string
+
+    HashicorpKubernetesAuthConfig:
+      type: object
+      required:
+        - vault_auth_type
+        - vault_addr
+        - vault_role
+      properties:
+        vault_auth_type:
+          type: string
+          enum: [kubernetes]
+        vault_addr:
+          type: string
+          format: uri
+        vault_role:
+          type: string
+        vault_namespace:
+          type: string
 
     IntegrationList:
       type: object
