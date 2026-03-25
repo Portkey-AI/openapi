@@ -190,7 +190,7 @@ paths:
               -H "x-portkey-api-key: $PORTKEY_API_KEY" \
               -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
               -d '{
-                "model": "gpt-4o",
+                "model": "gpt-5",
                 "messages": [
                   {
                     "role": "system",
@@ -200,7 +200,8 @@ paths:
                     "role": "user",
                     "content": "Hello!"
                   }
-                ]
+                ],
+                "max_completion_tokens": 250
               }'
         - lang: cURL
           label: Self-Hosted
@@ -210,7 +211,7 @@ paths:
               -H "x-portkey-api-key: $PORTKEY_API_KEY" \
               -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
               -d '{
-                "model": "gpt-4o",
+                "model": "gpt-5",
                 "messages": [
                   {
                     "role": "system",
@@ -220,7 +221,8 @@ paths:
                     "role": "user",
                     "content": "Hello!"
                   }
-                ]
+                ],
+                "max_completion_tokens": 250
               }'
         - lang: python
           label: Default
@@ -233,11 +235,12 @@ paths:
             )
 
             response = portkey.chat.completions.create(
-              model="gpt-4o",
+              model="gpt-5",
               messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Hello!"}
-              ]
+              ],
+              max_completion_tokens=250
             )
 
             print(response.choices[0].message)
@@ -253,11 +256,12 @@ paths:
             )
 
             response = portkey.chat.completions.create(
-              model="gpt-4o",
+              model="gpt-5",
               messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": "Hello!"}
-              ]
+              ],
+              max_completion_tokens=250
             )
 
             print(response.choices[0].message)
@@ -274,7 +278,8 @@ paths:
             async function main() {
               const response = await portkey.chat.completions.create({
                 messages: [{ role: "system", content: "You are a helpful assistant." }],
-                model: "gpt-4o",
+                model: "gpt-5",
+                max_completion_tokens: 250,
               });
 
               console.log(response.choices[0]);
@@ -295,7 +300,8 @@ paths:
             async function main() {
               const response = await portkey.chat.completions.create({
                 messages: [{ role: "system", content: "You are a helpful assistant." }],
-                model: "gpt-4o",
+                model: "gpt-5",
+                max_completion_tokens: 250,
               });
 
               console.log(response.choices[0]);
@@ -1853,7 +1859,7 @@ paths:
                 "variables": {
                   "user_input": "Hello world"
                 },
-                "max_tokens": 250,
+                "max_completion_tokens": 250,
                 "presence_penalty": 0.2
               }'
         - lang: Python
@@ -1870,7 +1876,7 @@ paths:
                 variables={
                     "user_input": "Hello world"
                 },
-                max_tokens=250,
+                max_completion_tokens=250,
                 presence_penalty=0.2
             )
 
@@ -1890,7 +1896,7 @@ paths:
               variables: {
                 user_input: "Hello world"
               },
-              max_tokens: 250,
+              max_completion_tokens: 250,
               presence_penalty: 0.2
             });
 
@@ -1905,7 +1911,7 @@ paths:
                 "variables": {
                   "user_input": "Hello world"
                 },
-                "max_tokens": 250,
+                "max_completion_tokens": 250,
                 "presence_penalty": 0.2
               }'
         - lang: python
@@ -1923,7 +1929,7 @@ paths:
                 variables={
                     "user_input": "Hello world"
                 },
-                max_tokens=250,
+                max_completion_tokens=250,
                 presence_penalty=0.2
             )
 
@@ -1943,7 +1949,7 @@ paths:
               variables: {
                 user_input: "Hello world"
               },
-              max_tokens: 250,
+              max_completion_tokens: 250,
               presence_penalty: 0.2
             });
 
@@ -2008,7 +2014,7 @@ paths:
                 "variables": {
                   "user_input": "Hello world"
                 },
-                "max_tokens": 250,
+                "max_completion_tokens": 250,
                 "presence_penalty": 0.2
               }'
         - lang: Python
@@ -2025,7 +2031,7 @@ paths:
                 variables={
                     "user_input": "Hello world"
                 },
-                max_tokens=250,
+                max_completion_tokens=250,
                 presence_penalty=0.2
             )
 
@@ -2045,7 +2051,7 @@ paths:
               variables: {
                 user_input: "Hello world"
               },
-              max_tokens: 250,
+              max_completion_tokens: 250,
               presence_penalty: 0.2
             });
 
@@ -2060,7 +2066,7 @@ paths:
                 "variables": {
                   "user_input": "Hello world"
                 },
-                "max_tokens": 250,
+                "max_completion_tokens": 250,
                 "presence_penalty": 0.2
               }'
         - lang: Python
@@ -2078,7 +2084,7 @@ paths:
                 variables={
                     "user_input": "Hello world"
                 },
-                max_tokens=250,
+                max_completion_tokens=250,
                 presence_penalty=0.2
             )
 
@@ -2099,7 +2105,7 @@ paths:
               variables: {
                 user_input: "Hello world"
               },
-              max_tokens: 250,
+              max_completion_tokens: 250,
               presence_penalty: 0.2
             });
 
@@ -22282,13 +22288,22 @@ components:
             $ref: "#/components/schemas/ChatCompletionRequestMessage"
         model:
           description: ID of the model to use. See the [model endpoint compatibility](https://platform.openai.com/docs/models/model-endpoint-compatibility) table for details on which models work with the Chat API.
-          example: "gpt-4-turbo"
+          example: "gpt-5"
           anyOf:
             - type: string
             - type: string
               enum:
                 [
+                  "gpt-5",
+                  "gpt-5-mini",
+                  "gpt-5-nano",
+                  "o4-mini",
+                  "o3",
+                  "o3-mini",
+                  "o1",
+                  "o1-mini",
                   "gpt-4o",
+                  "gpt-4o-mini",
                   "gpt-4o-2024-05-13",
                   "gpt-4-turbo",
                   "gpt-4-turbo-2024-04-09",
@@ -22342,9 +22357,21 @@ components:
           nullable: true
         max_tokens:
           description: |
-            The maximum number of [tokens](https://platform.openai.com/tokenizer?view=bpe) that can be generated in the chat completion.
+            Deprecated in favor of `max_completion_tokens`.
 
-            The total length of input tokens and generated tokens is limited by the model's context length. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.
+            The maximum number of [tokens](https://platform.openai.com/tokenizer?view=bpe) that can be generated in the chat completion. This value can be used to control [costs](https://openai.com/api/pricing/) for text generated via API.
+
+            **Supported models:** GPT-4o, GPT-4o-mini, GPT-4, GPT-4 Turbo, GPT-3.5 Turbo.
+
+            **Not supported:** o-series reasoning models (o1, o3, o3-mini, o4-mini) and GPT-5 series — use `max_completion_tokens` instead.
+          type: integer
+          nullable: true
+          deprecated: true
+        max_completion_tokens:
+          description: |
+            An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and [reasoning tokens](https://platform.openai.com/docs/guides/reasoning).
+
+            **Supported models:** GPT-5 series, o-series reasoning models (o1, o3, o3-mini, o4-mini) — required. Also supported on GPT-4o, GPT-4o-mini, GPT-4, GPT-4 Turbo, GPT-3.5 Turbo as a replacement for `max_tokens`.
           type: integer
           nullable: true
         n:
@@ -24999,6 +25026,28 @@ components:
         total_tokens:
           type: integer
           description: Total number of tokens used in the request (prompt + completion).
+        completion_tokens_details:
+          type: object
+          nullable: true
+          description: Breakdown of tokens used in a completion.
+          properties:
+            reasoning_tokens:
+              type: integer
+              description: Tokens generated by the model for reasoning.
+            accepted_prediction_tokens:
+              type: integer
+              description: When using Predicted Outputs, the number of tokens in the prediction that appeared in the completion.
+            rejected_prediction_tokens:
+              type: integer
+              description: When using Predicted Outputs, the number of tokens in the prediction that did not appear in the completion.
+        prompt_tokens_details:
+          type: object
+          nullable: true
+          description: Breakdown of tokens used in the prompt.
+          properties:
+            cached_tokens:
+              type: integer
+              description: Cached tokens present in the prompt.
       required:
         - prompt_tokens
         - completion_tokens
