@@ -1809,7 +1809,7 @@ paths:
                   required:
                     - variables
                   description: |
-                    Note: Although hyperparameters are shown grouped here (like messages, max_tokens, temperature, etc.), they should only be passed at the root level, alongside 'variables' and 'stream'.
+                    Note: Although hyperparameters are shown grouped here (like messages, max_completion_tokens, temperature, etc.), they should only be passed at the root level, alongside 'variables' and 'stream'. The `max_tokens` parameter is deprecated — use `max_completion_tokens` instead.
                   properties:
                     variables:
                       type: object
@@ -1981,7 +1981,7 @@ paths:
                   required:
                     - variables
                   description: |
-                    Note: Although hyperparameters are shown grouped here (like messages, max_tokens, temperature, etc.), they should only be passed at the root level, alongside 'variables' and 'stream'.
+                    Note: Although hyperparameters are shown grouped here (like messages, max_completion_tokens, temperature, etc.), they should only be passed at the root level, alongside 'variables' and 'stream'. The `max_tokens` parameter is deprecated — use `max_completion_tokens` instead.
                   properties:
                     variables:
                       type: object
