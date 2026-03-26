@@ -14633,17 +14633,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkspaceMember"
               example:
-                object: workspace_member
-                user_id: 61e08f60-4822-465e-ba23-39f85cd741cb
-                user:
-                  object: user
-                  id: 61e08f60-4822-465e-ba23-39f85cd741cb
-                  first_name: horace
-                  last_name: slughorn
-                  email: horace.slughorn@example.com
+                object: workspace-user
+                id: 66dc015d-0270-11f1-8eec-0e27d7367989
+                first_name: John
+                last_name: Doe
+                org_role: admin
                 role: admin
-                created_at: "2024-01-25 11:35:07"
-                last_updated_at: "2024-01-25 11:35:07"
+                created_at: "2026-03-09T07:55:25.000Z"
+                last_updated_at: "2026-03-09T07:55:25.000Z"
+                status: active
+                workspace_id: bf276bb9-4cef-4d87-b69b-b23a6ed6b1dd
+                email: john.doe@example.com
+                scopes:
+                  - organisations.read
+                  - organisation_users.read
+                  - workspaces.read
+                  - logs.list
+                  - logs.view
+                  - prompts.create
+                  - prompts.read
+                  - prompts.list
+                  - configs.create
+                  - configs.read
+                  - configs.list
+                  - virtual_keys.create
+                  - virtual_keys.read
+                  - virtual_keys.list
+                  - workspace_users.create
+                  - workspace_users.read
+                  - workspace_users.list
+                  - generations.create
+                settings: null
       x-code-samples:
         - lang: python
           label: Default
@@ -32420,7 +32440,7 @@ components:
         id:
           type: string
           format: uuid
-          example: 25afb7bd-f98a-11ee-85fe-0e27d7367987
+          example: 66dc015d-0270-11f1-8eec-0e27d7367989
         first_name:
           type: string
           example: John
@@ -32429,31 +32449,66 @@ components:
           example: Doe
         org_role:
           type: string
-          example: member
+          example: admin
           enum:
             - admin
             - member
             - owner
         role:
           type: string
-          example: member
+          example: admin
           enum:
             - admin
             - member
             - manager
         created_at:
           type: string
-          example: 2024-01-01T00:00:00.000Z
           format: date-time
+          example: "2026-03-09T07:55:25.000Z"
         last_updated_at:
           type: string
-          example: 2024-01-01T00:00:00.000Z
           format: date-time
+          example: "2026-03-09T07:55:25.000Z"
         status:
           type: string
           example: active
           enum:
             - active
+        workspace_id:
+          type: string
+          format: uuid
+          example: bf276bb9-4cef-4d87-b69b-b23a6ed6b1dd
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        scopes:
+          type: array
+          items:
+            type: string
+          example:
+            - organisations.read
+            - organisation_users.read
+            - workspaces.read
+            - logs.list
+            - logs.view
+            - prompts.create
+            - prompts.read
+            - prompts.list
+            - configs.create
+            - configs.read
+            - configs.list
+            - virtual_keys.create
+            - virtual_keys.read
+            - virtual_keys.list
+            - workspace_users.create
+            - workspace_users.read
+            - workspace_users.list
+            - generations.create
+        settings:
+          type: object
+          nullable: true
+          example: null
     WorkspaceMemberList:
       type: object
       properties:
