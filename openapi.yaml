@@ -17479,6 +17479,19 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UpdateApiKeyObject"
+            examples:
+              update_api_key:
+                summary: Update key metadata and limits
+                value:
+                  name: API_KEY_NAME_0909
+                  rate_limits:
+                    - type: requests
+                      unit: rpm
+                      value: 100
+              reset_usage:
+                summary: Reset accumulated usage for this key
+                value:
+                  reset_usage: true
       parameters:
         - name: id
           in: path
@@ -17614,7 +17627,7 @@ paths:
         - lang: curl
           label: Default
           source: |
-            curl -X GET "https://api.portkey.ai/v1/api-keys/{id}"
+            curl -X PUT "https://api.portkey.ai/v1/api-keys/{id}" \
               -H "x-portkey-api-key: PORTKEY_API_KEY" \
               -H "Content-Type: application/json" \
               -d '{
@@ -17678,7 +17691,7 @@ paths:
         - lang: curl
           label: Self-Hosted
           source: |
-            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/api-keys/{id}" \
+            curl -X PUT "SELF_HOSTED_CONTROL_PLANE_URL/api-keys/{id}" \
             -H "x-portkey-api-key: PORTKEY_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{
@@ -33857,6 +33870,10 @@ components:
                 example: 100
         usage_limits:
           $ref: "#/components/schemas/UsageLimits"
+        reset_usage:
+          type: boolean
+          description: Whether to reset current usage. If the current status is exhausted, this will change it back to active.
+          example: true
         scopes:
           type: array
           items:
