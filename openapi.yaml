@@ -62,6 +62,8 @@ tags:
     description: Given a prompt, the model will return one or more predicted completions, and can also return the probabilities of alternative tokens at each position.
   - name: Embeddings
     description: Get a vector representation of a given input that can be easily consumed by machine learning models and algorithms.
+  - name: Rerank
+    description: Rerank a list of documents based on their relevance to a query. Supported providers include Cohere, Voyage, Jina, Pinecone, Bedrock, and Azure AI.
   - name: Fine-tuning
     description: Manage fine-tuning jobs to tailor a model to your specific training data.
   - name: Batch
@@ -3320,6 +3322,185 @@ paths:
               });
 
               console.log(embedding);
+            }
+
+            main();
+
+  /rerank:
+    servers: *DataPlaneServers
+    post:
+      operationId: createRerank
+      tags:
+        - Rerank
+      summary: Rerank
+      description: |
+        Reranks a list of documents based on their relevance to a query. This endpoint provides a unified interface to reranking models from multiple providers including Cohere, Voyage, Jina, Pinecone, Bedrock, and Azure AI.
+
+        Reranking is useful for improving search results by scoring and sorting documents based on semantic relevance to a query, rather than just keyword matching.
+      parameters:
+        - $ref: "#/components/parameters/PortkeyTraceId"
+        - $ref: "#/components/parameters/PortkeySpanId"
+        - $ref: "#/components/parameters/PortkeyParentSpanId"
+        - $ref: "#/components/parameters/PortkeySpanName"
+        - $ref: "#/components/parameters/PortkeyMetadata"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRerankRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRerankResponse"
+      security:
+        - Portkey-Key: []
+          Virtual-Key: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+        - Portkey-Key: []
+          Config: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+          Custom-Host: []
+
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl https://api.portkey.ai/v1/rerank \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "model": "rerank-v3.5",
+                "query": "What is the capital of France?",
+                "documents": [
+                  "Paris is the capital of France.",
+                  "Berlin is the capital of Germany.",
+                  "Madrid is the capital of Spain."
+                ],
+                "top_n": 2
+              }'
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+              api_key = "PORTKEY_API_KEY",
+              virtual_key = "PROVIDER_VIRTUAL_KEY"
+            )
+
+            response = client.post(
+              "/rerank",
+              model="rerank-v3.5",
+              query="What is the capital of France?",
+              documents=[
+                "Paris is the capital of France.",
+                "Berlin is the capital of Germany.",
+                "Madrid is the capital of Spain.",
+              ],
+              top_n=2,
+            )
+
+            print(response)
+        - lang: javascript
+          label: Default
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY'
+            });
+
+            async function main() {
+              const response = await client.post('/rerank', {
+                model: 'rerank-v3.5',
+                query: 'What is the capital of France?',
+                documents: [
+                  'Paris is the capital of France.',
+                  'Berlin is the capital of Germany.',
+                  'Madrid is the capital of Spain.'
+                ],
+                top_n: 2
+              });
+
+              console.log(response);
+            }
+
+            main();
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST "SELF_HOSTED_GATEWAY_URL/rerank" \
+              -H "Content-Type: application/json" \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -d '{
+                "model": "rerank-v3.5",
+                "query": "What is the capital of France?",
+                "documents": [
+                  "Paris is the capital of France.",
+                  "Berlin is the capital of Germany.",
+                  "Madrid is the capital of Spain."
+                ],
+                "top_n": 2
+              }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+                api_key="PORTKEY_API_KEY",
+                virtual_key="PROVIDER_VIRTUAL_KEY",
+                base_url="SELF_HOSTED_GATEWAY_URL"
+            )
+
+            response = client.post(
+              "/rerank",
+              model="rerank-v3.5",
+              query="What is the capital of France?",
+              documents=[
+                "Paris is the capital of France.",
+                "Berlin is the capital of Germany.",
+                "Madrid is the capital of Spain.",
+              ],
+              top_n=2,
+            )
+
+            print(response)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY',
+              baseURL: 'SELF_HOSTED_GATEWAY_URL'
+            });
+
+            async function main() {
+              const response = await client.post('/rerank', {
+                model: 'rerank-v3.5',
+                query: 'What is the capital of France?',
+                documents: [
+                  'Paris is the capital of France.',
+                  'Berlin is the capital of Germany.',
+                  'Madrid is the capital of Spain.'
+                ],
+                top_n: 2
+              });
+
+              console.log(response);
             }
 
             main();
@@ -23958,6 +24139,170 @@ components:
         - data
         - usage
 
+    RerankDocument:
+      description: |
+        A document to be reranked. Can be a simple string or an object with a text field and optional metadata.
+      oneOf:
+        - type: string
+          title: string
+          description: A simple text string to be reranked.
+          example: "Paris is the capital of France."
+        - type: object
+          title: object
+          description: An object containing the document text and optional metadata.
+          properties:
+            text:
+              type: string
+              description: The text content of the document.
+              example: "Paris is the capital of France."
+          required:
+            - text
+          additionalProperties: true
+
+    CreateRerankRequest:
+      type: object
+      description: |
+        Request body for reranking documents. The unified API supports multiple providers including Cohere, Voyage, Jina, Pinecone, Bedrock, and Azure AI.
+      properties:
+        model:
+          description: |
+            ID of the model to use for reranking. Model availability depends on the provider:
+            - **Cohere**: `rerank-v3.5`, `rerank-english-v3.0`, `rerank-multilingual-v3.0`, `rerank-english-v2.0`, `rerank-multilingual-v2.0`
+            - **Voyage**: `rerank-2`, `rerank-2-lite`
+            - **Jina**: `jina-reranker-v2-base-multilingual`, `jina-reranker-v1-base-en`, `jina-reranker-v1-turbo-en`, `jina-reranker-v1-tiny-en`
+            - **Pinecone**: `bge-reranker-v2-m3`, `pinecone-rerank-v0`
+            - **Bedrock**: Model ARN (e.g., `arn:aws:bedrock:us-west-2::foundation-model/cohere.rerank-v3-5:0`)
+            - **Azure AI**: Cohere rerank deployments on Azure AI Inference; use the model name from your deployment, typically prefixed with `cohere.` (the gateway strips that prefix for the upstream request)
+          type: string
+          example: "rerank-v3.5"
+        query:
+          description: The search query to compare against the documents.
+          type: string
+          example: "What is the capital of France?"
+        documents:
+          description: |
+            The list of documents to rerank. Each document can be a string or an object with a `text` field.
+            The documents will be scored based on their relevance to the query.
+          type: array
+          items:
+            $ref: "#/components/schemas/RerankDocument"
+          minItems: 1
+          example:
+            - "Paris is the capital of France."
+            - "Berlin is the capital of Germany."
+            - "Madrid is the capital of Spain."
+        top_n:
+          description: |
+            The number of top results to return. If not specified, all documents are returned sorted by relevance.
+            For Voyage, the gateway maps this field to the provider's `top_k` parameter.
+          type: integer
+          minimum: 1
+          example: 3
+        return_documents:
+          description: |
+            Whether to return the document text in the response. Supported by Voyage, Jina, and Pinecone.
+          type: boolean
+          default: false
+        max_tokens_per_doc:
+          description: |
+            Maximum number of tokens per document. Documents exceeding this limit will be truncated. Cohere-specific parameter.
+          type: integer
+          minimum: 1
+        priority:
+          description: |
+            Request priority hint. Cohere-specific parameter.
+          type: number
+        rank_fields:
+          description: |
+            The fields to use for ranking when documents are objects with multiple fields. Pinecone-specific parameter.
+          type: array
+          items:
+            type: string
+          example: ["text", "title"]
+        truncation:
+          description: |
+            Whether to truncate documents that exceed the model's maximum context length. Voyage-specific parameter.
+          type: boolean
+        parameters:
+          description: |
+            Additional provider-specific parameters. Pinecone-specific parameter.
+          type: object
+          additionalProperties: true
+      required:
+        - model
+        - query
+        - documents
+
+    RerankResult:
+      type: object
+      description: A single reranked document result.
+      properties:
+        index:
+          type: integer
+          description: The index of the document in the original input array.
+          example: 0
+        relevance_score:
+          type: number
+          format: float
+          description: |
+            The relevance score of the document to the query. Higher scores indicate greater relevance.
+            Score ranges vary by provider but are typically between 0 and 1.
+          example: 0.98
+        document:
+          type: object
+          description: The original document text. Only present if `return_documents` is true.
+          properties:
+            text:
+              type: string
+              description: The text content of the document.
+          additionalProperties: true
+      required:
+        - index
+        - relevance_score
+
+    RerankUsage:
+      type: object
+      description: Usage information for the rerank request.
+      properties:
+        search_units:
+          type: integer
+          description: |
+            The number of search units consumed by the request. Billing varies by provider.
+
+    CreateRerankResponse:
+      type: object
+      description: Response from the rerank endpoint.
+      properties:
+        id:
+          type: string
+          description: A unique identifier for the rerank request.
+          example: "rerank-abc123"
+        object:
+          type: string
+          description: The object type, which is always "list".
+          enum: [list]
+          example: "list"
+        results:
+          type: array
+          description: |
+            The reranked results sorted by relevance score in descending order.
+          items:
+            $ref: "#/components/schemas/RerankResult"
+        model:
+          type: string
+          description: The model used for reranking.
+          example: "rerank-v3.5"
+        usage:
+          $ref: "#/components/schemas/RerankUsage"
+        provider:
+          type: string
+          description: The provider that processed the request.
+          example: "cohere"
+      required:
+        - object
+        - results
+        - model
+
     CreateTranscriptionRequest:
       type: object
       additionalProperties: false
@@ -36720,6 +37065,20 @@ x-code-samples:
           path: create
         - type: object
           key: Embedding
+          path: object
+    - id: rerank
+      title: Rerank
+      description: |
+        Rerank a list of documents based on their relevance to a query. Reranking improves search results by scoring documents based on semantic relevance rather than keyword matching.
+
+        Supported providers: Cohere, Voyage, Jina, Pinecone, Bedrock, Azure AI.
+      navigationGroup: endpoints
+      sections:
+        - type: endpoint
+          key: createRerank
+          path: create
+        - type: object
+          key: CreateRerankResponse
           path: object
     - id: fine-tuning
       title: Fine-tuning
