@@ -114,6 +114,8 @@ tags:
     description: List and manage capabilities for MCP Servers.
   - name: MCP Servers > User Access
     description: List and manage user access for MCP Servers.
+  - name: MCP Servers > Connections
+    description: List and manage user connections for MCP Servers.
   - name: Api-Keys
     description: Create, List, Retrieve, Update, and Delete your Portkey API keys.
   - name: Logs Export
@@ -16090,6 +16092,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/McpServerUserAccessBulkUpdateResponse"
+
+  /mcp-servers/{mcpServerId}/connections:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID or slug
+    get:
+      operationId: McpServerConnections_list
+      tags:
+        - MCP Servers > Connections
+      summary: List MCP Server Connections
+      description: List users who have connected to this MCP Server.
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+          description: Filter by user ID(s), comma-separated. Defaults to current user.
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+          description: Workspace ID or slug
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerConnectionsListResponse"
+    delete:
+      operationId: McpServerConnections_delete
+      tags:
+        - MCP Servers > Connections
+      summary: Delete MCP Server Connection
+      description: Remove a user's connection to this MCP Server.
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: User ID to disconnect. Defaults to current user.
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+          description: Workspace ID or slug
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpServerConnectionDeleteResponse"
 
   /logs:
     servers: *DataPlaneServers
@@ -37129,6 +37203,40 @@ components:
           description: Server default when user has no explicit override
 
     McpServerUserAccessBulkUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+
+    McpServerConnectionItem:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        connected:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+
+    McpServerConnectionsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/McpServerConnectionItem"
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    McpServerConnectionDeleteResponse:
       type: object
       properties:
         success:
