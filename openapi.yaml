@@ -16101,24 +16101,23 @@ paths:
         required: true
         schema:
           type: string
-        description: MCP Server ID or slug
+        description: MCP Server ID (UUID) or slug
     get:
       operationId: McpServerConnections_list
       tags:
         - MCP Servers > Connections
       summary: List MCP Server Connections
-      description: List users who have connected to this MCP Server.
       parameters:
         - name: user_id
           in: query
           schema:
             type: string
-          description: Filter by user ID(s), comma-separated. Defaults to current user.
+          description: Filter by user ID(s), comma-separated
         - name: workspace_id
           in: query
           schema:
             type: string
-          description: Workspace ID or slug
+          description: Workspace ID or slug. Required when using org admin API key; optional when API key is workspace-scoped.
         - name: current_page
           in: query
           schema:
@@ -16144,19 +16143,18 @@ paths:
       tags:
         - MCP Servers > Connections
       summary: Delete MCP Server Connection
-      description: Remove a user's connection to this MCP Server.
       parameters:
         - name: user_id
           in: query
           schema:
             type: string
             format: uuid
-          description: User ID to disconnect. Defaults to current user.
+          description: User ID to disconnect
         - name: workspace_id
           in: query
           schema:
             type: string
-          description: Workspace ID or slug
+          description: Workspace ID or slug. Required when using org admin API key; optional when API key is workspace-scoped.
       responses:
         "200":
           description: OK
