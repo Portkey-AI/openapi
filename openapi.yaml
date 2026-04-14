@@ -16112,7 +16112,7 @@ paths:
           in: query
           schema:
             type: string
-          description: Filter by user ID(s), comma-separated
+          description: Optional. UUID of the user whose connections to list. If not provided, defaults to the current user for user API keys, and returns all connections on the MCP server for service API keys.
         - name: workspace_id
           in: query
           schema:
