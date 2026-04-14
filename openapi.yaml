@@ -16149,7 +16149,7 @@ paths:
           schema:
             type: string
             format: uuid
-          description: User ID to disconnect
+          description: The UUID of the user to disconnect. Required when using a service API key; optional when using a user API key (the user ID is derived from the key if not provided).
         - name: workspace_id
           in: query
           schema:
