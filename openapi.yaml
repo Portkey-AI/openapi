@@ -5505,7 +5505,7 @@ paths:
             }
 
             main();
-          response: &list_assistants_example |
+          x-example-response: &list_assistants_example |
             {
               "object": "list",
               "data": [
@@ -5644,7 +5644,7 @@ paths:
             }
 
             main();
-          response: &create_assistants_example |
+          x-example-response: &create_assistants_example |
             {
               "id": "asst_abc123",
               "object": "assistant",
@@ -5735,7 +5735,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "asst_abc123",
               "object": "assistant",
@@ -5849,7 +5849,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "asst_123",
               "object": "assistant",
@@ -5941,7 +5941,7 @@ paths:
               console.log(response);
             }
             main();
-          response: |
+          x-example-response: |
             {
               "id": "asst_abc123",
               "object": "assistant.deleted",
@@ -6190,7 +6190,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "thread_abc123",
               "object": "thread",
@@ -6271,7 +6271,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "thread_abc123",
               "object": "thread",
@@ -6374,7 +6374,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "thread_abc123",
               "object": "thread",
@@ -6453,7 +6453,7 @@ paths:
               console.log(response);
             }
             main();
-          response: |
+          x-example-response: |
             {
               "id": "thread_abc123",
               "object": "thread.deleted",
@@ -6562,7 +6562,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "object": "list",
               "data": [
@@ -6696,7 +6696,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "msg_abc123",
               "object": "thread.message",
@@ -6800,7 +6800,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "msg_abc123",
               "object": "thread.message",
@@ -6918,7 +6918,7 @@ paths:
                   },
                 }
               }'
-          response: |
+          x-example-response: |
             {
               "id": "msg_abc123",
               "object": "thread.message",
@@ -7020,7 +7020,7 @@ paths:
 
               console.log(deletedMessage);
             }
-          response: |
+          x-example-response: |
             {
               "id": "msg_abc123",
               "object": "thread.message.deleted",
@@ -7119,7 +7119,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7253,7 +7253,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "object": "list",
               "data": [
@@ -7440,7 +7440,7 @@ paths:
             }
 
             main();
-          response: &run_object_example |
+          x-example-response: &run_object_example |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7559,7 +7559,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7697,7 +7697,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7860,7 +7860,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "run_123",
               "object": "thread.run",
@@ -7997,7 +7997,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -8138,7 +8138,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "object": "list",
               "data": [
@@ -8264,7 +8264,7 @@ paths:
             }
 
             main();
-          response: &run_step_object_example |
+          x-example-response: &run_step_object_example |
             {
               "id": "step_abc123",
               "object": "thread.run.step",
@@ -8378,7 +8378,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "object": "list",
               "data": [
@@ -8488,7 +8488,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vs_abc123",
               "object": "vector_store",
@@ -8576,7 +8576,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vs_abc123",
               "object": "vector_store",
@@ -8666,7 +8666,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vs_abc123",
               "object": "vector_store",
@@ -8754,7 +8754,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vs_abc123",
               "object": "vector_store.deleted",
@@ -8863,7 +8863,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "object": "list",
               "data": [
@@ -8970,7 +8970,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "file-abc123",
               "object": "vector_store.file",
@@ -9063,7 +9063,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "file-abc123",
               "object": "vector_store.file",
@@ -9152,7 +9152,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "file-abc123",
               "object": "vector_store.file.deleted",
@@ -9246,7 +9246,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vsfb_abc123",
               "object": "vector_store.file_batch",
@@ -9344,7 +9344,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vsfb_abc123",
               "object": "vector_store.file_batch",
@@ -9441,7 +9441,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "id": "vsfb_abc123",
               "object": "vector_store.file_batch",
@@ -9567,7 +9567,7 @@ paths:
             }
 
             main();
-          response: |
+          x-example-response: |
             {
               "object": "list",
               "data": [
@@ -20742,7 +20742,7 @@ paths:
                             operands:
                               - value: cache_read_tokens
                               - value: rates.cache_read_input_token
-                      response:
+                      x-example-response:
                         operation: multiply
                         operands:
                           - value: output_tokens
@@ -20773,7 +20773,7 @@ paths:
                             operands:
                               - value: input_tokens
                               - value: rates.request_token
-                      response:
+                      x-example-response:
                         operation: multiply
                         operands:
                           - value: output_tokens
@@ -21650,7 +21650,6 @@ components:
 
             Note that <|endoftext|> is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
           default: "<|endoftext|>"
-          nullable: true
           oneOf:
             - type: string
               default: ""
@@ -21673,6 +21672,7 @@ components:
                 items:
                   type: integer
               example: "[[1212, 318, 257, 1332, 13]]"
+            - enum: [null]
         best_of:
           type: integer
           default: 1
@@ -21768,7 +21768,6 @@ components:
           description: &completions_stop_description >
             Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
           default: null
-          nullable: true
           oneOf:
             - type: string
               default: <|endoftext|>
@@ -21780,6 +21779,7 @@ components:
               items:
                 type: string
                 example: '["\n"]'
+            - enum: [null]
         stream:
           description: >
             Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-UShttps://platform.openai.com/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
@@ -23212,10 +23212,10 @@ components:
             - type: string
             - type: string
               enum: ["dall-e-2", "dall-e-3"]
+            - enum: [null]
           x-oaiTypeLabel: string
           default: "dall-e-2"
           example: "dall-e-3"
-          nullable: true
           description: The model to use for image generation.
         n: &images_n
           type: integer
@@ -23709,10 +23709,10 @@ components:
             - type: string
             - type: string
               enum: ["dall-e-2"]
+            - enum: [null]
           x-oaiTypeLabel: string
           default: "dall-e-2"
           example: "dall-e-2"
-          nullable: true
           description: The model to use for image generation. Only `dall-e-2` is supported at this time.
         n:
           type: integer
@@ -23747,10 +23747,10 @@ components:
             - type: string
             - type: string
               enum: ["dall-e-2"]
+            - enum: [null]
           x-oaiTypeLabel: string
           default: "dall-e-2"
           example: "dall-e-2"
-          nullable: true
           description: The model to use for image generation. Only `dall-e-2` is supported at this time.
         n: *images_n
         response_format: *images_response_format
@@ -23780,7 +23780,6 @@ components:
             Two content moderations models are available: `text-moderation-stable` and `text-moderation-latest`.
 
             The default is `text-moderation-latest` which will be automatically upgraded over time. This ensures you are always using our most accurate model. If you use `text-moderation-stable`, we will provide advanced notice before updating the model. Accuracy of `text-moderation-stable` may be slightly lower than for `text-moderation-latest`.
-          nullable: false
           default: "text-moderation-latest"
           example: "text-moderation-stable"
           anyOf:
@@ -28369,8 +28368,8 @@ components:
                   "gpt-3.5-turbo-0125",
                   "gpt-3.5-turbo-16k-0613",
                 ]
+            - enum: [null]
           x-oaiTypeLabel: string
-          nullable: true
         instructions:
           description: Overrides the [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant) of the assistant. This is useful for modifying the behavior on a per-run basis.
           type: string
@@ -28704,8 +28703,8 @@ components:
                   "gpt-3.5-turbo-0125",
                   "gpt-3.5-turbo-16k-0613",
                 ]
+            - enum: [null]
           x-oaiTypeLabel: string
-          nullable: true
         instructions:
           description: Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis.
           type: string
@@ -30507,20 +30506,21 @@ components:
             - `web_search_preview`
             - `web_search_preview_2025_03_11`
         user_location:
-          allOf:
-            - $ref: "#/components/schemas/WebSearchLocation"
-            - type: object
-              properties:
-                type:
-                  type: string
-                  description: |
-                    The type of location approximation. Always `approximate`.
-                  enum:
-                    - approximate
-                  x-stainless-const: true
-              required:
-                - type
-          nullable: true
+          anyOf:
+            - allOf:
+                - $ref: "#/components/schemas/WebSearchLocation"
+                - type: object
+                  properties:
+                    type:
+                      type: string
+                      description: |
+                        The type of location approximation. Always `approximate`.
+                      enum:
+                        - approximate
+                      x-stainless-const: true
+                  required:
+                    - type
+            - enum: [null]
         search_context_size:
           $ref: "#/components/schemas/WebSearchContextSize"
       required:
@@ -35946,6 +35946,8 @@ components:
           description: Inference endpoint
         metadata:
           description: metadata related for the batch job
+          type: object
+          additionalProperties: true
           nullable: true
       description: Gateway supported body params for OpenAI, Azure OpenAI and VertexAI.
       title: OpenAI Params
