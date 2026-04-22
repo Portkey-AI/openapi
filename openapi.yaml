@@ -17362,6 +17362,31 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateApiKeyObject"
+            examples:
+              create_basic:
+                summary: Create a basic service API key
+                value:
+                  name: "API_KEY_NAME_0909"
+                  scopes: ["completions.write"]
+              create_with_rotation:
+                summary: Create an API key with automatic monthly rotation
+                value:
+                  name: "Auto-rotating Key"
+                  scopes: ["completions.write"]
+                  rotation_policy:
+                    rotation_period: "monthly"
+                    key_transition_period_ms: 3600000
+              create_with_usage_limits:
+                summary: Create an API key with usage limits and alert emails
+                value:
+                  name: "Budget-limited Key"
+                  scopes: ["completions.write"]
+                  usage_limits:
+                    type: "cost"
+                    credit_limit: 100
+                    alert_threshold: 80
+                    periodic_reset: "monthly"
+                  alert_emails: ["admin@example.com"]
       responses:
         "200":
           description: OK
@@ -17771,6 +17796,21 @@ paths:
                 summary: Reset accumulated usage for this key
                 value:
                   reset_usage: true
+              set_rotation_policy:
+                summary: Set automatic monthly rotation on an existing key
+                value:
+                  rotation_policy:
+                    rotation_period: "monthly"
+                    key_transition_period_ms: 3600000
+              update_usage_limits:
+                summary: Update usage limits and alert emails
+                value:
+                  usage_limits:
+                    type: "cost"
+                    credit_limit: 100
+                    alert_threshold: 80
+                    periodic_reset: "monthly"
+                  alert_emails: ["admin@example.com"]
       parameters:
         - name: id
           in: path
