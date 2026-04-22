@@ -139,6 +139,7 @@ tags:
   - name: Secret-References
     description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
 
+
 paths:
   # Note: When adding an endpoint, make sure you also add it in the `groups` section, in the end of this file,
   # under the appropriate group
@@ -605,7 +606,7 @@ paths:
               required:
                 - name
       responses:
-        "200":
+        '200':
           description: Collection created successfully
           content:
             application/json:
@@ -619,17 +620,17 @@ paths:
                   slug:
                     type: string
                     description: Slug of the created collection
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Workspace or parent collection not found
-        "500":
+        '500':
           description: Server error
-
+    
     get:
       summary: List collections
       description: Lists all collections in the specified workspace
@@ -665,7 +666,7 @@ paths:
             type: string
           description: Search query to filter collections by name
       responses:
-        "200":
+        '200':
           description: List of collections
           content:
             application/json:
@@ -678,18 +679,18 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/CollectionWithDetails"
-        "400":
+                      $ref: '#/components/schemas/CollectionWithDetails'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Workspace not found
-        "500":
+        '500':
           description: Server error
-
+  
   /collections/{collectionId}:
     servers: *ControlPlaneServers
     parameters:
@@ -699,7 +700,7 @@ paths:
         schema:
           type: string
         description: ID or slug of the collection
-
+    
     get:
       summary: Get collection details
       description: Retrieves details of a specific collection
@@ -708,21 +709,21 @@ paths:
       security:
         - Portkey-Key: []
       responses:
-        "200":
+        '200':
           description: Collection details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CollectionWithChildCollections"
-        "401":
+                $ref: '#/components/schemas/CollectionWithChildCollections'
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Collection not found
-        "500":
+        '500':
           description: Server error
-
+    
     put:
       summary: Update collection
       description: Updates a collection's details
@@ -743,7 +744,7 @@ paths:
               required:
                 - name
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -755,17 +756,17 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Collection not found
-        "500":
+        '500':
           description: Server error
-
+    
     delete:
       summary: Delete collection
       description: Deletes a collection
@@ -774,7 +775,7 @@ paths:
       tags:
         - Collections
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -786,13 +787,13 @@ paths:
               schema:
                 type: object
               example: {}
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Collection not found or trying to delete default collection
-        "500":
+        '500':
           description: Server error
 
   /labels:
@@ -810,25 +811,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateLabelRequest"
+              $ref: '#/components/schemas/CreateLabelRequest'
       responses:
-        "200":
+        '200':
           description: Label created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateLabelResponse"
-        "400":
+                $ref: '#/components/schemas/CreateLabelResponse'
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "500":
+        '500':
           description: Server error
 
     get:
@@ -869,23 +870,23 @@ paths:
             minimum: 1
           description: Number of items per page
       responses:
-        "200":
+        '200':
           description: List of labels
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListLabelsResponse"
-        "400":
+                $ref: '#/components/schemas/ListLabelsResponse'
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "500":
+        '500':
           description: Server error
 
   /labels/{labelId}:
@@ -918,25 +919,25 @@ paths:
             type: string
           description: ID or slug of the workspace
       responses:
-        "200":
+        '200':
           description: Label details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Label"
-        "400":
+                $ref: '#/components/schemas/Label'
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Label not found
-        "500":
+        '500':
           description: Server error
 
     put:
@@ -960,9 +961,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateLabelRequest"
+              $ref: '#/components/schemas/UpdateLabelRequest'
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -974,19 +975,19 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Label not found
-        "500":
+        '500':
           description: Server error
 
     delete:
@@ -1006,7 +1007,7 @@ paths:
             format: uuid
           description: ID of the label to delete
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -1018,19 +1019,19 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Label not found
-        "500":
+        '500':
           description: Server err
 
   /prompts:
@@ -1092,7 +1093,7 @@ paths:
                   type: object
                   description: Metadata for the prompt
       responses:
-        "200":
+        '200':
           description: Prompt created successfully
           content:
             application/json:
@@ -1109,16 +1110,16 @@ paths:
                     format: uuid
                   object:
                     type: string
-                    enum: ["prompt"]
-        "400":
+                    enum: ['prompt']
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "500":
+        '500':
           description: Server error
-
+    
     get:
       summary: List prompts
       operationId: listPrompts
@@ -1148,7 +1149,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of prompts
           content:
             application/json:
@@ -1158,18 +1159,18 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/PromptSummary"
+                      $ref: '#/components/schemas/PromptSummary'
                   total:
                     type: integer
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/{promptId}:
     servers: *ControlPlaneServers
     get:
@@ -1186,23 +1187,23 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Prompt details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Prompt"
-        "400":
+                $ref: '#/components/schemas/Prompt'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt not found
-        "500":
+        '500':
           description: Server error
-
+    
     put:
       summary: Update a prompt
       description: |
@@ -1273,7 +1274,7 @@ paths:
                   type: object
                   description: Additional metadata for the prompt version. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
       responses:
-        "200":
+        '200':
           description: Prompt updated successfully
           content:
             application/json:
@@ -1288,17 +1289,17 @@ paths:
                   prompt_version_id:
                     type: string
                     format: uuid
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt not found
-        "500":
+        '500':
           description: Server error
-
+    
     delete:
       summary: Delete a prompt
       operationId: deletePrompt
@@ -1313,24 +1314,24 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Prompt deleted successfully
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/{promptId}/versions:
     servers: *ControlPlaneServers
     get:
@@ -1347,25 +1348,25 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of prompt versions
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PromptVersionSummary"
-        "400":
+                  $ref: '#/components/schemas/PromptVersionSummary'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/{promptId}/versions/{versionId}:
     servers: *ControlPlaneServers
     get:
@@ -1388,23 +1389,23 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Prompt version details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Prompt"
-        "400":
+                $ref: '#/components/schemas/Prompt'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt version not found
-        "500":
+        '500':
           description: Server error
-
+    
     put:
       summary: Update a specific version of a prompt
       description: |
@@ -1440,24 +1441,24 @@ paths:
                   format: uuid
                   description: The label to assign to this version.
       responses:
-        "200":
+        '200':
           description: Prompt version updated successfully
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt version not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/{promptId}/makeDefault:
     servers: *ControlPlaneServers
     put:
@@ -1486,24 +1487,24 @@ paths:
                   type: number
                   description: Version Number to set as default
       responses:
-        "200":
+        '200':
           description: Default version set successfully
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt or version not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/partials:
     servers: *ControlPlaneServers
     post:
@@ -1534,7 +1535,7 @@ paths:
                 version_description:
                   type: string
       responses:
-        "200":
+        '200':
           description: Prompt partial created successfully
           content:
             application/json:
@@ -1549,15 +1550,15 @@ paths:
                   version_id:
                     type: string
                     format: uuid
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "500":
+        '500':
           description: Server error
-
+    
     get:
       summary: List prompt partials
       operationId: listPromptPartials
@@ -1571,25 +1572,25 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of prompt partials
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PromptPartialSummary"
-        "400":
+                  $ref: '#/components/schemas/PromptPartialSummary'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/partials/{promptPartialId}:
     servers: *ControlPlaneServers
     get:
@@ -1606,23 +1607,23 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Prompt partial details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PromptPartial"
-        "400":
+                $ref: '#/components/schemas/PromptPartial'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt partial not found
-        "500":
+        '500':
           description: Server error
-
+    
     put:
       summary: Update a prompt partial
       operationId: updatePromptPartial
@@ -1652,7 +1653,7 @@ paths:
                 status:
                   type: string
       responses:
-        "200":
+        '200':
           description: Prompt partial updated successfully
           content:
             application/json:
@@ -1662,17 +1663,17 @@ paths:
                   prompt_partial_version_id:
                     type: string
                     format: uuid
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt partial not found
-        "500":
+        '500':
           description: Server error
-
+    
     delete:
       summary: Delete a prompt partial
       operationId: deletePromptPartial
@@ -1687,24 +1688,24 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Prompt partial deleted successfully
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt partial not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/partials/{promptPartialId}/versions:
     servers: *ControlPlaneServers
     get:
@@ -1721,25 +1722,25 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of prompt partial versions
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/PromptPartialVersion"
-        "400":
+                  $ref: '#/components/schemas/PromptPartialVersion'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt partial not found
-        "500":
+        '500':
           description: Server error
-
+  
   /prompts/partials/{promptPartialId}/makeDefault:
     servers: *ControlPlaneServers
     put:
@@ -1768,22 +1769,22 @@ paths:
                   type: number
                   description: Version Number to set as default
       responses:
-        "200":
+        '200':
           description: Default version set successfully
           content:
             application/json:
               schema:
                 type: object
                 properties: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Prompt partial or version not found
-        "500":
+        '500':
           description: Server error
 
   /prompts/{promptId}/completions:
@@ -1959,7 +1960,7 @@ paths:
             console.log(completion);
 
   /prompts/{promptId}/render:
-    servers: *DataPlaneServers
+    servers: *DataPlaneServers 
     post:
       operationId: createPromptRender
       tags:
@@ -2126,7 +2127,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateGuardrailRequest"
+              $ref: '#/components/schemas/CreateGuardrailRequest'
             examples:
               # BASIC CATEGORY EXAMPLES
               jwt_authentication:
@@ -2155,13 +2156,7 @@ paths:
                   checks:
                     - id: "default.modelWhitelist"
                       parameters:
-                        models:
-                          [
-                            "gpt-4",
-                            "gpt-3.5-turbo",
-                            "claude-3-sonnet",
-                            "claude-3-haiku",
-                          ]
+                        models: ["gpt-4", "gpt-3.5-turbo", "claude-3-sonnet", "claude-3-haiku"]
                   actions:
                     onFail: "block"
                     message: "Model not in approved whitelist"
@@ -2328,14 +2323,13 @@ paths:
                   checks:
                     - id: "portkey.moderateContent"
                       parameters:
-                        categories:
-                          [
-                            "hate/threatening",
-                            "harassment/threatening",
-                            "self-harm/intent",
-                            "sexual/minors",
-                            "violence/graphic",
-                          ]
+                        categories: [
+                          "hate/threatening",
+                          "harassment/threatening", 
+                          "self-harm/intent",
+                          "sexual/minors",
+                          "violence/graphic"
+                        ]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -2365,14 +2359,13 @@ paths:
                     - id: "portkey.pii"
                       parameters:
                         redact: true
-                        categories:
-                          [
-                            "EMAIL_ADDRESS",
-                            "PHONE_NUMBER",
-                            "SSN",
-                            "CREDIT_CARD",
-                            "NAME",
-                          ]
+                        categories: [
+                          "EMAIL_ADDRESS",
+                          "PHONE_NUMBER", 
+                          "SSN",
+                          "CREDIT_CARD",
+                          "NAME"
+                        ]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -2430,14 +2423,13 @@ paths:
                   checks:
                     - id: "pillar.scanPrompt"
                       parameters:
-                        scanners:
-                          [
-                            "prompt_injection",
-                            "pii",
-                            "secrets",
-                            "toxic_language",
-                            "invisible_characters",
-                          ]
+                        scanners: [
+                          "prompt_injection",
+                          "pii", 
+                          "secrets",
+                          "toxic_language",
+                          "invisible_characters"
+                        ]
                         timeout: 5000
                     - id: "pillar.scanResponse"
                       parameters:
@@ -2506,14 +2498,13 @@ paths:
                   checks:
                     - id: "mistral.moderateContent"
                       parameters:
-                        categories:
-                          [
-                            "sexual",
-                            "hate_and_discrimination",
-                            "violence_and_threats",
-                            "selfharm",
-                            "pii",
-                          ]
+                        categories: [
+                          "sexual",
+                          "hate_and_discrimination",
+                          "violence_and_threats",
+                          "selfharm",
+                          "pii"
+                        ]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -2579,8 +2570,7 @@ paths:
                         pii_categories: ["email_address", "ssn", "credit_card"]
                         secrets: true
                         secrets_redact: true
-                        secrets_categories:
-                          ["aws_secret_key", "openai", "github"]
+                        secrets_categories: ["aws_secret_key", "openai", "github"]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -2615,30 +2605,30 @@ paths:
                     message: "Prisma AIRS blocked request"
 
       responses:
-        "200":
+        '200':
           description: Guardrail created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateGuardrailResponse"
-        "400":
+                $ref: '#/components/schemas/CreateGuardrailResponse'
+        '400':
           description: Bad request - validation failed
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden - insufficient permissions or guardrail not allowed
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     get:
       summary: List guardrails
@@ -2675,24 +2665,24 @@ paths:
             minimum: 0
             default: 0
       responses:
-        "200":
+        '200':
           description: List of guardrails retrieved successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListGuardrailsResponse"
-        "400":
+                $ref: '#/components/schemas/ListGuardrailsResponse'
+        '400':
           description: Bad request - invalid parameters
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden - insufficient permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /guardrails/{guardrailId}:
     get:
@@ -2716,24 +2706,24 @@ paths:
               summary: Using slug
               value: "guard_abc123"
       responses:
-        "200":
+        '200':
           description: Guardrail details retrieved successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GuardrailDetails"
-        "403":
+                $ref: '#/components/schemas/GuardrailDetails'
+        '403':
           description: Forbidden - guardrail not found or insufficient permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     put:
       summary: Update a guardrail
@@ -2753,26 +2743,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateGuardrailRequest"
+              $ref: '#/components/schemas/UpdateGuardrailRequest'
       responses:
-        "200":
+        '200':
           description: Guardrail updated successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UpdateGuardrailResponse"
-        "400":
+                $ref: '#/components/schemas/UpdateGuardrailResponse'
+        '400':
           description: Bad request - validation failed
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden - guardrail not found or insufficient permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
     delete:
       summary: Delete a guardrail
@@ -2788,20 +2778,20 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Guardrail deleted successfully
-        "403":
+        '403':
           description: Forbidden - guardrail not found or insufficient permissions
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 
   /images/generations:
     servers: *DataPlaneServers
@@ -5062,12 +5052,12 @@ paths:
             enum: [asc, desc]
             default: asc
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListModelsResponse"
+                $ref: '#/components/schemas/ListModelsResponse'
               example:
                 object: "list"
                 total: 500
@@ -5154,7 +5144,8 @@ paths:
               });
               console.log(list);
             }
-            main();
+            main();     
+
 
   /models/{model}:
     get:
@@ -9868,6 +9859,7 @@ paths:
                 type: string
                 format: binary
 
+
       security:
         - Portkey-Key: []
           Virtual-Key: []
@@ -10491,7 +10483,8 @@ paths:
                 type: object
               examples:
                 example-1:
-                  value: {}
+                  value:
+                    {}
       x-code-samples:
         - lang: python
           label: Default
@@ -10929,27 +10922,26 @@ paths:
                     {
                       "object": "list",
                       "total": 1,
-                      "data":
-                        [
-                          {
-                            "id": "daab995b-8d3b-42c5-a490-47217fbf4e0e",
-                            "name": "PII Redaction Guardrail",
-                            "workspace_id": "8610029e-692a-4df6-9052-3fa3eff69911",
-                            "slug": "pc-pii-re-7f1051",
-                            "organisation_id": "472d2804-d054-4226-b4ae-9d4e2e61e69e",
-                            "is_default": 0,
-                            "status": "active",
-                            "owner_id": "c4c7996d-be62-429d-b787-5d48fe94da86",
-                            "updated_by": "c4c7996d-be62-429d-b787-5d48fe94da86",
-                            "created_at": "2025-10-17T19:11:47.000Z",
-                            "last_updated_at": "2025-10-17T19:11:47.000Z",
-                            "config": '{"input_guardrails":["pg-patron-1d0224"]}',
-                            "format": "json",
-                            "type": "ORG_CONFIG",
-                            "version_id": "8c1a4fbf-26d9-49df-82ca-ab772ba397d2",
-                            "object": "config",
-                          },
-                        ],
+                      "data": [
+                        {
+                          "id": "daab995b-8d3b-42c5-a490-47217fbf4e0e",
+                          "name": "PII Redaction Guardrail",
+                          "workspace_id": "8610029e-692a-4df6-9052-3fa3eff69911",
+                          "slug": "pc-pii-re-7f1051",
+                          "organisation_id": "472d2804-d054-4226-b4ae-9d4e2e61e69e",
+                          "is_default": 0,
+                          "status": "active",
+                          "owner_id": "c4c7996d-be62-429d-b787-5d48fe94da86",
+                          "updated_by": "c4c7996d-be62-429d-b787-5d48fe94da86",
+                          "created_at": "2025-10-17T19:11:47.000Z",
+                          "last_updated_at": "2025-10-17T19:11:47.000Z",
+                          "config": "{\"input_guardrails\":[\"pg-patron-1d0224\"]}",
+                          "format": "json",
+                          "type": "ORG_CONFIG",
+                          "version_id": "8c1a4fbf-26d9-49df-82ca-ab772ba397d2",
+                          "object": "config"
+                        }
+                      ]
                     }
       x-code-samples:
         - lang: curl
@@ -11197,7 +11189,7 @@ paths:
             enum: [workspace, organisation, all]
             default: all
           description: For type=workspace, the API will only return Workpace-Scoped integrations. For type=organisation, the API will only return Global (organisation level) integrations. For type=all, both types of integrations will be returned.
-
+          
       responses:
         "200":
           description: Successful response
@@ -11289,7 +11281,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateIntegrationRequest"
+              $ref: '#/components/schemas/CreateIntegrationRequest'
       responses:
         "200":
           description: Successful response
@@ -11501,7 +11493,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateIntegrationRequest"
+              $ref: '#/components/schemas/UpdateIntegrationRequest'
       responses:
         "200":
           description: Successful response
@@ -11699,12 +11691,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of integration models
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/IntegrationModelsResponse"
+                $ref: '#/components/schemas/IntegrationModelsResponse'
 
     put:
       summary: Bulk update integration models
@@ -11724,14 +11716,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BulkUpdateModelsRequest"
+              $ref: '#/components/schemas/BulkUpdateModelsRequest'
       responses:
-        "200":
+        '200':
           description: Models updated successfully
           content:
             application/json:
               schema:
-                type: object
+                  type: object
 
     delete:
       summary: Bulk delete integration custom models
@@ -11752,12 +11744,12 @@ paths:
             type: string
             example: "gpt-4,gpt-3.5-turbo"
       responses:
-        "200":
+        '200':
           description: Models deleted successfully
           content:
             application/json:
               schema:
-                type: object
+                  type: object
 
   /integrations/{slug}/workspaces:
     get:
@@ -11772,12 +11764,12 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: List of workspace access configurations
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/IntegrationWorkspacesResponse"
+                $ref: '#/components/schemas/IntegrationWorkspacesResponse'
 
     put:
       summary: Bulk update workspace access
@@ -11797,9 +11789,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BulkUpdateWorkspacesRequest"
+              $ref: '#/components/schemas/BulkUpdateWorkspacesRequest'
       responses:
-        "200":
+        '200':
           description: Workspace access updated successfully
           content:
             application/json:
@@ -11828,7 +11820,7 @@ paths:
           schema:
             type: string
           description: Not required when using workspace API keys. Required when using organisation admin keys
-
+          
       responses:
         "200":
           description: Successful response
@@ -12070,7 +12062,7 @@ paths:
                 "integrationId": "",
                 "workspaceId": ""
             }'
-
+  
   /providers/{slug}:
     servers: *ControlPlaneServers
     get:
@@ -12210,7 +12202,7 @@ paths:
                   nullable: true
                 reset_usage:
                   type: boolean
-
+                
       responses:
         "200":
           description: Successful response
@@ -12414,7 +12406,7 @@ paths:
                 workspace_id: ""
             })
             console.log(result);
-
+    
   /virtual-keys:
     servers: *ControlPlaneServers
     get:
@@ -12434,7 +12426,7 @@ paths:
             type: integer
           required: true
           description: Page size, default to 50
-
+          
       responses:
         "200":
           description: Successful response
@@ -12627,7 +12619,7 @@ paths:
                 secret_mappings:
                   type: array
                   items:
-                    $ref: "#/components/schemas/SecretMapping"
+                    $ref: '#/components/schemas/SecretMapping'
                   description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "model_config.<field>" (e.g. "model_config.awsSecretAccessKey"). Each target_field must be unique. When "key" is mapped, the key field becomes optional.
             examples:
               generic:
@@ -12966,7 +12958,7 @@ paths:
                 secret_mappings:
                   type: array
                   items:
-                    $ref: "#/components/schemas/SecretMapping"
+                    $ref: '#/components/schemas/SecretMapping'
                   description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "model_config.<field>" (e.g. "model_config.awsSecretAccessKey"). Each target_field must be unique.
       responses:
         "200":
@@ -15259,11 +15251,11 @@ paths:
                         type: string
                     input_guardrails:
                       type: array
-                      items:
+                      items: 
                         type: string
                     output_guardrails:
                       type: array
-                      items:
+                      items: 
                         type: string
                 usage_limits:
                   type: array
@@ -15273,7 +15265,7 @@ paths:
                   type: array
                   items:
                     $ref: "#/components/schemas/RateLimits"
-
+                  
               example:
                 name: My Workspace
                 description: My Description
@@ -17227,7 +17219,7 @@ paths:
             }
 
             main()
-
+  
   /audit-logs:
     servers: *ControlPlaneServers
     get:
@@ -18484,7 +18476,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateUsageLimitsPolicyRequest"
+              $ref: '#/components/schemas/CreateUsageLimitsPolicyRequest'
             examples:
               monthlyCostLimit:
                 summary: Monthly Cost Limit per API Key
@@ -18512,21 +18504,21 @@ paths:
                   credit_limit: 1000000
                   periodic_reset: weekly
       responses:
-        "200":
+        '200':
           description: Policy created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreatePolicyResponse"
-        "400":
+                $ref: '#/components/schemas/CreatePolicyResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
     get:
@@ -18538,7 +18530,7 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/WorkspaceIdQuery"
+        - $ref: '#/components/parameters/WorkspaceIdQuery'
         - name: status
           in: query
           description: Filter by status
@@ -18554,24 +18546,24 @@ paths:
           schema:
             type: string
             enum: [cost, tokens]
-        - $ref: "#/components/parameters/PageSize"
-        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/CurrentPage'
       responses:
-        "200":
+        '200':
           description: List of usage limits policies
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UsageLimitsPolicyListResponse"
-        "400":
+                $ref: '#/components/schemas/UsageLimitsPolicyListResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
   /policies/usage-limits/{policyUsageLimitsId}:
@@ -18584,7 +18576,7 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/PolicyUsageLimitsId"
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
         - name: status
           in: query
           description: Filter by status
@@ -18601,21 +18593,21 @@ paths:
             type: boolean
             default: false
       responses:
-        "200":
+        '200':
           description: Usage limits policy details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UsageLimitsPolicyResponse"
-        "400":
+                $ref: '#/components/schemas/UsageLimitsPolicyResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
     put:
@@ -18627,19 +18619,19 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/PolicyUsageLimitsId"
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateUsageLimitsPolicyRequest"
+              $ref: '#/components/schemas/UpdateUsageLimitsPolicyRequest'
             example:
               credit_limit: 2000.0
               alert_threshold: 1500.0
               reset_usage_for_value: api-key-123
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -18651,15 +18643,15 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
     delete:
@@ -18671,9 +18663,9 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/PolicyUsageLimitsId"
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -18685,15 +18677,15 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
   /policies/usage-limits/{policyUsageLimitsId}/entities:
@@ -18706,7 +18698,7 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/PolicyUsageLimitsId"
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
         - name: status
           in: query
           description: Filter by entity usage status
@@ -18728,23 +18720,23 @@ paths:
             type: integer
             minimum: 1
             maximum: 100
-        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: '#/components/parameters/CurrentPage'
       responses:
-        "200":
+        '200':
           description: List of entities for the policy
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UsageLimitsPolicyEntityListResponse"
-        "400":
+                $ref: '#/components/schemas/UsageLimitsPolicyEntityListResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
   /policies/usage-limits/{policyUsageLimitsId}/entities/{entityId}/reset:
@@ -18757,25 +18749,25 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/PolicyUsageLimitsId"
-        - $ref: "#/components/parameters/UsageLimitsPolicyEntityId"
+        - $ref: '#/components/parameters/PolicyUsageLimitsId'
+        - $ref: '#/components/parameters/UsageLimitsPolicyEntityId'
       responses:
-        "200":
+        '200':
           description: Entity usage reset successfully
           content:
             application/json:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy or entity not found
-        "500":
+        '500':
           description: Server error
 
   /policies/rate-limits:
@@ -18792,7 +18784,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateRateLimitsPolicyRequest"
+              $ref: '#/components/schemas/CreateRateLimitsPolicyRequest'
             examples:
               requestsPerMinute:
                 summary: 100 Requests per Minute per API Key
@@ -18819,19 +18811,19 @@ paths:
                   unit: rph
                   value: 10000
       responses:
-        "200":
+        '200':
           description: Policy created successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreatePolicyResponse"
-        "400":
+                $ref: '#/components/schemas/CreatePolicyResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "500":
+        '500':
           description: Server error
 
     get:
@@ -18843,7 +18835,7 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/WorkspaceIdQuery"
+        - $ref: '#/components/parameters/WorkspaceIdQuery'
         - name: status
           in: query
           description: Filter by status
@@ -18866,24 +18858,24 @@ paths:
           schema:
             type: string
             enum: [rpm, rph, rpd]
-        - $ref: "#/components/parameters/PageSize"
-        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/CurrentPage'
       responses:
-        "200":
+        '200':
           description: List of rate limits policies
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RateLimitsPolicyListResponse"
-        "400":
+                $ref: '#/components/schemas/RateLimitsPolicyListResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
   /policies/rate-limits/{rateLimitsPolicyId}:
@@ -18896,7 +18888,7 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/RateLimitsPolicyId"
+        - $ref: '#/components/parameters/RateLimitsPolicyId'
         - name: status
           in: query
           description: Filter by status
@@ -18906,21 +18898,21 @@ paths:
             enum: [active, archived]
             default: active
       responses:
-        "200":
+        '200':
           description: Rate limits policy details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RateLimitsPolicyResponse"
-        "400":
+                $ref: '#/components/schemas/RateLimitsPolicyResponse'
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
     put:
@@ -18932,18 +18924,18 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/RateLimitsPolicyId"
+        - $ref: '#/components/parameters/RateLimitsPolicyId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateRateLimitsPolicyRequest"
+              $ref: '#/components/schemas/UpdateRateLimitsPolicyRequest'
             example:
               value: 200
               unit: rph
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -18955,15 +18947,15 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
     delete:
@@ -18975,9 +18967,9 @@ paths:
       security:
         - Portkey-Key: []
       parameters:
-        - $ref: "#/components/parameters/RateLimitsPolicyId"
+        - $ref: '#/components/parameters/RateLimitsPolicyId'
       responses:
-        "200":
+        '200':
           description: OK
           headers:
             Content-Type:
@@ -18989,15 +18981,15 @@ paths:
               schema:
                 type: object
               example: {}
-        "400":
+        '400':
           description: Bad request
-        "401":
+        '401':
           description: Unauthorized
-        "403":
+        '403':
           description: Forbidden
-        "404":
+        '404':
           description: Policy not found
-        "500":
+        '500':
           description: Server error
 
   /analytics/graphs/requests:
@@ -20667,17 +20659,17 @@ paths:
       security: []
       description: |
         Returns pricing configuration for a specific model.
-
+        
         **Note:** Prices are in USD cents per token.
-
+        
         ## Supported Providers
-
+        
         openai, anthropic, google, azure-openai, bedrock, mistral-ai, cohere, 
         together-ai, groq, deepseek, fireworks-ai, perplexity-ai, anyscale, 
         deepinfra, cerebras, x-ai, and 25+ more.
-
+        
         ## Example Response Fields
-
+        
         | Field | Description | Unit |
         |-------|-------------|------|
         | `request_token.price` | Input token cost | cents/token |
@@ -20685,7 +20677,7 @@ paths:
         | `cache_write_input_token.price` | Cache write cost | cents/token |
         | `cache_read_input_token.price` | Cache read cost | cents/token |
         | `additional_units.*` | Provider-specific features | cents/unit |
-
+        
       operationId: getModelPricing
       tags:
         - Model Pricing
@@ -20695,7 +20687,7 @@ paths:
           required: true
           description: |
             Provider identifier. Use lowercase with hyphens.
-
+            
             Examples: `openai`, `anthropic`, `google`, `azure-openai`, `bedrock`, `x-ai`
           schema:
             type: string
@@ -20705,18 +20697,18 @@ paths:
           required: true
           description: |
             Model identifier. Use the exact model name as specified by the provider.
-
+            
             Examples: `gpt-5`, `gpt-5.2`, `claude-opus-4-5-20251101`, `gemini-3.0-pro`
           schema:
             type: string
             example: gpt-5
       responses:
-        "200":
+        '200':
           description: Pricing configuration for the specified model
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ModelPricingConfig"
+                $ref: '#/components/schemas/ModelPricingConfig'
               examples:
                 openai-gpt4:
                   summary: OpenAI GPT-4
@@ -20808,7 +20800,7 @@ paths:
                         search:
                           price: 3.5
                     currency: USD
-        "404":
+        '404':
           description: Model or provider not found
           content:
             application/json:
@@ -21086,6 +21078,7 @@ paths:
           source: |
             curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/secret-references/SECRET_REFERENCE_ID \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
+
 
 components:
   securitySchemes:
@@ -21385,39 +21378,39 @@ components:
       description: Complete pricing configuration for a model
       properties:
         pay_as_you_go:
-          $ref: "#/components/schemas/ModelPayAsYouGo"
+          $ref: '#/components/schemas/ModelPayAsYouGo'
         calculate:
-          $ref: "#/components/schemas/ModelCalculateConfig"
+          $ref: '#/components/schemas/ModelCalculateConfig'
         currency:
           type: string
           enum: [USD]
           description: Currency code (always USD)
         finetune_config:
-          $ref: "#/components/schemas/ModelFinetuneConfig"
+          $ref: '#/components/schemas/ModelFinetuneConfig'
 
     ModelPayAsYouGo:
       type: object
       description: Token-based pricing (all prices in USD cents)
       properties:
         request_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         response_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         cache_write_input_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         cache_read_input_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         request_audio_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         response_audio_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         cache_read_audio_input_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         additional_units:
           type: object
           description: |
             Provider-specific additional pricing units.
-
+            
             Common additional units:
             - `web_search`: Web search tool usage
             - `file_search`: File search tool usage
@@ -21425,9 +21418,9 @@ components:
             - `image_token`: Image generation tokens
             - `video_duration_seconds_*`: Video generation (OpenAI Sora)
           additionalProperties:
-            $ref: "#/components/schemas/ModelTokenPrice"
+            $ref: '#/components/schemas/ModelTokenPrice'
         image:
-          $ref: "#/components/schemas/ModelImagePricing"
+          $ref: '#/components/schemas/ModelImagePricing'
 
     ModelTokenPrice:
       type: object
@@ -21437,7 +21430,7 @@ components:
           type: number
           description: |
             Price in USD cents per token/unit.
-
+            
             Example: `0.003` = 0.003 cents/token = $0.03 per 1K tokens
 
     ModelImagePricing:
@@ -21446,7 +21439,7 @@ components:
       additionalProperties:
         type: object
         additionalProperties:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
       example:
         standard:
           1024x1024:
@@ -21464,9 +21457,9 @@ components:
       description: Cost calculation formulas
       properties:
         request:
-          $ref: "#/components/schemas/ModelCalculateOperation"
+          $ref: '#/components/schemas/ModelCalculateOperation'
         response:
-          $ref: "#/components/schemas/ModelCalculateOperation"
+          $ref: '#/components/schemas/ModelCalculateOperation'
 
     ModelCalculateOperation:
       type: object
@@ -21481,8 +21474,8 @@ components:
           description: Operands for the operation
           items:
             oneOf:
-              - $ref: "#/components/schemas/ModelCalculateOperation"
-              - $ref: "#/components/schemas/ModelValueReference"
+              - $ref: '#/components/schemas/ModelCalculateOperation'
+              - $ref: '#/components/schemas/ModelValueReference'
 
     ModelValueReference:
       type: object
@@ -21491,7 +21484,7 @@ components:
           type: string
           description: |
             Reference to a value or rate.
-
+            
             Examples:
             - `input_tokens`: Number of input tokens
             - `output_tokens`: Number of output tokens
@@ -21503,9 +21496,9 @@ components:
       description: Fine-tuning pricing configuration
       properties:
         pay_per_token:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
         pay_per_hour:
-          $ref: "#/components/schemas/ModelTokenPrice"
+          $ref: '#/components/schemas/ModelTokenPrice'
 
     Error:
       type: object
@@ -21650,6 +21643,7 @@ components:
 
             Note that <|endoftext|> is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.
           default: "<|endoftext|>"
+          nullable: true
           oneOf:
             - type: string
               default: ""
@@ -21672,7 +21666,6 @@ components:
                 items:
                   type: integer
               example: "[[1212, 318, 257, 1332, 13]]"
-            - enum: [null]
         best_of:
           type: integer
           default: 1
@@ -21768,6 +21761,7 @@ components:
           description: &completions_stop_description >
             Up to 4 sequences where the API will stop generating further tokens. The returned text will not contain the stop sequence.
           default: null
+          nullable: true
           oneOf:
             - type: string
               default: <|endoftext|>
@@ -21779,7 +21773,6 @@ components:
               items:
                 type: string
                 example: '["\n"]'
-            - enum: [null]
         stream:
           description: >
             Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-UShttps://platform.openai.com/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
@@ -23212,10 +23205,10 @@ components:
             - type: string
             - type: string
               enum: ["dall-e-2", "dall-e-3"]
-            - enum: [null]
           x-oaiTypeLabel: string
           default: "dall-e-2"
           example: "dall-e-3"
+          nullable: true
           description: The model to use for image generation.
         n: &images_n
           type: integer
@@ -23709,10 +23702,10 @@ components:
             - type: string
             - type: string
               enum: ["dall-e-2"]
-            - enum: [null]
           x-oaiTypeLabel: string
           default: "dall-e-2"
           example: "dall-e-2"
+          nullable: true
           description: The model to use for image generation. Only `dall-e-2` is supported at this time.
         n:
           type: integer
@@ -23747,10 +23740,10 @@ components:
             - type: string
             - type: string
               enum: ["dall-e-2"]
-            - enum: [null]
           x-oaiTypeLabel: string
           default: "dall-e-2"
           example: "dall-e-2"
+          nullable: true
           description: The model to use for image generation. Only `dall-e-2` is supported at this time.
         n: *images_n
         response_format: *images_response_format
@@ -23780,6 +23773,7 @@ components:
             Two content moderations models are available: `text-moderation-stable` and `text-moderation-latest`.
 
             The default is `text-moderation-latest` which will be automatically upgraded over time. This ensures you are always using our most accurate model. If you use `text-moderation-stable`, we will provide advanced notice before updating the model. Accuracy of `text-moderation-stable` may be slightly lower than for `text-moderation-latest`.
+          nullable: false
           default: "text-moderation-latest"
           example: "text-moderation-stable"
           anyOf:
@@ -28368,8 +28362,8 @@ components:
                   "gpt-3.5-turbo-0125",
                   "gpt-3.5-turbo-16k-0613",
                 ]
-            - enum: [null]
           x-oaiTypeLabel: string
+          nullable: true
         instructions:
           description: Overrides the [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant) of the assistant. This is useful for modifying the behavior on a per-run basis.
           type: string
@@ -28703,8 +28697,8 @@ components:
                   "gpt-3.5-turbo-0125",
                   "gpt-3.5-turbo-16k-0613",
                 ]
-            - enum: [null]
           x-oaiTypeLabel: string
+          nullable: true
         instructions:
           description: Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis.
           type: string
@@ -31848,7 +31842,7 @@ components:
           example: "Production OpenAI"
         slug:
           type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
+          pattern: '^[a-zA-Z0-9_-]+$'
           description: URL-friendly identifier (auto-generated if not provided)
           example: "production-openai"
         ai_provider_id:
@@ -31871,25 +31865,25 @@ components:
           type: object
           description: Provider-specific configuration object
           oneOf:
-            - $ref: "#/components/schemas/OpenAIConfiguration"
+            - $ref: '#/components/schemas/OpenAIConfiguration'
               title: OpenAI
-            - $ref: "#/components/schemas/AzureOpenAIConfiguration"
+            - $ref: '#/components/schemas/AzureOpenAIConfiguration'
               title: Azure OpenAI
-            - $ref: "#/components/schemas/BedrockConfiguration"
+            - $ref: '#/components/schemas/BedrockConfiguration'
               title: AWS Bedrock
-            - $ref: "#/components/schemas/VertexAIConfiguration"
+            - $ref: '#/components/schemas/VertexAIConfiguration'
               title: Vertex AI
-            - $ref: "#/components/schemas/AzureAIConfiguration"
+            - $ref: '#/components/schemas/AzureAIConfiguration'
               title: Azure AI
-            - $ref: "#/components/schemas/WorkersAIConfiguration"
+            - $ref: '#/components/schemas/WorkersAIConfiguration'
               title: Workers AI
-            - $ref: "#/components/schemas/SageMakerConfiguration"
+            - $ref: '#/components/schemas/SageMakerConfiguration'
               title: AWS Sagemaker
-            - $ref: "#/components/schemas/HuggingFaceConfiguration"
+            - $ref: '#/components/schemas/HuggingFaceConfiguration'
               title: Hugginface
-            - $ref: "#/components/schemas/CortexConfiguration"
+            - $ref: '#/components/schemas/CortexConfiguration'
               title: Cortex
-            - $ref: "#/components/schemas/CustomHostConfiguration"
+            - $ref: '#/components/schemas/CustomHostConfiguration'
               title: Custom Base URL
         create_default_provider:
           type: boolean
@@ -31897,13 +31891,13 @@ components:
           description: Whether to automatically create a default provider when creating a workspace-scoped integration. Defaults to true.
         default_provider_slug:
           type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
+          pattern: '^[a-zA-Z0-9_-]+$'
           maxLength: 255
           description: Custom slug for the auto-created default provider. Only applicable for workspace-scoped integrations. If the slug already exists in the workspace, the request will fail with a validation error.
         secret_mappings:
           type: array
           items:
-            $ref: "#/components/schemas/SecretMapping"
+            $ref: '#/components/schemas/SecretMapping'
           description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique. When "key" is mapped, the key body field can be omitted.
 
     UpdateIntegrationRequest:
@@ -31925,35 +31919,35 @@ components:
           type: object
           description: Provider-specific configuration object
           oneOf:
-            - $ref: "#/components/schemas/OpenAIConfiguration"
+            - $ref: '#/components/schemas/OpenAIConfiguration'
               title: OpenAI
-            - $ref: "#/components/schemas/AzureOpenAIConfiguration"
+            - $ref: '#/components/schemas/AzureOpenAIConfiguration'
               title: Azure OpenAI
-            - $ref: "#/components/schemas/BedrockConfiguration"
+            - $ref: '#/components/schemas/BedrockConfiguration'
               title: AWS Bedrock
-            - $ref: "#/components/schemas/VertexAIConfiguration"
+            - $ref: '#/components/schemas/VertexAIConfiguration'
               title: Vertex AI
-            - $ref: "#/components/schemas/AzureAIConfiguration"
+            - $ref: '#/components/schemas/AzureAIConfiguration'
               title: Azure AI
-            - $ref: "#/components/schemas/WorkersAIConfiguration"
+            - $ref: '#/components/schemas/WorkersAIConfiguration'
               title: Workers AI
-            - $ref: "#/components/schemas/SageMakerConfiguration"
+            - $ref: '#/components/schemas/SageMakerConfiguration'
               title: AWS Sagemaker
-            - $ref: "#/components/schemas/HuggingFaceConfiguration"
+            - $ref: '#/components/schemas/HuggingFaceConfiguration'
               title: Hugginface
-            - $ref: "#/components/schemas/CortexConfiguration"
+            - $ref: '#/components/schemas/CortexConfiguration'
               title: Cortex
-            - $ref: "#/components/schemas/CustomHostConfiguration"
+            - $ref: '#/components/schemas/CustomHostConfiguration'
               title: Custom Base URL
         secret_mappings:
           type: array
           items:
-            $ref: "#/components/schemas/SecretMapping"
+            $ref: '#/components/schemas/SecretMapping'
           description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique.
 
     IntegrationDetailResponse:
       allOf:
-        - $ref: "#/components/schemas/IntegrationList"
+        - $ref: '#/components/schemas/IntegrationList'
         - type: object
           properties:
             masked_key:
@@ -31963,36 +31957,36 @@ components:
               type: object
               description: |
                 Provider-specific configuration object
-
+                
                 **⚠️ Security Note - Response Masking:**
                 When retrieving integration details, sensitive fields are automatically masked:
                 - Sensitive fields get a `masked_` prefix (e.g., `client_secret` → `masked_client_secret`)
                 - Non-sensitive fields (IDs, URLs, regions, etc.) remain unchanged
               oneOf:
-                - $ref: "#/components/schemas/OpenAIConfiguration"
+                - $ref: '#/components/schemas/OpenAIConfiguration'
                   title: OpenAI
-                - $ref: "#/components/schemas/AzureOpenAIConfiguration"
+                - $ref: '#/components/schemas/AzureOpenAIConfiguration'
                   title: Azure OpenAI
-                - $ref: "#/components/schemas/BedrockConfiguration"
+                - $ref: '#/components/schemas/BedrockConfiguration'
                   title: AWS Bedrock
-                - $ref: "#/components/schemas/VertexAIConfiguration"
+                - $ref: '#/components/schemas/VertexAIConfiguration'
                   title: Vertex AI
-                - $ref: "#/components/schemas/AzureAIConfiguration"
+                - $ref: '#/components/schemas/AzureAIConfiguration'
                   title: Azure AI
-                - $ref: "#/components/schemas/WorkersAIConfiguration"
+                - $ref: '#/components/schemas/WorkersAIConfiguration'
                   title: Workers AI
-                - $ref: "#/components/schemas/SageMakerConfiguration"
+                - $ref: '#/components/schemas/SageMakerConfiguration'
                   title: AWS Sagemaker
-                - $ref: "#/components/schemas/HuggingFaceConfiguration"
+                - $ref: '#/components/schemas/HuggingFaceConfiguration'
                   title: Hugginface
-                - $ref: "#/components/schemas/CortexConfiguration"
+                - $ref: '#/components/schemas/CortexConfiguration'
                   title: Cortex
-                - $ref: "#/components/schemas/CustomHostConfiguration"
+                - $ref: '#/components/schemas/CustomHostConfiguration'
                   title: Custom Base URL
             global_workspace_access_settings:
               type: object
               nullable: true
-              $ref: "#/components/schemas/GlobalWorkspaceAccess"
+              $ref: '#/components/schemas/GlobalWorkspaceAccess'
               description: Global workspace access configuration
             allow_all_models:
               type: boolean
@@ -32003,9 +31997,9 @@ components:
             secret_mappings:
               type: array
               items:
-                $ref: "#/components/schemas/SecretMapping"
+                $ref: '#/components/schemas/SecretMapping'
               description: Secret reference mappings for this integration. Valid target_field values are "key" or "configurations.<field>".
-
+  
     GlobalWorkspaceAccess:
       type: object
       required:
@@ -32019,13 +32013,13 @@ components:
           nullable: true
           maxItems: 1
           items:
-            $ref: "#/components/schemas/UsageLimits"
+            $ref: '#/components/schemas/UsageLimits'
         rate_limits:
           type: array
           nullable: true
           maxItems: 1
           items:
-            $ref: "#/components/schemas/RateLimits"
+            $ref: '#/components/schemas/RateLimits'
 
     OpenAIConfiguration:
       type: object
@@ -32055,7 +32049,7 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: "#/components/schemas/AzureDeploymentConfig"
+            $ref: '#/components/schemas/AzureDeploymentConfig'
         # Entra-specific fields
         azure_entra_tenant_id:
           type: string
@@ -32127,7 +32121,7 @@ components:
 
     SageMakerConfiguration:
       allOf:
-        - $ref: "#/components/schemas/BedrockConfiguration"
+        - $ref: '#/components/schemas/BedrockConfiguration'
         - type: object
           properties:
             amzn_sagemaker_custom_attributes:
@@ -32292,7 +32286,7 @@ components:
           maxLength: 255
         slug:
           type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
+          pattern: '^[a-zA-Z0-9_-]+$'
           maxLength: 255
           description: Auto-generated from name if omitted
         description:
@@ -32633,7 +32627,7 @@ components:
         object:
           type: string
           enum: [integration]
-
+  
     IntegrationModelsResponse:
       type: object
       properties:
@@ -32643,7 +32637,7 @@ components:
         models:
           type: array
           items:
-            $ref: "#/components/schemas/IntegrationModel"
+            $ref: '#/components/schemas/IntegrationModel'
 
     IntegrationModel:
       type: object
@@ -32670,7 +32664,7 @@ components:
           nullable: true
           description: Base model slug for fine-tuned models
         pricing_config:
-          $ref: "#/components/schemas/PricingConfig"
+          $ref: '#/components/schemas/PricingConfig'
 
     PricingConfig:
       type: object
@@ -32680,21 +32674,21 @@ components:
           enum: [static]
           description: Pricing type
         pay_as_you_go:
-          $ref: "#/components/schemas/PayAsYouGoPricing"
+          $ref: '#/components/schemas/PayAsYouGoPricing'
 
     PayAsYouGoPricing:
       type: object
       properties:
         request_token:
-          $ref: "#/components/schemas/TokenPricing"
+          $ref: '#/components/schemas/TokenPricing'
         response_token:
-          $ref: "#/components/schemas/TokenPricing"
+          $ref: '#/components/schemas/TokenPricing'
     ModelConfigurations:
-      type: object
-      properties:
-        custom_host:
-          type: string
-          description: Custom Host URL for the model.
+          type: object
+          properties:
+            custom_host:
+              type: string
+              description: Custom Host URL for the model.
 
     TokenPricing:
       type: object
@@ -32712,7 +32706,7 @@ components:
         models:
           type: array
           items:
-            $ref: "#/components/schemas/ModelUpdateRequest"
+            $ref: '#/components/schemas/ModelUpdateRequest'
         allow_all_models:
           type: boolean
           description: Whether to allow all models by default
@@ -32744,7 +32738,7 @@ components:
         configurations:
           $ref: "#/components/schemas/ModelConfigurations"
         pricing_config:
-          $ref: "#/components/schemas/PricingConfig"
+          $ref: '#/components/schemas/PricingConfig'
 
     IntegrationWorkspacesResponse:
       type: object
@@ -32755,7 +32749,7 @@ components:
         workspaces:
           type: array
           items:
-            $ref: "#/components/schemas/IntegrationWorkspace"
+            $ref: '#/components/schemas/IntegrationWorkspace'
 
     IntegrationWorkspace:
       type: object
@@ -32771,12 +32765,12 @@ components:
           type: array
           nullable: true
           items:
-            $ref: "#/components/schemas/UsageLimits"
+            $ref: '#/components/schemas/UsageLimits'
         rate_limits:
           type: array
           nullable: true
           items:
-            $ref: "#/components/schemas/RateLimits"
+            $ref: '#/components/schemas/RateLimits'
 
     BulkUpdateWorkspacesRequest:
       type: object
@@ -32784,9 +32778,9 @@ components:
         workspaces:
           type: array
           items:
-            $ref: "#/components/schemas/WorkspaceUpdateRequest"
+            $ref: '#/components/schemas/WorkspaceUpdateRequest'
         global_workspace_access:
-          $ref: "#/components/schemas/GlobalWorkspaceAccess"
+          $ref: '#/components/schemas/GlobalWorkspaceAccess'
         override_existing_workspace_access:
           type: boolean
           description: Whether to override existing workspace access settings
@@ -32816,13 +32810,13 @@ components:
           nullable: true
           maxItems: 1
           items:
-            $ref: "#/components/schemas/UsageLimits"
+            $ref: '#/components/schemas/UsageLimits'
         rate_limits:
           type: array
           nullable: true
           maxItems: 1
           items:
-            $ref: "#/components/schemas/RateLimits"
+            $ref: '#/components/schemas/RateLimits'
         reset_usage:
           type: boolean
           description: Whether to reset current usage. If the current status is exhausted, this will change it back to active.
@@ -32908,7 +32902,7 @@ components:
         secret_mappings:
           type: array
           items:
-            $ref: "#/components/schemas/SecretMapping"
+            $ref: '#/components/schemas/SecretMapping'
           description: Secret reference mappings for this virtual key. Valid target_field values are "key" or "model_config.<field>".
         object:
           type: string
@@ -33213,11 +33207,11 @@ components:
               example: 0
             input_guardrails:
               type: array
-              items:
+              items: 
                 type: string
             output_guardrails:
               type: array
-              items:
+              items: 
                 type: string
             object:
               type: string
@@ -33265,7 +33259,7 @@ components:
         last_updated_at:
           type: string
           format: date-time
-
+    
     CollectionDetails:
       type: object
       properties:
@@ -33281,15 +33275,15 @@ components:
           type: string
           format: date-time
           nullable: true
-
+    
     CollectionWithDetails:
       allOf:
-        - $ref: "#/components/schemas/Collection"
+        - $ref: '#/components/schemas/Collection'
         - type: object
           properties:
             collection_details:
-              $ref: "#/components/schemas/CollectionDetails"
-
+              $ref: '#/components/schemas/CollectionDetails'
+    
     ChildCollection:
       type: object
       properties:
@@ -33302,17 +33296,17 @@ components:
           type: string
           format: date-time
         collection_details:
-          $ref: "#/components/schemas/CollectionDetails"
-
+          $ref: '#/components/schemas/CollectionDetails'
+    
     CollectionWithChildCollections:
       allOf:
-        - $ref: "#/components/schemas/Collection"
+        - $ref: '#/components/schemas/Collection'
         - type: object
           properties:
             child_collections:
               type: array
               items:
-                $ref: "#/components/schemas/ChildCollection"
+                $ref: '#/components/schemas/ChildCollection'
 
     Label:
       type: object
@@ -33407,7 +33401,7 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Label"
+            $ref: '#/components/schemas/Label'
 
     PromptSummary:
       type: object
@@ -33436,7 +33430,7 @@ components:
         object:
           type: string
           enum: ["prompt"]
-
+    
     Prompt:
       type: object
       properties:
@@ -33493,7 +33487,7 @@ components:
         last_updated_at:
           type: string
           format: date-time
-
+    
     PromptVersionSummary:
       type: object
       properties:
@@ -33521,7 +33515,7 @@ components:
         object:
           type: string
           enum: ["prompt"]
-
+    
     PromptPartialSummary:
       type: object
       properties:
@@ -33547,7 +33541,7 @@ components:
         object:
           type: string
           enum: ["partial"]
-
+    
     PromptPartial:
       type: object
       properties:
@@ -33579,7 +33573,7 @@ components:
         status:
           type: string
           enum: ["active"]
-
+    
     PromptPartialVersion:
       type: object
       properties:
@@ -33831,40 +33825,40 @@ components:
           description: Unique identifier for the log entry
           nullable: true
           example: "550e8400-e29b-41d4-a716-446655440000"
-
+        
         request:
-          $ref: "#/components/schemas/LogRequest"
-
+          $ref: '#/components/schemas/LogRequest'
+        
         response:
-          $ref: "#/components/schemas/LogResponse"
-
+          $ref: '#/components/schemas/LogResponse'
+        
         organisation_id:
           type: string
           description: Organization identifier
           nullable: true
           example: "org-123"
-
+        
         created_at:
           type: string
           format: date-time
           description: Timestamp when the log was created
           nullable: true
           example: "2024-01-15T10:30:00.000Z"
-
+        
         metrics:
-          $ref: "#/components/schemas/AnalyticsMetrics"
+          $ref: '#/components/schemas/AnalyticsMetrics'
           description: Analytics metrics object containing detailed metrics about the request
-
+        
         finalUntransformedRequest:
-          $ref: "#/components/schemas/RequestResponseObject"
+          $ref: '#/components/schemas/RequestResponseObject'
           description: The original request before any transformations (only present when debug logging is enabled)
-
+        
         originalResponse:
-          $ref: "#/components/schemas/RequestResponseObject"
+          $ref: '#/components/schemas/RequestResponseObject'
           description: The original response from the provider (only present when debug logging is enabled or request failed)
-
+        
         transformedRequest:
-          $ref: "#/components/schemas/RequestResponseObject"
+          $ref: '#/components/schemas/RequestResponseObject'
           description: The request after transformations (only present when debug logging is enabled)
 
     LogRequest:
@@ -33879,13 +33873,13 @@ components:
           format: uri
           description: Sanitized request URL
           example: "https://api.openai.com/v1/chat/completions"
-
+        
         method:
           type: string
           description: HTTP method
           enum: [GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD]
           example: "POST"
-
+        
         headers:
           type: object
           additionalProperties:
@@ -33894,12 +33888,12 @@ components:
           example:
             "Content-Type": "application/json"
             "Authorization": "Bearer hashed_value"
-
+        
         body:
           type: object
           additionalProperties: true
           description: Request body (only present when debug logging is enabled)
-
+        
         portkeyHeaders:
           type: object
           additionalProperties:
@@ -33908,7 +33902,7 @@ components:
           example:
             "x-portkey-trace-id": "trace-123"
             "x-portkey-span-id": "span-456"
-            "x-portkey-metadata": '{"key":"value"}'
+            "x-portkey-metadata": "{\"key\":\"value\"}"
 
     LogResponse:
       type: object
@@ -33922,7 +33916,7 @@ components:
           format: int32
           description: HTTP response status code
           example: 200
-
+        
         headers:
           type: object
           additionalProperties:
@@ -33930,7 +33924,7 @@ components:
           description: Response headers (only present when debug logging is enabled or request failed)
           example:
             "Content-Type": "application/json"
-
+        
         body:
           type: object
           additionalProperties: true
@@ -33939,13 +33933,13 @@ components:
             id: "chatcmpl-123"
             object: "chat.completion"
             created: 1677652288
-
+        
         responseTime:
           type: integer
           format: int64
           description: Response time in milliseconds
           example: 1234
-
+        
         lastUsedOptionJsonPath:
           type: string
           description: JSON path to the last used option in the config
@@ -33980,220 +33974,220 @@ components:
           format: uuid
           description: Unique identifier for the log entry
           example: "550e8400-e29b-41d4-a716-446655440000"
-
+        
         organisation_id:
           type: string
           description: Organization identifier
           example: "org-123"
-
+        
         organisation_name:
           type: string
           description: Organization name
           example: "Acme Corp"
-
+        
         prompt_id:
           type: string
           description: Prompt identifier
           example: "prompt-789"
-
+        
         prompt_version_id:
           type: string
           description: Prompt version identifier
           example: "prompt-v1"
-
+        
         config_id:
           type: string
           description: Configuration identifier
           example: "config-123"
-
+        
         created_at:
           type: string
           format: date-time
           description: Timestamp when the log was created
           example: "2024-01-15T10:30:00.000"
-
+        
         is_success:
           type: boolean
           description: Whether the request was successful (status code 200-299)
           example: true
-
+        
         ai_org:
           type: string
           description: AI provider organization (e.g., openai, anthropic)
           example: "openai"
-
+        
         ai_model:
           type: string
           description: AI model used
           example: "gpt-4o"
-
+        
         req_units:
           type: number
           format: float
           description: Request token units
           example: 100
-
+        
         res_units:
           type: number
           format: float
           description: Response token units
           example: 50
-
+        
         total_units:
           type: number
           format: float
           description: Total token units (req_units + res_units)
           example: 150
-
+        
         cost:
           type: number
           format: float
           description: Cost in the specified currency
           example: 0.002
-
+        
         cost_currency:
           type: string
           description: Currency code for the cost
           default: "USD"
           example: "USD"
-
+        
         request_url:
           type: string
           format: uri
           description: Sanitized request URL
           example: "https://api.openai.com/v1/chat/completions"
-
+        
         request_method:
           type: string
           description: HTTP method
           example: "POST"
-
+        
         response_status_code:
           type: integer
           format: int32
           description: HTTP response status code
           example: 200
-
+        
         response_time:
           type: integer
           format: int64
           description: Response time in milliseconds
           example: 1234
-
+        
         is_proxy_call:
           type: boolean
           description: Whether this was a proxy call
           example: true
-
+        
         cache_status:
           type: string
           nullable: true
           description: Cache status (e.g., HIT, MISS, DISABLED, SEMANTIC HIT)
           example: "MISS"
-
+        
         cache_type:
           type: string
           nullable: true
           description: Type of cache used
           example: "semantic"
-
+        
         stream_mode:
           type: integer
           nullable: true
           description: Whether streaming was enabled (1) or not (0)
           example: 1
-
+        
         retry_success_count:
           type: integer
           description: Number of successful retries
           example: 0
-
+        
         trace_id:
           type: string
           description: Distributed tracing trace ID
           example: "trace-123"
-
+        
         span_id:
           type: string
           description: Distributed tracing span ID
           example: "span-456"
-
+        
         span_name:
           type: string
           description: Name of the span
           example: "llm"
-
+        
         parent_span_id:
           type: string
           description: Parent span ID in distributed tracing
           example: "span-789"
-
+        
         mode:
           type: string
           description: Request mode (e.g., single, loadbalance, fallback)
           example: "single"
-
+        
         virtual_key:
           type: string
           description: Virtual key identifier
           example: "vk-123"
-
+        
         source:
           type: string
           description: Source of the request (e.g., rubeus, proxy)
           example: "rubeus"
-
+        
         runtime:
           type: string
           description: Runtime environment
           example: "node"
-
+        
         runtime_version:
           type: string
           description: Runtime version
           example: "18.0.0"
-
+        
         sdk_version:
           type: string
           description: SDK version
           example: "1.0.0"
-
+        
         config:
           type: string
           description: Configuration slug or ID
           example: "pc-config-123"
-
+        
         internal_trace_id:
           type: string
           description: Internal trace ID for gateway tracking
           example: "internal-trace-123"
-
+        
         last_used_option_index:
           type: integer
           description: Index of the last used option in the config
           example: 0
-
+        
         config_version_id:
           type: string
           description: Configuration version identifier
           example: "config-v1"
-
+        
         prompt_slug:
           type: string
           description: Prompt slug
           example: "my-prompt"
-
+        
         workspace_slug:
           type: string
           nullable: true
           description: Workspace slug
           example: "my-workspace"
-
+        
         log_store_file_path_format:
           type: string
           description: Path format version for log storage
           example: "v1"
-
+        
         metadata.key:
           type: array
           items:
@@ -34201,7 +34195,7 @@ components:
             nullable: true
           description: Array of metadata keys
           example: ["key1", "key2"]
-
+        
         metadata.value:
           type: array
           items:
@@ -34209,42 +34203,42 @@ components:
             nullable: true
           description: Array of metadata values
           example: ["value1", "value2"]
-
+        
         api_key_id:
           type: string
           description: API key identifier
           example: "api-key-123"
-
+        
         request_parsing_time:
           type: integer
           format: int64
           description: Time taken to parse the request in milliseconds
           example: 5
-
+        
         pre_processing_time:
           type: integer
           format: int64
           description: Time taken for pre-processing in milliseconds
           example: 10
-
+        
         cache_processing_time:
           type: integer
           format: int64
           description: Time taken for cache processing in milliseconds
           example: 2
-
+        
         response_parsing_time:
           type: integer
           format: int64
           description: Time taken to parse the response in milliseconds
           example: 8
-
+        
         gateway_processing_time:
           type: integer
           format: int64
           description: Total gateway processing time in milliseconds
           example: 50
-
+        
         upstream_response_time:
           type: integer
           format: int64
@@ -34724,10 +34718,10 @@ components:
           type: array
           description: Array of guardrail checks to apply
           items:
-            $ref: "#/components/schemas/GuardrailCheck"
+            $ref: '#/components/schemas/GuardrailCheck'
           minItems: 1
         actions:
-          $ref: "#/components/schemas/GuardrailActions"
+          $ref: '#/components/schemas/GuardrailActions'
 
     UpdateGuardrailRequest:
       type: object
@@ -34739,10 +34733,10 @@ components:
           type: array
           description: Updated array of guardrail checks
           items:
-            $ref: "#/components/schemas/GuardrailCheck"
+            $ref: '#/components/schemas/GuardrailCheck'
           minItems: 1
         actions:
-          $ref: "#/components/schemas/GuardrailActions"
+          $ref: '#/components/schemas/GuardrailActions'
 
     GuardrailActions:
       type: object
@@ -34874,38 +34868,38 @@ components:
             - "panw-prisma-airs.intercept"
         parameters:
           oneOf:
-            - $ref: "#/components/schemas/JWTParameters"
-            - $ref: "#/components/schemas/ModelWhitelistParameters"
-            - $ref: "#/components/schemas/RegexMatchParameters"
-            - $ref: "#/components/schemas/SentenceCountParameters"
-            - $ref: "#/components/schemas/WordCountParameters"
-            - $ref: "#/components/schemas/CharacterCountParameters"
-            - $ref: "#/components/schemas/JSONSchemaParameters"
-            - $ref: "#/components/schemas/JSONKeysParameters"
-            - $ref: "#/components/schemas/ContainsParameters"
-            - $ref: "#/components/schemas/ValidUrlsParameters"
-            - $ref: "#/components/schemas/ContainsCodeParameters"
-            - $ref: "#/components/schemas/WebhookParameters"
-            - $ref: "#/components/schemas/EndsWithParameters"
-            - $ref: "#/components/schemas/UppercaseParameters"
-            - $ref: "#/components/schemas/RequiredMetadataKeysParameters"
-            - $ref: "#/components/schemas/AllowedRequestTypesParameters"
-            - $ref: "#/components/schemas/SydeGuardParameters"
-            - $ref: "#/components/schemas/AporiaParameters"
-            - $ref: "#/components/schemas/PillarScanParameters"
-            - $ref: "#/components/schemas/PatronusParameters"
-            - $ref: "#/components/schemas/PatronusCustomParameters"
-            - $ref: "#/components/schemas/PortkeyModerationParameters"
-            - $ref: "#/components/schemas/PortkeyLanguageParameters"
-            - $ref: "#/components/schemas/PortkeyPIIParameters"
-            - $ref: "#/components/schemas/MistralModerationParameters"
-            - $ref: "#/components/schemas/BedrockGuardParameters"
-            - $ref: "#/components/schemas/PromptfooParameters"
-            - $ref: "#/components/schemas/AcuvityScanParameters"
-            - $ref: "#/components/schemas/AzureContentSafetyParameters"
-            - $ref: "#/components/schemas/AzurePIIParameters"
-            - $ref: "#/components/schemas/PANWPrismaParameters"
-            - $ref: "#/components/schemas/BasicParameters"
+            - $ref: '#/components/schemas/JWTParameters'
+            - $ref: '#/components/schemas/ModelWhitelistParameters'
+            - $ref: '#/components/schemas/RegexMatchParameters'
+            - $ref: '#/components/schemas/SentenceCountParameters'
+            - $ref: '#/components/schemas/WordCountParameters'
+            - $ref: '#/components/schemas/CharacterCountParameters'
+            - $ref: '#/components/schemas/JSONSchemaParameters'
+            - $ref: '#/components/schemas/JSONKeysParameters'
+            - $ref: '#/components/schemas/ContainsParameters'
+            - $ref: '#/components/schemas/ValidUrlsParameters'
+            - $ref: '#/components/schemas/ContainsCodeParameters'
+            - $ref: '#/components/schemas/WebhookParameters'
+            - $ref: '#/components/schemas/EndsWithParameters'
+            - $ref: '#/components/schemas/UppercaseParameters'
+            - $ref: '#/components/schemas/RequiredMetadataKeysParameters'
+            - $ref: '#/components/schemas/AllowedRequestTypesParameters'
+            - $ref: '#/components/schemas/SydeGuardParameters'
+            - $ref: '#/components/schemas/AporiaParameters'
+            - $ref: '#/components/schemas/PillarScanParameters'
+            - $ref: '#/components/schemas/PatronusParameters'
+            - $ref: '#/components/schemas/PatronusCustomParameters'
+            - $ref: '#/components/schemas/PortkeyModerationParameters'
+            - $ref: '#/components/schemas/PortkeyLanguageParameters'
+            - $ref: '#/components/schemas/PortkeyPIIParameters'
+            - $ref: '#/components/schemas/MistralModerationParameters'
+            - $ref: '#/components/schemas/BedrockGuardParameters'
+            - $ref: '#/components/schemas/PromptfooParameters'
+            - $ref: '#/components/schemas/AcuvityScanParameters'
+            - $ref: '#/components/schemas/AzureContentSafetyParameters'
+            - $ref: '#/components/schemas/AzurePIIParameters'
+            - $ref: '#/components/schemas/PANWPrismaParameters'
+            - $ref: '#/components/schemas/BasicParameters'
           description: Configuration parameters specific to the check type
         name:
           type: string
@@ -34958,7 +34952,7 @@ components:
           type: array
           description: Array of guardrail summaries
           items:
-            $ref: "#/components/schemas/GuardrailSummary"
+            $ref: '#/components/schemas/GuardrailSummary'
         total:
           type: integer
           description: Total number of guardrails available
@@ -35016,18 +35010,18 @@ components:
 
     GuardrailDetails:
       allOf:
-        - $ref: "#/components/schemas/GuardrailSummary"
+        - $ref: '#/components/schemas/GuardrailSummary'
         - type: object
           properties:
             checks:
               type: array
               description: Array of configured guardrail checks
               items:
-                $ref: "#/components/schemas/GuardrailCheck"
+                $ref: '#/components/schemas/GuardrailCheck'
             actions:
-              $ref: "#/components/schemas/GuardrailActions"
+              $ref: '#/components/schemas/GuardrailActions'
 
-    # Detailed parameter schemas for specific guardrail types
+# Detailed parameter schemas for specific guardrail types
     JWTParameters:
       title: JWT Parameters
       type: object
@@ -35877,7 +35871,7 @@ components:
       type: object
       description: Basic parameters with no specific requirements
       additionalProperties: true
-
+    
     BedrockBatchJob:
       type: object
       required:
@@ -36110,13 +36104,13 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: "#/components/schemas/Condition"
+            $ref: '#/components/schemas/Condition'
           description: Array of conditions that define which requests the policy applies to
         group_by:
           type: array
           minItems: 1
           items:
-            $ref: "#/components/schemas/GroupBy"
+            $ref: '#/components/schemas/GroupBy'
           description: Array of group by fields that define how usage is aggregated
         type:
           type: string
@@ -36187,13 +36181,13 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: "#/components/schemas/Condition"
+            $ref: '#/components/schemas/Condition'
           description: Array of conditions that define which requests the policy applies to
         group_by:
           type: array
           minItems: 1
           items:
-            $ref: "#/components/schemas/GroupBy"
+            $ref: '#/components/schemas/GroupBy'
           description: Array of group by fields that define how usage is aggregated
         type:
           type: string
@@ -36255,12 +36249,12 @@ components:
         conditions:
           type: array
           items:
-            $ref: "#/components/schemas/Condition"
+            $ref: '#/components/schemas/Condition'
           description: Array of conditions
         group_by:
           type: array
           items:
-            $ref: "#/components/schemas/GroupBy"
+            $ref: '#/components/schemas/GroupBy'
           description: Array of group by fields
         type:
           type: string
@@ -36301,7 +36295,7 @@ components:
         value_key_usage_map:
           type: object
           additionalProperties:
-            $ref: "#/components/schemas/ValueKeyUsage"
+            $ref: '#/components/schemas/ValueKeyUsage'
           description: Map of value keys to usage information (only included when include_usage=true)
 
     ValueKeyUsage:
@@ -36345,12 +36339,12 @@ components:
         conditions:
           type: array
           items:
-            $ref: "#/components/schemas/Condition"
+            $ref: '#/components/schemas/Condition'
           description: Array of conditions
         group_by:
           type: array
           items:
-            $ref: "#/components/schemas/GroupBy"
+            $ref: '#/components/schemas/GroupBy'
           description: Array of group by fields
         type:
           type: string
@@ -36405,14 +36399,14 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/UsageLimitsPolicy"
+            $ref: '#/components/schemas/UsageLimitsPolicy'
         total:
           type: integer
           description: Total number of policies
 
     UsageLimitsPolicyResponse:
       allOf:
-        - $ref: "#/components/schemas/UsageLimitsPolicy"
+        - $ref: '#/components/schemas/UsageLimitsPolicy'
         - type: object
           properties:
             object:
@@ -36441,7 +36435,7 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/UsageLimitsPolicyEntity"
+            $ref: '#/components/schemas/UsageLimitsPolicyEntity'
         total:
           type: integer
           description: Total number of entities
@@ -36455,14 +36449,14 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/RateLimitsPolicy"
+            $ref: '#/components/schemas/RateLimitsPolicy'
         total:
           type: integer
           description: Total number of policies
 
     RateLimitsPolicyResponse:
       allOf:
-        - $ref: "#/components/schemas/RateLimitsPolicy"
+        - $ref: '#/components/schemas/RateLimitsPolicy'
         - type: object
           properties:
             object:
@@ -36488,7 +36482,7 @@ components:
           description: Workspace ID (optional; to create at workspace level)
         slug:
           type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
+          pattern: '^[a-zA-Z0-9_-]+$'
           description: Optional slug; must be unique within organisation
         name:
           type: string
@@ -36647,7 +36641,7 @@ components:
         description:
           type: string
           nullable: true
-        workspaces_count:
+        workspaces_count: 
           type: number
           nullable: true
 
@@ -36968,7 +36962,7 @@ components:
           description: MCP Integration ID (UUID) or slug
         slug:
           type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
+          pattern: '^[a-zA-Z0-9_-]+$'
           minLength: 3
           maxLength: 50
           description: Optional slug; must be unique within organisation
