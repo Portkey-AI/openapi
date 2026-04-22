@@ -30500,21 +30500,20 @@ components:
             - `web_search_preview`
             - `web_search_preview_2025_03_11`
         user_location:
-          anyOf:
-            - allOf:
-                - $ref: "#/components/schemas/WebSearchLocation"
-                - type: object
-                  properties:
-                    type:
-                      type: string
-                      description: |
-                        The type of location approximation. Always `approximate`.
-                      enum:
-                        - approximate
-                      x-stainless-const: true
-                  required:
-                    - type
-            - enum: [null]
+          allOf:
+            - $ref: "#/components/schemas/WebSearchLocation"
+            - type: object
+              properties:
+                type:
+                  type: string
+                  description: |
+                    The type of location approximation. Always `approximate`.
+                  enum:
+                    - approximate
+                  x-stainless-const: true
+              required:
+                - type
+          nullable: true
         search_context_size:
           $ref: "#/components/schemas/WebSearchContextSize"
       required:
