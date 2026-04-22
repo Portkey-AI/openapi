@@ -5496,7 +5496,7 @@ paths:
             }
 
             main();
-          x-example-response: &list_assistants_example |
+          response: &list_assistants_example |
             {
               "object": "list",
               "data": [
@@ -5635,7 +5635,7 @@ paths:
             }
 
             main();
-          x-example-response: &create_assistants_example |
+          response: &create_assistants_example |
             {
               "id": "asst_abc123",
               "object": "assistant",
@@ -5726,7 +5726,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "asst_abc123",
               "object": "assistant",
@@ -5840,7 +5840,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "asst_123",
               "object": "assistant",
@@ -5932,7 +5932,7 @@ paths:
               console.log(response);
             }
             main();
-          x-example-response: |
+          response: |
             {
               "id": "asst_abc123",
               "object": "assistant.deleted",
@@ -6181,7 +6181,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "thread_abc123",
               "object": "thread",
@@ -6262,7 +6262,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "thread_abc123",
               "object": "thread",
@@ -6365,7 +6365,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "thread_abc123",
               "object": "thread",
@@ -6444,7 +6444,7 @@ paths:
               console.log(response);
             }
             main();
-          x-example-response: |
+          response: |
             {
               "id": "thread_abc123",
               "object": "thread.deleted",
@@ -6553,7 +6553,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "object": "list",
               "data": [
@@ -6687,7 +6687,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "msg_abc123",
               "object": "thread.message",
@@ -6791,7 +6791,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "msg_abc123",
               "object": "thread.message",
@@ -6909,7 +6909,7 @@ paths:
                   },
                 }
               }'
-          x-example-response: |
+          response: |
             {
               "id": "msg_abc123",
               "object": "thread.message",
@@ -7011,7 +7011,7 @@ paths:
 
               console.log(deletedMessage);
             }
-          x-example-response: |
+          response: |
             {
               "id": "msg_abc123",
               "object": "thread.message.deleted",
@@ -7110,7 +7110,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7244,7 +7244,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "object": "list",
               "data": [
@@ -7431,7 +7431,7 @@ paths:
             }
 
             main();
-          x-example-response: &run_object_example |
+          response: &run_object_example |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7550,7 +7550,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7688,7 +7688,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -7851,7 +7851,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "run_123",
               "object": "thread.run",
@@ -7988,7 +7988,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "run_abc123",
               "object": "thread.run",
@@ -8129,7 +8129,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "object": "list",
               "data": [
@@ -8255,7 +8255,7 @@ paths:
             }
 
             main();
-          x-example-response: &run_step_object_example |
+          response: &run_step_object_example |
             {
               "id": "step_abc123",
               "object": "thread.run.step",
@@ -8369,7 +8369,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "object": "list",
               "data": [
@@ -8479,7 +8479,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vs_abc123",
               "object": "vector_store",
@@ -8567,7 +8567,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vs_abc123",
               "object": "vector_store",
@@ -8657,7 +8657,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vs_abc123",
               "object": "vector_store",
@@ -8745,7 +8745,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vs_abc123",
               "object": "vector_store.deleted",
@@ -8854,7 +8854,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "object": "list",
               "data": [
@@ -8961,7 +8961,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "file-abc123",
               "object": "vector_store.file",
@@ -9054,7 +9054,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "file-abc123",
               "object": "vector_store.file",
@@ -9143,7 +9143,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "file-abc123",
               "object": "vector_store.file.deleted",
@@ -9237,7 +9237,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vsfb_abc123",
               "object": "vector_store.file_batch",
@@ -9335,7 +9335,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vsfb_abc123",
               "object": "vector_store.file_batch",
@@ -9432,7 +9432,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "id": "vsfb_abc123",
               "object": "vector_store.file_batch",
@@ -9558,7 +9558,7 @@ paths:
             }
 
             main();
-          x-example-response: |
+          response: |
             {
               "object": "list",
               "data": [
@@ -20734,7 +20734,7 @@ paths:
                             operands:
                               - value: cache_read_tokens
                               - value: rates.cache_read_input_token
-                      x-example-response:
+                      response:
                         operation: multiply
                         operands:
                           - value: output_tokens
@@ -20765,7 +20765,7 @@ paths:
                             operands:
                               - value: input_tokens
                               - value: rates.request_token
-                      x-example-response:
+                      response:
                         operation: multiply
                         operands:
                           - value: output_tokens
