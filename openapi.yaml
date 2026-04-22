@@ -17362,6 +17362,31 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateApiKeyObject"
+            examples:
+              create_basic:
+                summary: Create a basic service API key
+                value:
+                  name: "API_KEY_NAME_0909"
+                  scopes: ["completions.write"]
+              create_with_rotation:
+                summary: Create an API key with automatic monthly rotation
+                value:
+                  name: "Auto-rotating Key"
+                  scopes: ["completions.write"]
+                  rotation_policy:
+                    rotation_period: "monthly"
+                    key_transition_period_ms: 3600000
+              create_with_usage_limits:
+                summary: Create an API key with usage limits and alert emails
+                value:
+                  name: "Budget-limited Key"
+                  scopes: ["completions.write"]
+                  usage_limits:
+                    type: "cost"
+                    credit_limit: 100
+                    alert_threshold: 80
+                    periodic_reset: "monthly"
+                  alert_emails: ["admin@example.com"]
       responses:
         "200":
           description: OK
@@ -17771,6 +17796,21 @@ paths:
                 summary: Reset accumulated usage for this key
                 value:
                   reset_usage: true
+              set_rotation_policy:
+                summary: Set automatic monthly rotation on an existing key
+                value:
+                  rotation_policy:
+                    rotation_period: "monthly"
+                    key_transition_period_ms: 3600000
+              update_usage_limits:
+                summary: Update usage limits and alert emails
+                value:
+                  usage_limits:
+                    type: "cost"
+                    credit_limit: 100
+                    alert_threshold: 80
+                    periodic_reset: "monthly"
+                  alert_emails: ["admin@example.com"]
       parameters:
         - name: id
           in: path
@@ -31809,6 +31849,21 @@ components:
           type: string
           description: Reset the usage periodically.
           enum: ["monthly", "weekly"]
+          nullable: true
+          example: "monthly"
+        periodic_reset_days:
+          type: integer
+          description: Reset the usage counter every N days (1-365). Mutually exclusive with periodic_reset.
+          minimum: 1
+          maximum: 365
+          nullable: true
+          example: 30
+        next_usage_reset_at:
+          type: string
+          format: date-time
+          description: ISO 8601 datetime for the next scheduled usage reset. Auto-computed from periodic_reset or periodic_reset_days if not provided.
+          nullable: true
+          example: "2026-05-01T00:00:00Z"
       example:
         credit_limit: 10
         periodic_reset: monthly
@@ -34447,6 +34502,11 @@ components:
         description:
           type: string
           example: "API key for development environment"
+        organisation_id:
+          type: string
+          format: uuid
+          description: Organisation ID. Optional when calling via an org-level API key (picked from auth context).
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
         workspace_id:
           type: string
           example: "ws-myworkspace"
@@ -34457,17 +34517,26 @@ components:
           example: "c3d4e5f6-a7b8-6c7d-0e1f-2a3b4c5d6e7f"
         rate_limits:
           type: array
+          nullable: true
           items:
             type: object
+            required:
+              - type
+              - unit
+              - value
             properties:
               type:
                 type: string
+                enum: ["requests", "tokens"]
                 example: "requests"
               unit:
                 type: string
+                enum: ["rpd", "rph", "rpm", "rps", "rpw"]
+                description: "Rate limit unit: requests/tokens per day, hour, minute, second, or week."
                 example: "rpm"
               value:
                 type: integer
+                minimum: 0
                 example: 100
         usage_limits:
           $ref: "#/components/schemas/UsageLimits"
@@ -34488,6 +34557,11 @@ components:
             config_id:
               type: string
               example: config-abc
+            allow_config_override:
+              type: boolean
+              default: true
+              description: When false, the pinned config_id cannot be overridden at request time.
+              example: false
         alert_emails:
           type: array
           items:
@@ -34497,6 +34571,31 @@ components:
         expires_at:
           type: string
           format: date-time
+          nullable: true
+          description: ISO 8601 datetime at which this key expires. Must not exceed the org/workspace maximum TTL if configured.
+          example: "2026-12-31T23:59:59Z"
+        rotation_policy:
+          type: object
+          nullable: true
+          description: Automatic key rotation configuration. Requires either rotation_period or next_rotation_at.
+          properties:
+            rotation_period:
+              type: string
+              enum: ["weekly", "monthly"]
+              nullable: true
+              description: How often to automatically rotate the key.
+              example: "monthly"
+            next_rotation_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: Explicit datetime for the next rotation. Mutually exclusive with rotation_period.
+              example: "2026-06-01T00:00:00Z"
+            key_transition_period_ms:
+              type: integer
+              minimum: 1800000
+              description: Duration in milliseconds during which the previous key remains valid after rotation. Minimum 30 minutes (1800000). Must be less than the full rotation period.
+              example: 3600000
 
     UpdateApiKeyObject:
       type: object
@@ -34509,17 +34608,26 @@ components:
           example: "API key for development environment"
         rate_limits:
           type: array
+          nullable: true
           items:
             type: object
+            required:
+              - type
+              - unit
+              - value
             properties:
               type:
                 type: string
+                enum: ["requests", "tokens"]
                 example: "requests"
               unit:
                 type: string
+                enum: ["rpd", "rph", "rpm", "rps", "rpw"]
+                description: "Rate limit unit: requests/tokens per day, hour, minute, second, or week."
                 example: "rpm"
               value:
                 type: integer
+                minimum: 0
                 example: 100
         usage_limits:
           $ref: "#/components/schemas/UsageLimits"
@@ -34544,12 +34652,45 @@ components:
             config_id:
               type: string
               example: config-abc
+            allow_config_override:
+              type: boolean
+              default: true
+              description: When false, the pinned config_id cannot be overridden at request time.
+              example: false
         alert_emails:
           type: array
           items:
             type: string
             format: email
             example: "foo@bar.com"
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: ISO 8601 datetime at which this key expires.
+          example: "2026-12-31T23:59:59Z"
+        rotation_policy:
+          type: object
+          nullable: true
+          description: Update or replace the automatic key rotation configuration. Requires either rotation_period or next_rotation_at.
+          properties:
+            rotation_period:
+              type: string
+              enum: ["weekly", "monthly"]
+              nullable: true
+              description: How often to automatically rotate the key.
+              example: "monthly"
+            next_rotation_at:
+              type: string
+              format: date-time
+              nullable: true
+              description: Explicit datetime for the next rotation. Mutually exclusive with rotation_period.
+              example: "2026-06-01T00:00:00Z"
+            key_transition_period_ms:
+              type: integer
+              minimum: 1800000
+              description: Duration in milliseconds during which the previous key remains valid after rotation. Minimum 30 minutes (1800000). Must be less than the full rotation period.
+              example: 3600000
 
     RotateApiKeyRequest:
       type: object
@@ -35838,6 +35979,8 @@ components:
           description: Inference endpoint
         metadata:
           description: metadata related for the batch job
+          type: object
+          additionalProperties: true
           nullable: true
       description: Gateway supported body params for OpenAI, Azure OpenAI and VertexAI.
       title: OpenAI Params
