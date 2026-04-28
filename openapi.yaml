@@ -5018,7 +5018,7 @@ paths:
         - in: query
           name: provider
           required: false
-          description: Filter models by virtual key slug (the provider segment in model id `@provider/model`).
+          description: Filter models by model catalog provider slug (the provider segment in model id `@provider/model`).
           schema:
             type: string
         - in: query
@@ -5036,7 +5036,7 @@ paths:
         - in: query
           name: sort
           required: false
-          description: The field to sort the results by (`provider` sorts by virtual key slug).
+          description: The field to sort the results by (`provider` sorts by model catalog provider slug).
           schema:
             type: string
             enum: [name, provider, ai_service]
@@ -5077,7 +5077,7 @@ paths:
           label: Self-Hosted
           source: |
             # Example of sending a query parameter in the URL
-            curl 'https://YOUR_SELF_HOSTED_URL/models?ai_service=openai' \
+            curl 'https://SELF_HOSTED_GATEWAY_URL/models?ai_service=openai' \
               -H "x-portkey-api-key: $PORTKEY_API_KEY"
         - lang: python
           label: Default
@@ -5100,7 +5100,7 @@ paths:
 
             client = Portkey(
               api_key = "PORTKEY_API_KEY",
-              base_url = "https://YOUR_SELF_HOSTED_URL"
+              base_url = "https://SELF_HOSTED_GATEWAY_URL"
             )
 
             # Example of sending query parameters via extra_query
@@ -5132,7 +5132,7 @@ paths:
 
             const client = new Portkey({
               apiKey: 'PORTKEY_API_KEY',
-              baseUrl: 'https://YOUR_SELF_HOSTED_URL'
+              baseUrl: 'https://SELF_HOSTED_GATEWAY_URL'
             });
 
             async function main() {
