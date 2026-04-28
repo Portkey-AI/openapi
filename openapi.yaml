@@ -15424,12 +15424,6 @@ paths:
                 - required:
                     - scim_group_name
             examples:
-              with_existing_group:
-                summary: Map an existing SCIM group
-                value:
-                  scim_group_id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
-                  workspace_id: "ws_my-workspace"
-                  role: member
               pre_create_group:
                 summary: Pre-create a SCIM group and map it
                 value:
@@ -15482,82 +15476,6 @@ paths:
                 "workspace_id": "ws_my-workspace",
                 "role": "member"
             }'
-
-    get:
-      tags:
-        - Workspaces
-      summary: List SCIM Group to Workspace Mappings
-      description: List all SCIM group to workspace mappings for the organisation.
-      parameters:
-        - name: workspace_id
-          in: query
-          schema:
-            type: string
-          description: Filter by workspace ID
-        - name: scim_group_id
-          in: query
-          schema:
-            type: string
-          description: Filter by SCIM group ID
-        - name: role
-          in: query
-          schema:
-            type: string
-            enum:
-              - admin
-              - member
-              - manager
-          description: Filter by role
-      responses:
-        "200":
-          description: OK
-          headers:
-            Content-Type:
-              schema:
-                type: string
-                example: application/json
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                    properties:
-                      mappings:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/ScimWorkspaceMapping"
-                      total_count:
-                        type: integer
-              example:
-                success: true
-                data:
-                  mappings:
-                    - id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-                      workspace_id: "ws-12345"
-                      scim_group: "Engineering Team"
-                      role: "member"
-                      scim_group_id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
-                    - id: "b2c3d4e5-f6a7-8901-bcde-f12345678901"
-                      workspace_id: "ws-67890"
-                      scim_group: "Platform Team"
-                      role: "admin"
-                      scim_group_id: "e3f4a5b6-7c8d-9012-efab-cd3456789012"
-                  total_count: 2
-      x-code-samples:
-        - lang: curl
-          label: Default
-          source: |
-            curl -X GET https://api.portkey.ai/v1/scim/workspaces \
-            -H "x-portkey-api-key: PORTKEY_API_KEY"
-        - lang: curl
-          label: Self-Hosted
-          source: |
-            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/scim/workspaces \
-            -H "x-portkey-api-key: PORTKEY_API_KEY"
 
   /scim/workspaces/{scimWorkspaceGroupId}:
     servers: *ControlPlaneServers
