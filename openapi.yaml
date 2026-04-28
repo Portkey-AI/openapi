@@ -5014,31 +5014,31 @@ paths:
         - in: query
           name: ai_service
           required: false
-          description: Filter models by the AI service (e.g., 'openai', 'anthropic').
+          description: Filter models by AI service (e.g., 'openai', 'anthropic').
           schema:
             type: string
         - in: query
           name: provider
           required: false
-          description: Filter models by the provider.
+          description: Filter models by model catalog provider slug (the provider segment in model id `@provider/model`).
           schema:
             type: string
         - in: query
           name: limit
           required: false
-          description: The maximum number of models to return.
+          description: Maximum number of models to return per page.
           schema:
             type: integer
         - in: query
           name: offset
           required: false
-          description: The number of models to skip before starting to collect the result set.
+          description: Number of models to skip before collecting the result set.
           schema:
             type: integer
         - in: query
           name: sort
           required: false
-          description: The field to sort the results by.
+          description: The field to sort the results by (`provider` sorts by model catalog provider slug).
           schema:
             type: string
             enum: [name, provider, ai_service]
@@ -5073,13 +5073,13 @@ paths:
           label: Default
           source: |
             # Example of sending a query parameter in the URL
-            curl 'https://api.portkey.ai/v1/models?provider=openai' \
+            curl 'https://api.portkey.ai/v1/models?ai_service=openai' \
               -H "x-portkey-api-key: $PORTKEY_API_KEY"
         - lang: curl
           label: Self-Hosted
           source: |
             # Example of sending a query parameter in the URL
-            curl 'https://YOUR_SELF_HOSTED_URL/models?provider=openai' \
+            curl 'https://SELF_HOSTED_GATEWAY_URL/models?ai_service=openai' \
               -H "x-portkey-api-key: $PORTKEY_API_KEY"
         - lang: python
           label: Default
@@ -5092,7 +5092,7 @@ paths:
 
             # Example of sending query parameters via extra_query
             models = client.models.list(
-              extra_query={"provider": "openai"}
+              extra_query={"ai_service": "openai"}
             )
             print(models)
         - lang: python
@@ -5102,12 +5102,12 @@ paths:
 
             client = Portkey(
               api_key = "PORTKEY_API_KEY",
-              base_url = "https://YOUR_SELF_HOSTED_URL"
+              base_url = "https://SELF_HOSTED_GATEWAY_URL"
             )
 
             # Example of sending query parameters via extra_query
             models = client.models.list(
-              extra_query={"provider": "openai"}
+              extra_query={"ai_service": "openai"}
             )
             print(models)
         - lang: javascript
@@ -5122,7 +5122,7 @@ paths:
             async function main() {
               // Example of sending query parameters in the list method
               const list = await client.models.list({
-                provider: "openai"
+                ai_service: "openai"
               });
               console.log(list);
             }
@@ -5134,13 +5134,13 @@ paths:
 
             const client = new Portkey({
               apiKey: 'PORTKEY_API_KEY',
-              baseUrl: 'https://YOUR_SELF_HOSTED_URL'
+              baseUrl: 'https://SELF_HOSTED_GATEWAY_URL'
             });
 
             async function main() {
               // Example of sending query parameters in the list method
               const list = await client.models.list({
-                provider: "openai"
+                ai_service: "openai"
               });
               console.log(list);
             }
