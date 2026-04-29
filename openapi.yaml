@@ -15384,6 +15384,100 @@ paths:
 
   /scim/workspaces:
     servers: *ControlPlaneServers
+    get:
+      tags:
+        - Workspaces
+      summary: List SCIM Group to Workspace Mappings
+      description: |
+        List all mappings between SCIM groups and workspaces for the organisation.
+        Optionally filter by workspace, SCIM group, or role.
+      parameters:
+        - name: workspace_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter mappings by workspace ID or slug.
+        - name: scim_group_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter mappings by SCIM group ID.
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - admin
+              - member
+              - manager
+          description: Filter mappings by role.
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mappings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Unique ID of the SCIM workspace mapping.
+                        workspace_id:
+                          type: string
+                          description: ID of the mapped workspace.
+                        scim_group:
+                          type: string
+                          description: Display name of the SCIM group.
+                        scim_group_id:
+                          type: string
+                          description: ID of the SCIM group.
+                        role:
+                          type: string
+                          enum:
+                            - admin
+                            - member
+                            - manager
+                          description: Role assigned to group members in the workspace.
+                  total_count:
+                    type: integer
+                    description: Total number of mappings returned.
+              example:
+                mappings:
+                  - id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                    workspace_id: "ws_my-workspace"
+                    scim_group: "Engineering Team"
+                    scim_group_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    role: "member"
+                total_count: 1
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Filter by workspace
+          source: |
+            curl -X GET "https://api.portkey.ai/v1/scim/workspaces?workspace_id=ws_my-workspace" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
     post:
       tags:
         - Workspaces
