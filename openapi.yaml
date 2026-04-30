@@ -139,7 +139,6 @@ tags:
   - name: Secret-References
     description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
 
-
 paths:
   # Note: When adding an endpoint, make sure you also add it in the `groups` section, in the end of this file,
   # under the appropriate group
@@ -15565,6 +15564,238 @@ paths:
                 workspaceId: 'WORKSPACE_SLUG',
             })
             console.log(workspace);
+
+  /scim/workspaces:
+    servers: *ControlPlaneServers
+    get:
+      tags:
+        - Workspaces
+      summary: List SCIM Group to Workspace Mappings
+      description: |
+        List all mappings between SCIM groups and workspaces for the organisation.
+        Optionally filter by workspace, SCIM group, or role.
+      parameters:
+        - name: workspace_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter mappings by workspace ID or slug.
+        - name: scim_group_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter mappings by SCIM group ID.
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - admin
+              - member
+              - manager
+          description: Filter mappings by role.
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mappings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Unique ID of the SCIM workspace mapping.
+                        workspace_id:
+                          type: string
+                          description: ID of the mapped workspace.
+                        scim_group:
+                          type: string
+                          description: Display name of the SCIM group.
+                        scim_group_id:
+                          type: string
+                          description: ID of the SCIM group.
+                        role:
+                          type: string
+                          enum:
+                            - admin
+                            - member
+                            - manager
+                          description: Role assigned to group members in the workspace.
+                  total_count:
+                    type: integer
+                    description: Total number of mappings returned.
+              example:
+                mappings:
+                  - id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                    workspace_id: "ws_my-workspace"
+                    scim_group: "Engineering Team"
+                    scim_group_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    role: "member"
+                total_count: 1
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Filter by workspace
+          source: |
+            curl -X GET "https://api.portkey.ai/v1/scim/workspaces?workspace_id=ws_my-workspace" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+    post:
+      tags:
+        - Workspaces
+      summary: Create SCIM Group to Workspace Mapping
+      description: |
+        Create a mapping between a SCIM group and a workspace. 
+        You can either reference an existing SCIM group by ID, or provide a group name 
+        to pre-create the SCIM group before the IdP provisions it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - workspace_id
+                - role
+              properties:
+                workspace_id:
+                  type: string
+                  description: ID or slug (ws_ prefix) of the workspace to map the SCIM group to.
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - member
+                    - manager
+                  description: Role assigned to group members in the workspace.
+                scim_group_id:
+                  type: string
+                  description: ID of an existing SCIM group. Required if scim_group_name is not provided.
+                scim_group_name:
+                  type: string
+                  description: Display name for the SCIM group. If the group doesn't exist, it will be created. Required if scim_group_id is not provided. Must not match the pattern-based auto-provisioning format (e.g. ws-name-role-admin).
+              oneOf:
+                - required:
+                    - scim_group_id
+                - required:
+                    - scim_group_name
+            examples:
+              pre_create_group:
+                summary: Pre-create a SCIM group and map it
+                value:
+                  scim_group_name: "Engineering Team"
+                  workspace_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                  role: admin
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimWorkspaceMapping"
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "scim_group_name": "Engineering Team",
+                "workspace_id": "ws_my-workspace",
+                "role": "member"
+            }'
+        - lang: curl
+          label: With existing group
+          source: |
+            curl -X POST https://api.portkey.ai/v1/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "scim_group_id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+                "workspace_id": "ws_my-workspace",
+                "role": "admin"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/scim/workspaces \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "scim_group_name": "Engineering Team",
+                "workspace_id": "ws_my-workspace",
+                "role": "member"
+            }'
+
+  /scim/workspaces/{scimWorkspaceGroupId}:
+    servers: *ControlPlaneServers
+    delete:
+      tags:
+        - Workspaces
+      summary: Delete SCIM Group to Workspace Mapping
+      description: Remove a SCIM group to workspace mapping. This archives the mapping but does not delete the SCIM group or workspace.
+      parameters:
+        - name: scimWorkspaceGroupId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the SCIM workspace mapping to delete
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                example:
+                  success: true
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/scim/workspaces/MAPPING_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/scim/workspaces/MAPPING_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
 
   /mcp-integrations:
     servers: *ControlPlaneServers
@@ -33269,6 +33500,35 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/RateLimits"
+
+    ScimWorkspaceMapping:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID of the mapping
+        workspace_id:
+          type: string
+          description: ID of the mapped workspace
+        scim_group:
+          type: string
+          description: Display name of the SCIM group
+        role:
+          type: string
+          enum:
+            - admin
+            - member
+            - manager
+          description: Role assigned to group members
+        scim_group_id:
+          type: string
+          description: ID of the SCIM group
+      example:
+        id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        workspace_id: "ws-12345"
+        scim_group: "Engineering Team"
+        role: "member"
+        scim_group_id: "d290f1ee-6c54-4b01-90e6-d701748f0851"
 
     Collection:
       type: object
