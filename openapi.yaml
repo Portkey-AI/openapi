@@ -32169,6 +32169,8 @@ components:
           items:
             $ref: '#/components/schemas/SecretMapping'
           description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique. When "key" is mapped, the key body field can be omitted.
+        pricing_adjustments:
+          $ref: '#/components/schemas/PricingAdjustments'
 
     UpdateIntegrationRequest:
       type: object
@@ -32214,6 +32216,8 @@ components:
           items:
             $ref: '#/components/schemas/SecretMapping'
           description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique.
+        pricing_adjustments:
+          $ref: '#/components/schemas/PricingAdjustments'
 
     IntegrationDetailResponse:
       allOf:
@@ -32269,7 +32273,153 @@ components:
               items:
                 $ref: '#/components/schemas/SecretMapping'
               description: Secret reference mappings for this integration. Valid target_field values are "key" or "configurations.<field>".
-  
+            pricing_adjustments:
+              $ref: '#/components/schemas/PricingAdjustments'
+
+    PricingAdjustments:
+      type: object
+      nullable: true
+      additionalProperties: false
+      description: |
+        Per-Integration pricing adjustments applied on top of Portkey's base model pricing
+        for cost tracking, analytics, and budget limits. Use to reflect negotiated discounts,
+        committed-use rates, or internal markups for cost showback.
+      properties:
+        multiplier:
+          $ref: '#/components/schemas/PricingMultiplier'
+      example:
+        multiplier:
+          default: 0.8
+          cache_read_input_token: 0.9
+          cache_write_input_token: 0.9
+
+    PricingMultiplier:
+      type: object
+      additionalProperties: false
+      description: |
+        Multipliers applied to the corresponding pricing keys from
+        [Portkey Models](https://portkey.ai/models). A multiplier of `1` leaves pricing
+        unchanged, `0.8` applies a 20% discount, `1.2` applies a 20% markup. Missing or
+        `null` fields inherit from `default`; if `default` is also unset, no change is applied.
+        All values must be non-negative numbers.
+      properties:
+        default:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier applied to every token type unless a more specific multiplier is set.
+        request_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for input/request token cost.
+        response_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for output/response token cost.
+        cache_read_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read input token cost.
+        cache_write_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-write input token cost.
+        cache_read_audio_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read audio input token cost.
+        request_audio_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for audio input token cost.
+        response_audio_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for audio output token cost.
+        reasoning_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for reasoning/thinking token cost.
+        prediction_accepted_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for accepted predicted-output token cost.
+        prediction_rejected_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for rejected predicted-output token cost.
+        request_image_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for image-modality input token cost.
+        response_image_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for image-modality output token cost.
+        request_text_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for text-modality input token cost.
+        response_text_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for text-modality output token cost.
+        cache_read_image_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read image-input token cost.
+        cache_read_text_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read text-input token cost.
+        cache_write_text_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-write text-input token cost.
+        cache_write_image_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-write image-input token cost.
+        image:
+          type: object
+          nullable: true
+          additionalProperties: false
+          description: Image generation pricing multipliers.
+          properties:
+            default:
+              type: number
+              nullable: true
+              minimum: 0
+              description: Multiplier applied to image generation pricing across all qualities and sizes.
+        additional_units:
+          type: object
+          nullable: true
+          description: |
+            Multipliers for per-unit charges such as `web_search`, `file_search`, `input_image`,
+            `input_video_standard`. Keys must match those returned by Portkey Models for the provider.
+          additionalProperties:
+            type: number
+            nullable: true
+            minimum: 0
+
     GlobalWorkspaceAccess:
       type: object
       required:
