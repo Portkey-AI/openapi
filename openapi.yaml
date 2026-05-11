@@ -611,11 +611,13 @@ paths:
   /collections:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Create a new collection
       description: Creates a new collection in the specified workspace
       tags:
         - Collections
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       requestBody:
         required: true
@@ -662,11 +664,13 @@ paths:
           description: Server error
     
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: List collections
       description: Lists all collections in the specified workspace
       tags:
         - Collections
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: workspace_id
@@ -732,11 +736,13 @@ paths:
         description: ID or slug of the collection
     
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Get collection details
       description: Retrieves details of a specific collection
       tags:
         - Collections
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       responses:
         '200':
@@ -755,9 +761,11 @@ paths:
           description: Server error
     
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Update collection
       description: Updates a collection's details
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Collections
@@ -771,8 +779,10 @@ paths:
                 name:
                   type: string
                   description: New name for the collection
-              required:
-                - name
+                parent_collection_id:
+                  type: string
+                  nullable: true
+                  description: New parent collection id, or null to move to root.
       responses:
         '200':
           description: OK
@@ -798,12 +808,20 @@ paths:
           description: Server error
     
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Delete collection
       description: Deletes a collection
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Collections
+      parameters:
+        - name: cascade
+          in: query
+          schema:
+            type: boolean
+          description: Delete child collections and prompts recursively.
       responses:
         '200':
           description: OK
@@ -829,10 +847,12 @@ paths:
   /labels:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Create a new label
       description: Creates a new label in the system
       operationId: createLabel
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Labels
@@ -863,10 +883,12 @@ paths:
           description: Server error
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: List labels
       description: Returns a list of labels based on filters
       operationId: listLabels
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Labels
@@ -887,6 +909,11 @@ paths:
           schema:
             type: string
           description: Search query to filter labels by name
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: Exact label name to filter results.
         - name: current_page
           in: query
           schema:
@@ -922,10 +949,12 @@ paths:
   /labels/{labelId}:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Get a label by ID
       description: Returns a specific label by its ID
       operationId: getLabel
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Labels
@@ -971,10 +1000,12 @@ paths:
           description: Server error
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Update a label
       description: Updates an existing label
       operationId: updateLabel
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Labels
@@ -1021,10 +1052,12 @@ paths:
           description: Server error
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Delete a label
       description: Deletes a label
       operationId: deleteLabel
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       tags:
         - Labels
@@ -1067,11 +1100,13 @@ paths:
   /prompts:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Create a new prompt
       operationId: createPrompt
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       requestBody:
         required: true
@@ -1113,6 +1148,18 @@ paths:
                 model:
                   type: string
                   description: The model to use for the prompt
+                ai_model_id:
+                  type: string
+                  format: uuid
+                  description: AI model id. Mutually exclusive with model and finetune_id.
+                finetune_id:
+                  type: string
+                  format: uuid
+                  description: Fine-tune id. Mutually exclusive with model and ai_model_id.
+                provider_api_key_id:
+                  type: string
+                  format: uuid
+                  description: Provider API key id. Mutually exclusive with virtual_key.
                 virtual_key:
                   type: string
                   description: The virtual key to use for the prompt
@@ -1151,11 +1198,13 @@ paths:
           description: Server error
     
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: List prompts
       operationId: listPrompts
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: collection_id
@@ -1175,6 +1224,14 @@ paths:
           schema:
             type: integer
         - name: search
+          in: query
+          schema:
+            type: string
+        - name: return_last_used
+          in: query
+          schema:
+            type: boolean
+        - name: id
           in: query
           schema:
             type: string
@@ -1235,6 +1292,7 @@ paths:
           description: Server error
     
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Update a prompt
       description: |
         Update a prompt's metadata and/or create a new version with updated template content.
@@ -1246,6 +1304,7 @@ paths:
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptId
@@ -1277,12 +1336,32 @@ paths:
                 model:
                   type: string
                   description: The model identifier. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
+                ai_model_id:
+                  type: string
+                  format: uuid
+                  description: AI model id. Mutually exclusive with model and finetune_id.
+                finetune_id:
+                  type: string
+                  format: uuid
+                  description: Fine-tune id. Mutually exclusive with model and ai_model_id.
+                status:
+                  type: string
+                  enum:
+                    - archived
+                    - active
+                provider_api_key_id:
+                  type: string
+                  format: uuid
+                  description: Provider API key id. Mutually exclusive with virtual_key.
                 virtual_key:
                   type: string
                   description: The virtual key to associate with this version. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
                 version_description:
                   type: string
                   description: A human-readable description for this version. When `patch` is `true`, this field is optional and will be inherited from the current latest version if omitted.
+                template_metadata:
+                  type: object
+                  description: Prompt template metadata.
                 functions:
                   type: array
                   items:
@@ -1331,11 +1410,13 @@ paths:
           description: Server error
     
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Delete a prompt
       operationId: deletePrompt
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptId
@@ -1365,11 +1446,13 @@ paths:
   /prompts/{promptId}/versions:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Get all versions of a prompt
       operationId: getPromptVersions
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptId
@@ -1400,11 +1483,13 @@ paths:
   /prompts/{promptId}/versions/{versionId}:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Get a specific version of a prompt
       operationId: getPromptByVersion
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptId
@@ -1437,6 +1522,7 @@ paths:
           description: Server error
     
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Update a specific version of a prompt
       description: |
         Updates metadata for a specific prompt version. **This endpoint only supports updating the `label_id` field.**
@@ -1446,6 +1532,7 @@ paths:
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptId
@@ -1492,11 +1579,13 @@ paths:
   /prompts/{promptId}/makeDefault:
     servers: *ControlPlaneServers
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Set a version as the default for a prompt
       operationId: updatePromptDefault
       tags:
         - Prompts
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptId
@@ -1538,11 +1627,13 @@ paths:
   /prompts/partials:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Create a new prompt partial
       operationId: createPromptPartial
       tags:
         - PromptPartials
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       requestBody:
         required: true
@@ -1557,6 +1648,10 @@ paths:
                 workspace_id:
                   type: string
                   description: Required for Admin keys
+                collection_id:
+                  type: string
+                  format: uuid
+                  description: Collection id for the prompt partial.
                 name:
                   type: string
                 string:
@@ -1590,11 +1685,13 @@ paths:
           description: Server error
     
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: List prompt partials
       operationId: listPromptPartials
       tags:
         - PromptPartials
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: collection_id
@@ -1655,11 +1752,13 @@ paths:
           description: Server error
     
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Update a prompt partial
       operationId: updatePromptPartial
       tags:
         - PromptPartials
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptPartialId
@@ -1680,6 +1779,9 @@ paths:
                   type: string
                 description:
                   type: string
+                version_description:
+                  type: string
+                  description: Description for the created prompt partial version.
                 status:
                   type: string
       responses:
@@ -1705,11 +1807,13 @@ paths:
           description: Server error
     
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Delete a prompt partial
       operationId: deletePromptPartial
       tags:
         - PromptPartials
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptPartialId
@@ -1739,11 +1843,13 @@ paths:
   /prompts/partials/{promptPartialId}/versions:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Get all versions of a prompt partial
       operationId: getPromptPartialVersions
       tags:
         - PromptPartials
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptPartialId
@@ -1774,11 +1880,13 @@ paths:
   /prompts/partials/{promptPartialId}/makeDefault:
     servers: *ControlPlaneServers
     put:
+      x-albus-auth-mode: user_token_or_api_key
       summary: Set a version as the default for a prompt partial
       operationId: updatePromptPartialDefault
       tags:
         - PromptPartials
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - name: promptPartialId
@@ -1992,6 +2100,9 @@ paths:
   /prompts/{promptId}/render:
     servers: *DataPlaneServers 
     post:
+      x-albus-auth-mode: org_api_key
+      security:
+        - Portkey-Key: []
       operationId: createPromptRender
       tags:
         - Prompts
@@ -2147,6 +2258,10 @@ paths:
 
   /guardrails:
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Create a new guardrail
       description: Creates a new guardrail with specified checks and actions
       operationId: createGuardrail
@@ -2661,6 +2776,10 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List guardrails
       description: Retrieves a paginated list of guardrails for the specified workspace or organisation
       operationId: listGuardrails
@@ -2756,6 +2875,10 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Update a guardrail
       description: Updates an existing guardrail's name, checks, or actions
       operationId: updateGuardrail
@@ -2795,6 +2918,10 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Delete a guardrail
       description: Deletes an existing guardrail
       operationId: deleteGuardrail
@@ -5034,6 +5161,7 @@ paths:
   /models:
     servers: *DataPlaneServers
     get:
+      x-albus-auth-mode: api_key
       operationId: listModels
       tags:
         - Models
@@ -5051,6 +5179,12 @@ paths:
           name: provider
           required: false
           description: Filter models by the provider.
+          schema:
+            type: string
+        - in: query
+          name: workspace
+          required: false
+          description: Filter models by workspace.
           schema:
             type: string
         - in: query
@@ -10200,10 +10334,20 @@ paths:
   /configs:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List all configs
       tags:
         - Configs
       operationId: listConfigs
+      parameters:
+        - name: return_last_used
+          in: query
+          schema:
+            type: boolean
+          description: Include last-used information for each config.
       responses:
         "200":
           description: A list of configs
@@ -10332,6 +10476,10 @@ paths:
             })
             console.log(config);
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Create a config
       tags:
         - Configs
@@ -10494,6 +10642,10 @@ paths:
   /configs/{slug}:
     servers: *ControlPlaneServers
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Delete a config
       tags:
         - Configs
@@ -10717,6 +10869,10 @@ paths:
             console.log(config);
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       servers: *ControlPlaneServers
       summary: Update a config
       tags:
@@ -10878,6 +11034,10 @@ paths:
   /configs/{slug}/versions:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List versions for a config
       tags:
         - Configs
@@ -11867,6 +12027,10 @@ paths:
   /providers:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List All Providers
       tags:
         - Providers
@@ -11886,6 +12050,16 @@ paths:
           schema:
             type: string
           description: Not required when using workspace API keys. Required when using organisation admin keys
+        - in: query
+          name: return_last_used
+          schema:
+            type: boolean
+          description: Include last-used information.
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: JSON-encoded tag filter.
           
       responses:
         "200":
@@ -11976,6 +12150,10 @@ paths:
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Create a Provider
       tags:
         - Providers
@@ -11985,6 +12163,8 @@ paths:
           application/json:
             schema:
               type: object
+              allOf:
+                - $ref: '#/components/schemas/ProviderCredentialCreateFields'
               properties:
                 name:
                   type: string
@@ -12231,6 +12411,10 @@ paths:
             console.log(provider);
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Update a Provider
       tags:
         - Providers
@@ -12252,6 +12436,8 @@ paths:
           application/json:
             schema:
               type: object
+              allOf:
+                - $ref: '#/components/schemas/ProviderCredentialUpdateFields'
               properties:
                 name:
                   type: string
@@ -12377,6 +12563,10 @@ paths:
             console.log(updatedProvider);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Delete a Provider
       tags:
         - Providers
@@ -12476,6 +12666,10 @@ paths:
   /virtual-keys:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List All Virtual Keys
       tags:
         - Virtual-keys
@@ -12492,6 +12686,11 @@ paths:
             type: integer
           required: true
           description: Page size, default to 50
+        - in: query
+          name: return_last_used
+          schema:
+            type: boolean
+          description: Include last-used information.
           
       responses:
         "200":
@@ -12596,6 +12795,10 @@ paths:
             -H "x-portkey-virtual-key: PROVIDER_VIRTUAL_KEY"
 
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Create a Virtual Key
       tags:
         - Virtual-keys
@@ -12605,6 +12808,8 @@ paths:
           application/json:
             schema:
               type: object
+              allOf:
+                - $ref: '#/components/schemas/ProviderCredentialCreateFields'
               properties:
                 name:
                   type: string
@@ -12982,6 +13187,10 @@ paths:
             console.log(vKey);
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Update a Virtual Key
       tags:
         - Virtual-keys
@@ -12997,6 +13206,8 @@ paths:
           application/json:
             schema:
               type: object
+              allOf:
+                - $ref: '#/components/schemas/ProviderCredentialUpdateFields'
               properties:
                 name:
                   type: string
@@ -13161,6 +13372,10 @@ paths:
             console.log(updatedVkey);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Delete a Virtual Key
       tags:
         - Virtual-keys
@@ -17175,6 +17390,64 @@ paths:
               schema:
                 $ref: "#/components/schemas/AlbusPublicApiResponse"
 
+  /configs/{configId}/versions/{configVersionId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_configsConfigIdVersionsConfigVersionId
+      tags:
+        - Configs
+      summary: "Get: /configs versions"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: configVersionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /finetune:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_finetune
+      tags:
+        - Fine-tuning
+      summary: "Get: /finetune"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisationId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
   /health:
     servers: *PublicServers
     get:
@@ -17465,6 +17738,26 @@ paths:
                 credentials:
                   type: object
                   additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /providers/models:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_providersModels
+      tags:
+        - Providers
+      summary: "Get: /providers models"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       responses:
         "200":
           description: OK
@@ -18730,6 +19023,239 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /v2/tools:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2Tools
+      tags:
+        - Tools
+      summary: "Get: /v2 tools"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: collection_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Tool list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolListResponse"
+    post:
+      operationId: Albus_post_v2Tools
+      tags:
+        - Tools
+      summary: "Post: /v2 tools"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                collection_id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                tool_def:
+                  type: object
+                  additionalProperties: true
+                version_description:
+                  type: string
+              required:
+                - collection_id
+                - name
+                - tool_def
+      responses:
+        "200":
+          description: Created tool identifiers.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolCreateResponse"
+
+  /v2/tools/{toolId}:
+    servers: *PublicServers
+    put:
+      operationId: Albus_put_v2ToolsToolId
+      tags:
+        - Tools
+      summary: "Put: /v2 tools"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: toolId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                tool_def:
+                  type: object
+                  additionalProperties: true
+                status:
+                  type: string
+                  enum:
+                    - archived
+                    - active
+                version_description:
+                  type: string
+      responses:
+        "200":
+          description: Updated tool version identifier when a new version was created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolUpdateResponse"
+    delete:
+      operationId: Albus_delete_v2ToolsToolId
+      tags:
+        - Tools
+      summary: "Delete: /v2 tools"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: toolId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tool deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+
+  /v2/tools/{toolId}/makeDefault:
+    servers: *PublicServers
+    put:
+      operationId: Albus_put_v2ToolsToolIdMakeDefault
+      tags:
+        - Tools
+      summary: "Put: /v2 tools makeDefault"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: toolId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                version:
+                  type: integer
+              required:
+                - version
+      responses:
+        "200":
+          description: Default tool version updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+
+  /v2/tools/{toolId}/versions:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2ToolsToolIdVersions
+      tags:
+        - Tools
+      summary: "Get: /v2 tools versions"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: toolId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tool version list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolVersionsResponse"
+
+  /virtual-keys/migrate:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_virtualKeysMigrate
+      tags:
+        - Virtual-keys
+      summary: "Post: /virtual-keys migrate"
+      description: "Requires user token or private deployment api key."
+      x-albus-auth-mode: user_token_or_private_deployment_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                virtual_key_id:
+                  type: string
+                  format: uuid
+                organisation_id:
+                  type: string
+                  format: uuid
       responses:
         "200":
           description: OK
@@ -20352,6 +20878,10 @@ paths:
   /api-keys/{type}/{sub-type}:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Api-Keys
       summary: Create API Keys
@@ -20657,6 +21187,10 @@ paths:
       - url: https://api.portkey.ai/v1
       - url: https://SELF_HOSTED_CONTROL_PLANE_URL
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Api-Keys
       summary: Get All
@@ -20676,6 +21210,24 @@ paths:
           schema:
             type: string
           example: "ws-shared-123"
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+          description: Organisation id to list organisation-level API keys.
+        - name: status
+          in: query
+          schema:
+            oneOf:
+              - type: string
+                enum: [active, exhausted, expired]
+              - type: array
+                items:
+                  type: string
+                  enum: [active, exhausted, expired]
+          style: form
+          explode: false
+          description: Status filter. Accepts comma-separated values or repeated query parameters.
       responses:
         "200":
           description: OK
@@ -20761,6 +21313,10 @@ paths:
   /api-keys/{id}:
     servers: *ControlPlaneServers
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Api-Keys
       summary: Update API Keys
@@ -21159,6 +21715,10 @@ paths:
             console.log(apiKey);
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Api-Keys
       summary: Get API Keys
@@ -21169,6 +21729,16 @@ paths:
             type: string
             format: uuid
           required: true
+        - name: usage
+          in: query
+          schema:
+            type: boolean
+          description: Include usage information.
+        - name: include_usage
+          in: query
+          schema:
+            type: boolean
+          description: Include usage information.
       responses:
         "200":
           description: OK
@@ -21256,6 +21826,10 @@ paths:
             console.log(apiKey);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Api-Keys
       summary: Remove an API Key
@@ -21354,6 +21928,10 @@ paths:
   /api-keys/{id}/rotate:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Api-Keys
       summary: Rotate API Key
@@ -23827,6 +24405,7 @@ paths:
   /secret-references:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
       operationId: listSecretReferences
       summary: List All Secret References
       tags:
@@ -23850,6 +24429,12 @@ paths:
             minLength: 1
             maxLength: 255
           description: Search by name
+        - in: query
+          name: organisation_id
+          schema:
+            type: string
+            format: uuid
+          description: Organisation id. Required unless using an API key that identifies the organisation.
         - in: query
           name: current_page
           schema:
@@ -23883,6 +24468,7 @@ paths:
                     items:
                       $ref: "#/components/schemas/SecretReferenceListItem"
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       x-code-samples:
         - lang: curl
@@ -23897,6 +24483,7 @@ paths:
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
     post:
+      x-albus-auth-mode: user_token_or_api_key
       operationId: createSecretReference
       summary: Create a Secret Reference
       tags:
@@ -23928,6 +24515,7 @@ paths:
         "403":
           description: secretReferences feature not enabled on subscription
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       x-code-samples:
         - lang: curl
@@ -24003,6 +24591,7 @@ paths:
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
       operationId: updateSecretReference
       summary: Update a Secret Reference
       tags:
@@ -24032,6 +24621,7 @@ paths:
         "404":
           description: Secret reference not found
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       x-code-samples:
         - lang: curl
@@ -24056,6 +24646,7 @@ paths:
             }'
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       operationId: deleteSecretReference
       summary: Delete a Secret Reference
       tags:
@@ -24079,6 +24670,7 @@ paths:
         "404":
           description: Secret reference not found
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       x-code-samples:
         - lang: curl
@@ -25093,6 +25685,122 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/WorkspaceUser"
+
+    ToolObject:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        collection_id:
+          type: string
+        provider_api_key_id:
+          type: string
+          nullable: true
+        slug:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        status:
+          type: string
+          enum:
+            - exhausted
+            - active
+            - archived
+        tool_def:
+          type: object
+          additionalProperties: true
+        object:
+          type: string
+
+    ToolListResponse:
+      type: object
+      required:
+        - object
+        - data
+      properties:
+        object:
+          type: string
+          enum:
+            - list
+        total:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolObject"
+
+    ToolCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        version_id:
+          type: string
+        object:
+          type: string
+
+    ToolUpdateResponse:
+      type: object
+      properties:
+        tool_version_id:
+          type: string
+        object:
+          type: string
+
+    ToolVersion:
+      type: object
+      properties:
+        tool_id:
+          type: string
+        tool_version_id:
+          type: string
+        slug:
+          type: string
+        version:
+          type: integer
+        tool_def:
+          type: object
+          additionalProperties: true
+        description:
+          type: string
+          nullable: true
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        tool_version_status:
+          type: string
+        object:
+          type: string
+
+    ToolVersionsResponse:
+      type: object
+      required:
+        - object
+        - data
+      properties:
+        object:
+          type: string
+          enum:
+            - list
+        total:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolVersion"
 
     OAuthError:
       type: object
@@ -36374,6 +37082,134 @@ components:
           nullable: true
           description: Override the secret_key defined on the secret reference. Use to pick a specific key from a multi-value secret.
 
+    ProviderCredentialCreateFields:
+      type: object
+      properties:
+        provider:
+          type: string
+          description: Provider identifier.
+        ai_provider_id:
+          type: string
+          description: AI provider id.
+        integration_id:
+          type: string
+          description: Integration id or slug.
+        key:
+          type: string
+          description: Provider API key when direct key auth is used.
+        awsAuthType:
+          type: string
+          description: AWS auth mode.
+        awsAccessKeyId:
+          type: string
+        awsSecretAccessKey:
+          type: string
+        awsRoleArn:
+          type: string
+        awsExternalId:
+          type: string
+        vertexProjectId:
+          type: string
+        vertexRegion:
+          type: string
+        vertexSkipPtuCostAttribution:
+          type: boolean
+        vertexAuthType:
+          type: string
+          enum: [serviceAccount]
+        vertexServiceAccountJson:
+          type: object
+          additionalProperties: true
+        azureFoundryUrl:
+          type: string
+          format: uri
+        azureApiVersion:
+          type: string
+          nullable: true
+        azureRegion:
+          type: string
+        azureDeploymentType:
+          type: string
+          enum: [serverless, managed]
+        azureEndpointName:
+          type: string
+        azureDeploymentName:
+          type: string
+        azureAuthMode:
+          type: string
+          enum: [entra, managed]
+        azureEntraClientId:
+          type: string
+        azureEntraClientSecret:
+          type: string
+        azureEntraTenantId:
+          type: string
+        azureManagedClientId:
+          type: string
+        custom_host:
+          type: string
+        custom_headers:
+          type: object
+          additionalProperties: true
+        huggingfaceBaseUrl:
+          type: string
+          format: uri
+        oracleRegion:
+          type: string
+        oracleVersion:
+          type: string
+        oracleCompartmentId:
+          type: string
+        oracleTenancy:
+          type: string
+        oraclePrivateKey:
+          type: string
+        oracleFingerprint:
+          type: string
+        oracleUser:
+          type: string
+        source_provider_api_key_id:
+          type: string
+          format: uuid
+        tags:
+          type: object
+          nullable: true
+          additionalProperties: true
+        apiVersion:
+          type: string
+          maxLength: 30
+        deploymentName:
+          type: string
+        resourceName:
+          type: string
+        workersAiAccountId:
+          type: string
+        openaiOrganization:
+          type: string
+        openaiProject:
+          type: string
+
+    ProviderCredentialUpdateFields:
+      allOf:
+        - $ref: '#/components/schemas/ProviderCredentialCreateFields'
+        - type: object
+          properties:
+            expires_at:
+              type: string
+              nullable: true
+              format: date-time
+            reset_usage:
+              type: boolean
+            aiModelId:
+              type: string
+              nullable: true
+              format: uuid
+            rate_limits:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/RateLimits'
+
     CreateSecretReferenceRequest:
       type: object
       required:
@@ -38520,6 +39356,9 @@ components:
             config_id:
               type: string
               example: config-abc
+            allow_config_override:
+              type: boolean
+              nullable: true
         alert_emails:
           type: array
           items:
@@ -38564,6 +39403,10 @@ components:
         workspace_id:
           type: string
           example: "ws-myworkspace"
+        organisation_id:
+          type: string
+          format: uuid
+          description: Required when creating an organisation API key unless the organisation is inferred from the API key.
         user_id:
           type: string
           format: uuid
@@ -38602,6 +39445,9 @@ components:
             config_id:
               type: string
               example: config-abc
+            allow_config_override:
+              type: boolean
+              nullable: true
         alert_emails:
           type: array
           items:
@@ -38611,6 +39457,27 @@ components:
         expires_at:
           type: string
           format: date-time
+        rotation_policy:
+          type: object
+          nullable: true
+          properties:
+            rotation_period:
+              type: string
+              nullable: true
+              enum: ["weekly", "monthly"]
+            rotation_period_days:
+              type: integer
+              nullable: true
+              minimum: 1
+              maximum: 365
+            next_rotation_at:
+              type: string
+              nullable: true
+              format: date-time
+            key_transition_period_ms:
+              type: integer
+              nullable: true
+              minimum: 1800000
 
     UpdateApiKeyObject:
       type: object
@@ -38664,6 +39531,31 @@ components:
             type: string
             format: email
             example: "foo@bar.com"
+        expires_at:
+          type: string
+          nullable: true
+          format: date-time
+        rotation_policy:
+          type: object
+          nullable: true
+          properties:
+            rotation_period:
+              type: string
+              nullable: true
+              enum: ["weekly", "monthly"]
+            rotation_period_days:
+              type: integer
+              nullable: true
+              minimum: 1
+              maximum: 365
+            next_rotation_at:
+              type: string
+              nullable: true
+              format: date-time
+            key_transition_period_ms:
+              type: integer
+              nullable: true
+              minimum: 1800000
 
     RotateApiKeyRequest:
       type: object
