@@ -137,6 +137,38 @@ tags:
   - name: Secret-References
     description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
 
+  - name: Agent Integrations
+    description: Create, List, Retrieve, Update, and Delete agent integrations.
+  - name: Agent Integrations > Workspaces
+    description: Manage workspace access for agent integrations.
+  - name: Agent Integrations > Skills
+    description: List and manage skills for agent integrations.
+  - name: Agent Servers
+    description: Create, List, Retrieve, Update, and Delete agent servers.
+  - name: Agent Servers > Skills
+    description: List and manage skills for agent servers.
+  - name: Agent Servers > User Access
+    description: List and manage user access for agent servers.
+  - name: Deployments
+    description: Create, List, Retrieve, Update, and Delete deployments.
+  - name: Tools
+    description: Create, List, Retrieve, Update, and Delete prompt tools.
+  - name: Auth
+    description: Authentication and SSO endpoints.
+  - name: OAuth
+    description: OAuth discovery, authorization, token, registration, revocation, and introspection endpoints.
+  - name: SCIM
+    description: SCIM user, group, and workspace mapping endpoints.
+  - name: Utilities
+    description: Utility endpoints for schemas, model configs, token counting, and generated prompts.
+  - name: Organisations
+    description: Organisation lookup and membership endpoints.
+  - name: Health
+    description: Service health endpoints.
+  - name: Plugins
+    description: Create and update plugin integrations.
+  - name: Portkey
+    description: Portkey API endpoints.
 
 paths:
   # Note: When adding an endpoint, make sure you also add it in the `groups` section, in the end of this file,
@@ -16091,6 +16123,1241 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpServerUserAccessBulkUpdateResponse"
 
+  # Albus public route coverage additions
+  /.well-known/oauth-authorization-server:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_WellKnownOauthAuthorizationServer
+      tags:
+        - OAuth
+      summary: "Get: /.well-known oauth-authorization-server"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      responses:
+        "200":
+          description: OAuth authorization server metadata.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthAuthorizationServerMetadata"
+
+  /health:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_health
+      tags:
+        - Health
+      summary: "Get: /health"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /scim/{organisationId}/Groups:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_scimOrganisationIdGroups
+      tags:
+        - SCIM
+      summary: "Get: /scim Groups"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SCIM group list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimListResponse"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    post:
+      operationId: Albus_post_scimOrganisationIdGroups
+      tags:
+        - SCIM
+      summary: "Post: /scim Groups"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScimGroupRequest"
+      responses:
+        "200":
+          description: Created or existing SCIM group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimGroup"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+
+  /scim/{organisationId}/Groups/{groupId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_scimOrganisationIdGroupsGroupId
+      tags:
+        - SCIM
+      summary: "Get: /scim Groups"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SCIM group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimGroup"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    put:
+      operationId: Albus_put_scimOrganisationIdGroupsGroupId
+      tags:
+        - SCIM
+      summary: "Put: /scim Groups"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScimGroupRequest"
+      responses:
+        "200":
+          description: Updated SCIM group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimGroup"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    patch:
+      operationId: Albus_patch_scimOrganisationIdGroupsGroupId
+      tags:
+        - SCIM
+      summary: "Patch: /scim Groups"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScimPatchRequest"
+      responses:
+        "200":
+          description: Updated SCIM group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimGroup"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    delete:
+      operationId: Albus_delete_scimOrganisationIdGroupsGroupId
+      tags:
+        - SCIM
+      summary: "Delete: /scim Groups"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SCIM group deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+
+  /scim/{organisationId}/Users:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_scimOrganisationIdUsers
+      tags:
+        - SCIM
+      summary: "Get: /scim Users"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SCIM user list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimListResponse"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    post:
+      operationId: Albus_post_scimOrganisationIdUsers
+      tags:
+        - SCIM
+      summary: "Post: /scim Users"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScimUserRequest"
+      responses:
+        "200":
+          description: Created or existing SCIM user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimUser"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+
+  /scim/{organisationId}/Users/{userId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_scimOrganisationIdUsersUserId
+      tags:
+        - SCIM
+      summary: "Get: /scim Users"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SCIM user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimUser"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    put:
+      operationId: Albus_put_scimOrganisationIdUsersUserId
+      tags:
+        - SCIM
+      summary: "Put: /scim Users"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScimUserRequest"
+      responses:
+        "200":
+          description: Updated SCIM user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimUser"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    patch:
+      operationId: Albus_patch_scimOrganisationIdUsersUserId
+      tags:
+        - SCIM
+      summary: "Patch: /scim Users"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScimPatchRequest"
+      responses:
+        "200":
+          description: Updated SCIM user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimUser"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+    delete:
+      operationId: Albus_delete_scimOrganisationIdUsersUserId
+      tags:
+        - SCIM
+      summary: "Delete: /scim Users"
+      description: "Requires scim bearer or basic token."
+      x-albus-auth-mode: scim_bearer_or_basic_token
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SCIM user deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+        "400":
+          description: SCIM error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+        "500":
+          description: SCIM server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScimError"
+
+  /scim/groups:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_scimGroups
+      tags:
+        - SCIM
+      summary: "Get: /scim groups"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /scim/workspaces:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_scimWorkspaces
+      tags:
+        - SCIM
+      summary: "Get: /scim workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    post:
+      operationId: Albus_post_scimWorkspaces
+      tags:
+        - SCIM
+      summary: "Post: /scim workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                workspace_id:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - member
+                    - manager
+                scim_group_id:
+                  type: string
+                scim_group_name:
+                  type: string
+              required:
+                - workspace_id
+                - role
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /scim/workspaces/{scimWorkspaceGroupId}:
+    servers: *ControlPlaneServers
+    delete:
+      operationId: Albus_delete_scimWorkspacesScimWorkspaceGroupId
+      tags:
+        - SCIM
+      summary: "Delete: /scim workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: scimWorkspaceGroupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /v2/.well-known/oauth-authorization-server:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2WellKnownOauthAuthorizationServer
+      tags:
+        - OAuth
+      summary: "Get: /v2 .well-known oauth-authorization-server"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      responses:
+        "200":
+          description: OAuth authorization server metadata.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthAuthorizationServerMetadata"
+
+  /v2/auth/callback:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2AuthCallback
+      tags:
+        - Auth
+      summary: "Get: /v2 auth callback"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      responses:
+        "200":
+          description: OIDC callback token response or follow-up authorization URL.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusAuthLoginResponse"
+
+  /v2/auth/login:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2AuthLogin
+      tags:
+        - Auth
+      summary: "Post: /v2 auth login"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                email:
+                  type: string
+                  format: email
+                organisation_id:
+                  type: string
+                  format: uuid
+      responses:
+        "200":
+          description: SSO authorization URL or deployment token response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusAuthLoginResponse"
+
+  /v2/auth/refresh:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2AuthRefresh
+      tags:
+        - Auth
+      summary: "Post: /v2 auth refresh"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                refresh_token:
+                  type: string
+                organisation_id:
+                  type: string
+                  format: uuid
+      responses:
+        "200":
+          description: Refreshed private-deployment auth token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusAuthRefreshResponse"
+
+  /v2/auth/saml/callback/{organisationId}:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2AuthSamlCallbackOrganisationId
+      tags:
+        - Auth
+      summary: "Post: /auth saml callback"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                SAMLResponse:
+                  type: string
+                RelayState:
+                  type: string
+              required:
+                - SAMLResponse
+      responses:
+        "302":
+          description: Redirects to the control-plane SAML callback URL or an SSO error URL.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+
+  /v2/auth/saml/metadata/{organisationId}:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2AuthSamlMetadataOrganisationId
+      tags:
+        - Auth
+      summary: "Get: /auth saml metadata"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SAML service-provider metadata XML.
+          content:
+            application/xml:
+              schema:
+                type: string
+
+  /v2/auth/validate-token:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2AuthValidateToken
+      tags:
+        - Auth
+      summary: "Get: /v2 auth validate-token"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Token validation result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusValidateTokenResponse"
+
+  /v2/oauth/{resourceId}/authorize:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2OauthResourceIdAuthorize
+      tags:
+        - OAuth
+      summary: "Get: /v2 oauth authorize"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: redirect_uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: response_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - code
+        - name: code_challenge
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: code_challenge_method
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - S256
+        - name: scope
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+            maxLength: 512
+        - name: resource
+          in: query
+          schema:
+            type: string
+        - name: gateway_state
+          in: query
+          schema:
+            type: string
+        - name: gateway_base_url
+          in: query
+          schema:
+            type: string
+            format: uri
+      responses:
+        "302":
+          description: Redirects to the MCP consent screen.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /v2/oauth/{workspaceId}/{resourceId}/authorize:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2OauthWorkspaceIdResourceIdAuthorize
+      tags:
+        - OAuth
+      summary: "Get: /v2 oauth authorize"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: redirect_uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: response_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - code
+        - name: code_challenge
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: code_challenge_method
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - S256
+        - name: scope
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+            maxLength: 512
+        - name: resource
+          in: query
+          schema:
+            type: string
+        - name: gateway_state
+          in: query
+          schema:
+            type: string
+        - name: gateway_base_url
+          in: query
+          schema:
+            type: string
+            format: uri
+      responses:
+        "302":
+          description: Redirects to the MCP consent screen.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /v2/oauth/authorize:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2OauthAuthorize
+      tags:
+        - OAuth
+      summary: "Get: /v2 oauth authorize"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: redirect_uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: response_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - code
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: code_challenge
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: code_challenge_method
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - S256
+        - name: scope
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+            maxLength: 512
+      responses:
+        "302":
+          description: Redirects to the MCP consent screen.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+    post:
+      operationId: Albus_post_v2OauthAuthorize
+      tags:
+        - OAuth
+      summary: "Post: /v2 oauth authorize"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthAuthorizeConsentRequest"
+      responses:
+        "200":
+          description: Authorization result with the URL the client should redirect to.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthAuthorizeConsentResponse"
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /v2/oauth/introspect:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2OauthIntrospect
+      tags:
+        - OAuth
+      summary: "Post: /v2 oauth introspect"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthIntrospectionRequest"
+      responses:
+        "200":
+          description: Token introspection response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthIntrospectionResponse"
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /v2/oauth/register:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2OauthRegister
+      tags:
+        - OAuth
+      summary: "Post: /v2 oauth register"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthClientRegistrationRequest"
+      responses:
+        "201":
+          description: OAuth client registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthClientRegistrationResponse"
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /v2/oauth/revoke:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2OauthRevoke
+      tags:
+        - OAuth
+      summary: "Post: /v2 oauth revoke"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthRevokeRequest"
+      responses:
+        "200":
+          description: Token revoked, or token was already unknown.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /v2/oauth/token:
+    servers: *PublicServers
+    post:
+      operationId: Albus_post_v2OauthToken
+      tags:
+        - OAuth
+      summary: "Post: /v2 oauth token"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthTokenRequest"
+      responses:
+        "200":
+          description: OAuth token response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthTokenResponse"
+        "400":
+          description: OAuth error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+        "401":
+          description: Invalid refresh token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
   /logs:
     servers: *DataPlaneServers
     post:
@@ -21033,6 +22300,13 @@ components:
       type: apiKey
       in: header
       name: x-portkey-custom-host
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    BasicAuth:
+      type: http
+      scheme: basic
 
   parameters:
     TimeOfGenerationMin:
@@ -21301,6 +22575,684 @@ components:
         type: string
 
   schemas:
+    AlbusPublicApiResponse:
+      type: object
+      additionalProperties: true
+      description: Response object returned by the Albus public API endpoint.
+
+    ScimError:
+      type: object
+      required:
+        - schemas
+        - detail
+        - status
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+          example:
+            - urn:ietf:params:scim:api:messages:2.0:Error
+        detail:
+          type: string
+        status:
+          oneOf:
+            - type: integer
+            - type: string
+        error:
+          type: string
+
+    ScimUserName:
+      type: object
+      properties:
+        givenName:
+          type: string
+          nullable: true
+        familyName:
+          type: string
+          nullable: true
+        formatted:
+          type: string
+          nullable: true
+
+    ScimEmail:
+      type: object
+      properties:
+        type:
+          type: string
+          example: work
+        value:
+          type: string
+          format: email
+        primary:
+          type: boolean
+
+    ScimRole:
+      type: object
+      properties:
+        value:
+          type: string
+          enum:
+            - admin
+            - member
+            - group
+            - owner
+        displayName:
+          type: string
+
+    ScimGroupMember:
+      type: object
+      additionalProperties: true
+      properties:
+        value:
+          type: string
+        display:
+          type: string
+        "$ref":
+          type: string
+
+    ScimUser:
+      type: object
+      required:
+        - schemas
+        - id
+        - meta
+        - name
+        - userName
+        - displayName
+        - emails
+        - active
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+          example:
+            - urn:ietf:params:scim:schemas:core:2.0:User
+        id:
+          type: string
+        externalId:
+          type: string
+          nullable: true
+        meta:
+          type: object
+          required:
+            - resourceType
+          properties:
+            resourceType:
+              type: string
+              enum:
+                - User
+        name:
+          $ref: "#/components/schemas/ScimUserName"
+        userName:
+          type: string
+          format: email
+        displayName:
+          type: string
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScimEmail"
+        active:
+          oneOf:
+            - type: boolean
+            - type: string
+              enum:
+                - "True"
+                - "False"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScimRole"
+        groups:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    ScimGroup:
+      type: object
+      required:
+        - schemas
+        - id
+        - externalId
+        - meta
+        - displayName
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+          example:
+            - urn:ietf:params:scim:schemas:core:2.0:Group
+        id:
+          type: string
+        externalId:
+          type: string
+          nullable: true
+        meta:
+          type: object
+          required:
+            - resourceType
+          properties:
+            resourceType:
+              type: string
+              enum:
+                - Group
+            created:
+              type: string
+              format: date-time
+              nullable: true
+        displayName:
+          type: string
+          nullable: true
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScimGroupMember"
+
+    ScimListResponse:
+      type: object
+      required:
+        - schemas
+        - totalResults
+        - Resources
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+          example:
+            - urn:ietf:params:scim:api:messages:2.0:ListResponse
+        totalResults:
+          type: integer
+        Resources:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/ScimUser"
+              - $ref: "#/components/schemas/ScimGroup"
+        startIndex:
+          type: integer
+        itemsPerPage:
+          type: integer
+
+    ScimPatchOperation:
+      type: object
+      required:
+        - op
+      properties:
+        op:
+          type: string
+          enum:
+            - add
+            - remove
+            - replace
+        path:
+          type: string
+        value:
+          nullable: true
+          oneOf:
+            - type: string
+            - type: boolean
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+
+    ScimPatchRequest:
+      type: object
+      required:
+        - Operations
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+        Operations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScimPatchOperation"
+
+    ScimUserRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+        userName:
+          type: string
+          format: email
+        name:
+          $ref: "#/components/schemas/ScimUserName"
+        displayName:
+          type: string
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScimEmail"
+        active:
+          type: boolean
+        roles:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/ScimRole"
+              - type: string
+        groups:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    ScimGroupRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+        displayName:
+          type: string
+        externalId:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScimGroupMember"
+
+    EmptyObjectResponse:
+      type: object
+      additionalProperties: false
+
+    AlbusAuthTokenResponse:
+      type: object
+      properties:
+        auth_token:
+          type: string
+          description: Bearer authentication token for private deployments.
+        refresh_token:
+          type: string
+          description: Refresh token for private deployments.
+        object:
+          type: string
+
+    AlbusFirebaseTokenResponse:
+      type: object
+      properties:
+        custom_token:
+          type: string
+          description: Firebase custom token for SaaS deployments.
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        organisation_id:
+          type: string
+          format: uuid
+        object:
+          type: string
+
+    AlbusSsoAuthorizationResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+        linked_sso:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        object:
+          type: string
+
+    AlbusAuthLoginResponse:
+      oneOf:
+        - $ref: "#/components/schemas/AlbusSsoAuthorizationResponse"
+        - $ref: "#/components/schemas/AlbusAuthTokenResponse"
+        - $ref: "#/components/schemas/AlbusFirebaseTokenResponse"
+
+    AlbusAuthRefreshResponse:
+      type: object
+      required:
+        - auth_token
+        - refresh_token
+      properties:
+        auth_token:
+          type: string
+        refresh_token:
+          type: string
+        object:
+          type: string
+
+    AlbusValidateTokenResponse:
+      type: object
+      required:
+        - is_valid
+      properties:
+        is_valid:
+          type: boolean
+        object:
+          type: string
+
+    OAuthAuthorizationServerMetadata:
+      type: object
+      required:
+        - issuer
+        - authorization_endpoint
+        - token_endpoint
+        - introspection_endpoint
+        - revocation_endpoint
+        - registration_endpoint
+        - response_types_supported
+        - grant_types_supported
+        - token_endpoint_auth_methods_supported
+        - code_challenge_methods_supported
+      properties:
+        issuer:
+          type: string
+          format: uri
+        authorization_endpoint:
+          type: string
+          format: uri
+        token_endpoint:
+          type: string
+          format: uri
+        introspection_endpoint:
+          type: string
+          format: uri
+        introspection_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - none
+        revocation_endpoint:
+          type: string
+          format: uri
+        revocation_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - none
+        registration_endpoint:
+          type: string
+          format: uri
+        response_types_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - code
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - authorization_code
+              - refresh_token
+        response_modes_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - query
+              - fragment
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - none
+        code_challenge_methods_supported:
+          type: array
+          items:
+            type: string
+            enum:
+              - S256
+        service_documentation:
+          type: string
+          format: uri
+        ui_locales_supported:
+          type: array
+          items:
+            type: string
+
+    OAuthError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+
+    OAuthTokenRequest:
+      type: object
+      required:
+        - grant_type
+      properties:
+        grant_type:
+          type: string
+          enum:
+            - authorization_code
+            - refresh_token
+        code:
+          type: string
+          description: Required for authorization_code grant.
+        redirect_uri:
+          type: string
+          format: uri
+          description: Required for authorization_code grant.
+        code_verifier:
+          type: string
+          description: Required for authorization_code grant.
+        client_id:
+          type: string
+          description: Required for authorization_code grant and accepted for refresh_token grant.
+        refresh_token:
+          type: string
+          description: Required for refresh_token grant.
+
+    OAuthTokenResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - refresh_token
+        - scope
+      properties:
+        access_token:
+          type: string
+          example: pat_...
+        token_type:
+          type: string
+          enum:
+            - Bearer
+        expires_in:
+          type: integer
+          example: 3600
+        refresh_token:
+          type: string
+          example: prt_...
+        scope:
+          type: string
+          description: Space-delimited granted scopes.
+
+    OAuthClientRegistrationRequest:
+      type: object
+      required:
+        - client_name
+        - redirect_uris
+      properties:
+        client_name:
+          type: string
+        redirect_uris:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: uri
+        scopes:
+          type: array
+          items:
+            type: string
+        logo_uri:
+          type: string
+          format: uri
+        token_endpoint_auth_method:
+          type: string
+          enum:
+            - none
+          default: none
+        grant_types:
+          type: array
+          items:
+            type: string
+            enum:
+              - authorization_code
+              - refresh_token
+          default:
+            - authorization_code
+        application_type:
+          type: string
+        response_types:
+          type: array
+          items:
+            type: string
+        client_uri:
+          type: string
+          format: uri
+
+    OAuthClientRegistrationResponse:
+      allOf:
+        - $ref: '#/components/schemas/OAuthClientRegistrationRequest'
+        - type: object
+          required:
+            - client_id
+            - token_endpoint_auth_method
+            - client_name
+            - redirect_uris
+          properties:
+            client_id:
+              type: string
+              example: pk_...
+
+    OAuthIntrospectionRequest:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+        token_type_hint:
+          type: string
+          enum:
+            - access_token
+            - refresh_token
+
+    OAuthIntrospectionResponse:
+      type: object
+      required:
+        - active
+      properties:
+        active:
+          type: boolean
+        token_type:
+          type: string
+        client_id:
+          type: string
+        scope:
+          type: string
+        exp:
+          type: integer
+        iat:
+          type: integer
+        sub:
+          type: string
+        aud:
+          type: string
+        workspace_id:
+          type: string
+        organisation_id:
+          type: string
+        resource_id:
+          type: string
+        resource_type:
+          type: string
+        iss:
+          type: string
+        email:
+          type: string
+          nullable: true
+        username:
+          type: string
+          nullable: true
+        organisation_name:
+          type: string
+          nullable: true
+        workspace_name:
+          type: string
+          nullable: true
+        workspace_slug:
+          type: string
+          nullable: true
+        organisation_details:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    OAuthRevokeRequest:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+        token_type_hint:
+          type: string
+          enum:
+            - access_token
+            - refresh_token
+
+    OAuthAuthorizeConsentRequest:
+      type: object
+      required:
+        - approved
+        - resume_state
+        - organisation_id
+      properties:
+        approved:
+          type: boolean
+        resume_state:
+          type: string
+        organisation_id:
+          type: string
+        workspace_id:
+          type: string
+
+    OAuthAuthorizeConsentResponse:
+      type: object
+      required:
+        - redirect_uri
+      properties:
+        redirect_uri:
+          type: string
+          format: uri
+
     ModelPricingConfig:
       type: object
       description: Complete pricing configuration for a model
