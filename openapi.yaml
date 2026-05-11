@@ -13233,6 +13233,10 @@ paths:
   /admin/users/invites:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: Invites_create
       summary: Invite User
       description: Send an invite to user for your organization
@@ -13424,6 +13428,10 @@ paths:
             console.log(user);
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - User-invites
       summary: Get All Invites
@@ -13434,6 +13442,16 @@ paths:
             type: integer
           example: "1"
         - name: currentPage
+          in: query
+          schema:
+            type: integer
+          example: "0"
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+          example: "1"
+        - name: current_page
           in: query
           schema:
             type: integer
@@ -13452,6 +13470,11 @@ paths:
             type: string
             format: email
           example: "foo@bar.com"
+        - name: search
+          in: query
+          schema:
+            type: string
+          example: "user@example.com"
         - name: status
           in: query
           schema:
@@ -13565,6 +13588,10 @@ paths:
   /admin/users/invites/{inviteId}:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - User-invites
       summary: Get Invite
@@ -13672,6 +13699,10 @@ paths:
             });
             console.log(user);
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - User-invites
       summary: Delete Invite By ID
@@ -13773,6 +13804,10 @@ paths:
   /admin/users/invites/{inviteId}/resend:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - User-invites
       summary: Resend Invite
@@ -13882,6 +13917,10 @@ paths:
       - url: https://api.portkey.ai/v1
       - url: https://SELF_HOSTED_CONTROL_PLANE_URL
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Users
       summary: Get users
@@ -13897,6 +13936,16 @@ paths:
             type: integer
           example: "1"
         - name: currentPage
+          in: query
+          schema:
+            type: integer
+          example: "0"
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+          example: "1"
+        - name: current_page
           in: query
           schema:
             type: integer
@@ -14011,6 +14060,10 @@ paths:
       - url: https://api.portkey.ai/v1
       - url: https://SELF_HOSTED_CONTROL_PLANE_URL
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Users
       summary: Get user
@@ -14116,6 +14169,10 @@ paths:
             console.log(user);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Users
       summary: Remove a user
@@ -14212,6 +14269,10 @@ paths:
 
             console.log(user);
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Users
       summary: Update user
@@ -14226,6 +14287,21 @@ paths:
                   enum:
                     - admin
                     - member
+                    - owner
+                workspaces:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Workspace slug.
+                      role:
+                        type: string
+                        enum:
+                          - admin
+                          - member
+                          - manager
               example:
                 role: admin
       parameters:
@@ -14332,6 +14408,10 @@ paths:
       - url: https://api.portkey.ai/v1
       - url: https://SELF_HOSTED_CONTROL_PLANE_URL
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces > Members
       summary: Add workspace member
@@ -14473,6 +14553,10 @@ paths:
             console.log(user);
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces > Members
       summary: Get workspace members
@@ -14587,6 +14671,10 @@ paths:
   /admin/workspaces/{workspaceId}/users/{userId}:
     servers: *ControlPlaneServers
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces > Members
       summary: Update workspace member
@@ -14711,6 +14799,10 @@ paths:
             console.log(user);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces > Members
       summary: Remove workspace member
@@ -14819,6 +14911,10 @@ paths:
             console.log(user)
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces > Members
       summary: Get member
@@ -14956,6 +15052,10 @@ paths:
   /admin/workspaces:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces
       summary: Create Workspace
@@ -14967,8 +15067,14 @@ paths:
               properties:
                 name:
                   type: string
+                organisation_id:
+                  type: string
+                  format: uuid
                 description:
                   type: string
+                icon:
+                  type: string
+                  nullable: true
                 defaults:
                   type: object
                   properties:
@@ -15132,6 +15238,10 @@ paths:
             console.log(workspace)
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces
       summary: Get All Workspaces
@@ -15141,6 +15251,12 @@ paths:
           schema:
             type: integer
           example: "1"
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Organisation id. Required unless using an API key that identifies the organisation.
         - name: current_page
           in: query
           schema:
@@ -15259,6 +15375,10 @@ paths:
   /admin/workspaces/{workspaceId}:
     servers: *ControlPlaneServers
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces
       summary: Update Workspace
@@ -15272,6 +15392,9 @@ paths:
                   type: string
                 description:
                   type: string
+                icon:
+                  type: string
+                  nullable: true
                 defaults:
                   type: object
                   properties:
@@ -15295,6 +15418,34 @@ paths:
                   type: array
                   items:
                     $ref: "#/components/schemas/RateLimits"
+                security_settings:
+                  type: object
+                  additionalProperties: true
+                settings:
+                  type: object
+                  properties:
+                    debug_log:
+                      type: integer
+                      enum: [0, 1]
+                    user_key_metadata:
+                      type: integer
+                      enum: [0, 1]
+                    user_key_metadata_override:
+                      type: integer
+                      enum: [0, 1]
+                    user_api_key_count:
+                      type: integer
+                      description: Use -1 for unlimited, or an integer greater than 0.
+                    user_api_key_rotation_period:
+                      nullable: true
+                      oneOf:
+                        - type: string
+                          enum: ["weekly", "monthly", ""]
+                        - type: integer
+                          minimum: 1
+                          maximum: 365
+                    user_api_key_auto_create:
+                      type: boolean
                   
               example:
                 name: My Workspace
@@ -15418,6 +15569,10 @@ paths:
             console.log(workspace);
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces
       summary: Get workspace
@@ -15427,6 +15582,16 @@ paths:
           schema:
             type: string
           required: true
+        - name: include_usage
+          in: query
+          schema:
+            type: boolean
+          description: Include workspace usage data.
+        - name: usage_id
+          in: query
+          schema:
+            type: string
+          description: Usage record identifier to include.
       responses:
         "200":
           description: OK
@@ -15512,9 +15677,28 @@ paths:
             console.log(workspace);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Workspaces
       summary: Delete a workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Workspace name confirmation.
+                force_delete:
+                  type: boolean
+                  description: Force deletion when supported.
       parameters:
         - name: workspaceId
           in: path
@@ -16141,6 +16325,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthAuthorizationServerMetadata"
+
+  /admin/workspaces/{workspaceId}/members/{memberUserId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_adminWorkspacesWorkspaceIdMembersMemberUserId
+      tags:
+        - Workspaces > Members
+      summary: "Get: /admin/workspaces members"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: memberUserId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace member.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceUser"
 
   /health:
     servers: *PublicServers
@@ -17357,6 +17572,470 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OAuthError"
+
+  /v2/organisations/{organisationId}/members:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2OrganisationsOrganisationIdMembers
+      tags:
+        - Portkey
+      summary: "Get: /v2 organisations members"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /workspaces:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_workspaces
+      tags:
+        - Workspaces
+      summary: "Get: /workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceListResponse"
+    post:
+      operationId: Albus_post_workspaces
+      tags:
+        - Workspaces
+      summary: "Post: /workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                  maxLength: 128
+                description:
+                  type: string
+                  maxLength: 500
+                defaults:
+                  $ref: "#/components/schemas/WorkspaceDefaults"
+                users:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/WorkspaceUserAssignment"
+                icon:
+                  type: string
+                  nullable: true
+                usage_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/WorkspaceUsageLimit"
+                  minItems: 1
+                  maxItems: 1
+                rate_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/WorkspaceRateLimit"
+              required:
+                - name
+      responses:
+        "200":
+          description: Created workspace.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceObject"
+
+  /workspaces/{workspaceId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_workspacesWorkspaceId
+      tags:
+        - Workspaces
+      summary: "Get: /workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: include_usage
+          in: query
+          schema:
+            type: boolean
+        - name: usage_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceObject"
+    put:
+      operationId: Albus_put_workspacesWorkspaceId
+      tags:
+        - Workspaces
+      summary: "Put: /workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                description:
+                  type: string
+                  maxLength: 500
+                icon:
+                  type: string
+                defaults:
+                  $ref: "#/components/schemas/WorkspaceDefaults"
+                usage_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/WorkspaceUsageLimit"
+                  minItems: 1
+                  maxItems: 1
+                rate_limits:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/WorkspaceRateLimit"
+                security_settings:
+                  type: object
+                  additionalProperties: true
+                settings:
+                  $ref: "#/components/schemas/WorkspaceSettings"
+      responses:
+        "200":
+          description: Workspace updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+    delete:
+      operationId: Albus_delete_workspacesWorkspaceId
+      tags:
+        - Workspaces
+      summary: "Delete: /workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                force_delete:
+                  type: boolean
+              required:
+                - name
+      responses:
+        "200":
+          description: Workspace deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+
+  /workspaces/{workspaceId}/members/{memberUserId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_workspacesWorkspaceIdMembersMemberUserId
+      tags:
+        - Workspaces > Members
+      summary: "Get: /workspaces members"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: memberUserId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace member.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceUser"
+
+  /workspaces/{workspaceId}/users:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_workspacesWorkspaceIdUsers
+      tags:
+        - Workspaces > Members
+      summary: "Get: /workspaces users"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum:
+              - manager
+              - admin
+              - member
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Workspace user list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceUserListResponse"
+    post:
+      operationId: Albus_post_workspacesWorkspaceIdUsers
+      tags:
+        - Workspaces > Members
+      summary: "Post: /workspaces users"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                users:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/WorkspaceUserAssignment"
+              required:
+                - users
+      responses:
+        "200":
+          description: Workspace users added.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+
+  /workspaces/{workspaceId}/users/{userId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_workspacesWorkspaceIdUsersUserId
+      tags:
+        - Workspaces > Members
+      summary: "Get: /workspaces users"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceUser"
+    delete:
+      operationId: Albus_delete_workspacesWorkspaceIdUsersUserId
+      tags:
+        - Workspaces > Members
+      summary: "Delete: /workspaces users"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace user removed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
+    put:
+      operationId: Albus_put_workspacesWorkspaceIdUsersUserId
+      tags:
+        - Workspaces > Members
+      summary: "Put: /workspaces users"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - member
+                    - manager
+                    - viewer
+              required:
+                - role
+      responses:
+        "200":
+          description: Workspace user updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmptyObjectResponse"
 
   /logs:
     servers: *DataPlaneServers
@@ -23029,6 +23708,253 @@ components:
           items:
             type: string
 
+    WorkspaceDefaults:
+      type: object
+      additionalProperties: true
+      properties:
+        input_guardrails:
+          type: array
+          items:
+            type: string
+        output_guardrails:
+          type: array
+          items:
+            type: string
+
+    WorkspaceUserAssignment:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+
+    WorkspaceUsageLimit:
+      type: object
+      required:
+        - type
+        - credit_limit
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          enum:
+            - tokens
+            - cost
+        credit_limit:
+          type: number
+          minimum: 0
+        alert_threshold:
+          type: number
+          minimum: 0
+          nullable: true
+        periodic_reset:
+          type: string
+          nullable: true
+          enum:
+            - monthly
+            - weekly
+        periodic_reset_days:
+          type: integer
+          minimum: 1
+          maximum: 365
+          nullable: true
+        next_usage_reset_at:
+          type: string
+          format: date-time
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+          maxProperties: 1
+          additionalProperties:
+            type: string
+            maxLength: 100
+
+    WorkspaceRateLimit:
+      type: object
+      required:
+        - type
+        - unit
+        - value
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          enum:
+            - requests
+            - tokens
+        unit:
+          type: string
+          enum:
+            - rpd
+            - rph
+            - rpm
+            - rps
+            - rpw
+        value:
+          type: integer
+          minimum: 0
+
+    WorkspaceSettings:
+      type: object
+      additionalProperties: true
+      properties:
+        debug_log:
+          oneOf:
+            - type: integer
+              enum:
+                - 0
+                - 1
+            - type: string
+              enum:
+                - "0"
+                - "1"
+        user_key_metadata:
+          oneOf:
+            - type: integer
+              enum:
+                - 0
+                - 1
+            - type: string
+              enum:
+                - "0"
+                - "1"
+        user_key_metadata_override:
+          oneOf:
+            - type: integer
+              enum:
+                - 0
+                - 1
+            - type: string
+              enum:
+                - "0"
+                - "1"
+        user_api_key_count:
+          type: integer
+        user_api_key_rotation_period:
+          nullable: true
+          oneOf:
+            - type: string
+              enum:
+                - ""
+                - weekly
+                - monthly
+            - type: integer
+              minimum: 1
+              maximum: 365
+        user_api_key_auto_create:
+          type: boolean
+
+    WorkspaceObject:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        defaults:
+          $ref: "#/components/schemas/WorkspaceDefaults"
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkspaceUserAssignment"
+        usage_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkspaceUsageLimit"
+        rate_limits:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkspaceRateLimit"
+        security_settings:
+          type: object
+          additionalProperties: true
+        settings:
+          $ref: "#/components/schemas/WorkspaceSettings"
+        object:
+          type: string
+          enum:
+            - workspace
+
+    WorkspaceListResponse:
+      type: object
+      required:
+        - object
+        - data
+      properties:
+        object:
+          type: string
+          enum:
+            - list
+        total:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkspaceObject"
+
+    WorkspaceUser:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          type: string
+          enum:
+            - admin
+            - member
+            - manager
+            - viewer
+        scopes:
+          type: array
+          items:
+            type: string
+        settings:
+          type: object
+          nullable: true
+          additionalProperties: true
+        object:
+          type: string
+          enum:
+            - workspace-user
+
+    WorkspaceUserListResponse:
+      type: object
+      required:
+        - object
+        - data
+      properties:
+        object:
+          type: string
+          enum:
+            - list
+        total:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkspaceUser"
+
     OAuthError:
       type: object
       required:
@@ -23430,6 +24356,13 @@ components:
               type: array
               items:
                 type: string
+            defaults:
+              type: object
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: string
           required:
             - scopes
       example:
