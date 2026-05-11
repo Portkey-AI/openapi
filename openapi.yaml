@@ -17390,6 +17390,122 @@ paths:
               schema:
                 $ref: "#/components/schemas/AlbusPublicApiResponse"
 
+  /analytics/groups/{groupBy}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_analyticsGroupsGroupBy
+      tags:
+        - Analytics > Groups
+      summary: "Get: /analytics groups"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: groupBy
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
+        - name: includeTotal
+          in: query
+          schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /analytics/groups/workspaces:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_analyticsGroupsWorkspaces
+      tags:
+        - Analytics > Groups
+      summary: "Get: /analytics groups workspaces"
+      description: "Requires api key."
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /analytics/metadata/{metadataKey}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_analyticsMetadataMetadataKey
+      tags:
+        - Analytics > Groups
+      summary: "Get: /analytics metadata"
+      description: "Requires user token or org api key."
+      x-albus-auth-mode: user_token_or_org_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: metadataKey
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /config/{nameOrSlug}/{configSlug}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_configNameOrSlugConfigSlug
+      tags:
+        - Configs
+      summary: "Get: /config"
+      description: "Requires user token or org api key."
+      x-albus-auth-mode: user_token_or_org_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: nameOrSlug
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - name
+              - slug
+        - name: configSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
   /configs/{configId}/versions/{configVersionId}:
     servers: *ControlPlaneServers
     get:
@@ -17409,6 +17525,322 @@ paths:
           schema:
             type: string
         - name: configVersionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /deployments:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_deployments
+      tags:
+        - Deployments
+      summary: "Get: /deployments"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - production
+              - non_production
+        - name: workspace_slug
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    post:
+      operationId: Albus_post_deployments
+      tags:
+        - Deployments
+      summary: "Post: /deployments"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                slug:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                type:
+                  type: string
+                  enum:
+                    - production
+                    - non_production
+                deployment_config:
+                  type: object
+                  additionalProperties: true
+                auth_settings:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    gateway_base_url:
+                      type: string
+                      format: uri
+                    is_dataservice_hosted:
+                      type: string
+                    is_playground_proxy_allowed:
+                      type: string
+                    disable_portkey_gateway:
+                      type: string
+                    mcp_gateway_base_url:
+                      type: string
+                      format: uri
+                    private_link_endpoint:
+                      type: string
+                      format: uri
+                    use_private_link_proxy:
+                      type: string
+                    jwt_sub_workspace_mapping:
+                      type: object
+                      additionalProperties: true
+                    jwt_subs_allowed:
+                      type: array
+                      items:
+                        type: string
+                    workspaces_allowed:
+                      type: array
+                      items:
+                        type: string
+                is_default:
+                  type: boolean
+                credentials:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    username:
+                      type: string
+                    password:
+                      type: string
+              required:
+                - name
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /deployments/{deploymentId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_deploymentsDeploymentId
+      tags:
+        - Deployments
+      summary: "Get: /deployments"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: deploymentId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: include_credentials
+          in: query
+          schema:
+            type: boolean
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    put:
+      operationId: Albus_put_deploymentsDeploymentId
+      tags:
+        - Deployments
+      summary: "Put: /deployments"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: deploymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                    - production
+                    - non_production
+                deployment_config:
+                  type: object
+                  additionalProperties: true
+                status:
+                  type: string
+                ch_db:
+                  type: string
+                auth_settings:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    gateway_base_url:
+                      type: string
+                      format: uri
+                    is_dataservice_hosted:
+                      type: string
+                    is_playground_proxy_allowed:
+                      type: string
+                    disable_portkey_gateway:
+                      type: string
+                    mcp_gateway_base_url:
+                      type: string
+                      format: uri
+                    private_link_endpoint:
+                      type: string
+                      format: uri
+                    use_private_link_proxy:
+                      type: string
+                    jwt_sub_workspace_mapping:
+                      type: object
+                      additionalProperties: true
+                    jwt_subs_allowed:
+                      type: array
+                      items:
+                        type: string
+                    workspaces_allowed:
+                      type: array
+                      items:
+                        type: string
+                    allow_all_workspaces:
+                      type: boolean
+                    remove_workspaces_allowed:
+                      type: array
+                      items:
+                        type: string
+                    remove_subs_allowed:
+                      type: array
+                      items:
+                        type: string
+                is_default:
+                  type: boolean
+                credentials:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    username:
+                      type: string
+                    password:
+                      type: string
+                rotate_auth:
+                  type: boolean
+                override_existing:
+                  type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    delete:
+      operationId: Albus_delete_deploymentsDeploymentId
+      tags:
+        - Deployments
+      summary: "Delete: /deployments"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: deploymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /deployments/{deploymentId}/ping:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_deploymentsDeploymentIdPing
+      tags:
+        - Deployments
+      summary: "Get: /deployments ping"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: deploymentId
           in: path
           required: true
           schema:
@@ -17458,6 +17890,58 @@ paths:
       description: "Unauthenticated public endpoint."
       x-albus-auth-mode: none
       security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /logs/groups/metadata/{metadataKey}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_logsGroupsMetadataMetadataKey
+      tags:
+        - Logs
+      summary: "Get: /logs groups metadata"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: metadataKey
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /logs/metadata/{metadataKey}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_logsMetadataMetadataKey
+      tags:
+        - Logs
+      summary: "Get: /logs metadata"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: metadataKey
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -17656,6 +18140,95 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /organisation/{organisationId}/members:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_organisationOrganisationIdMembers
+      tags:
+        - Organisations
+      summary: "Get: /organisation members"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /organisation/ai-providers/slug:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_organisationAiProvidersSlug
+      tags:
+        - Organisations
+      summary: "Get: /organisation ai-providers slug"
+      description: "Requires org api key."
+      x-albus-auth-mode: org_api_key
+      security:
+        - Portkey-Key: []
+      parameters:
+        - name: x-provider-key-slug
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /organisation/api-key:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_organisationApiKey
+      tags:
+        - Organisations
+      summary: "Get: /organisation api-key"
+      description: "Requires org api key."
+      x-albus-auth-mode: org_api_key
+      security:
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /organisation/config:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_organisationConfig
+      tags:
+        - Organisations
+      summary: "Get: /organisation config"
+      description: "Requires org api key."
+      x-albus-auth-mode: org_api_key
+      security:
+        - Portkey-Key: []
       responses:
         "200":
           description: OK
@@ -18380,6 +18953,316 @@ paths:
               schema:
                 $ref: "#/components/schemas/AlbusPublicApiResponse"
 
+  /users:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_users
+      tags:
+        - Users
+      summary: "Post: /users"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /users/send-verification-email:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_usersSendVerificationEmail
+      tags:
+        - Users
+      summary: "Post: /users send-verification-email"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                email:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/azure-openai-model-details:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_utilsAzureOpenaiModelDetails
+      tags:
+        - Utilities
+      summary: "Post: /utils azure-openai-model-details"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                organisation_id:
+                  type: string
+                integration_id:
+                  type: string
+                azure_resource_name:
+                  type: string
+                azure_deployment_name:
+                  type: string
+                azure_api_version:
+                  type: string
+                azure_api_key:
+                  type: string
+              required:
+                - azure_resource_name
+                - azure_deployment_name
+                - azure_api_version
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/generatePrompt:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_utilsGeneratePrompt
+      tags:
+        - Utilities
+      summary: "Post: /utils generatePrompt"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                provider:
+                  type: string
+                task:
+                  type: string
+                stream:
+                  type: boolean
+                type:
+                  type: string
+                  enum:
+                    - text
+                    - structured_output
+                    - improvement
+                variables:
+                  type: object
+                  additionalProperties: true
+                retry:
+                  type: boolean
+              required:
+                - task
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/model-configs/{type}/{provider}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_utilsModelConfigsTypeProvider
+      tags:
+        - Utilities
+      summary: "Get: /utils model-configs"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/model-configs/{type}/{provider}/{model}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_utilsModelConfigsTypeProviderModel
+      tags:
+        - Utilities
+      summary: "Get: /utils model-configs"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: model
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/openai-tokens:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_utilsOpenaiTokens
+      tags:
+        - Utilities
+      summary: "Post: /utils openai-tokens"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/static-resources/integration-providers:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_utilsStaticResourcesIntegrationProviders
+      tags:
+        - Utilities
+      summary: "Get: /utils static-resources integration-providers"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/static-resources/plugin-providers:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_utilsStaticResourcesPluginProviders
+      tags:
+        - Utilities
+      summary: "Get: /utils static-resources plugin-providers"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/static-resources/schema:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_utilsStaticResourcesSchema
+      tags:
+        - Utilities
+      summary: "Get: /utils static-resources schema"
+      description: "Unauthenticated public endpoint."
+      x-albus-auth-mode: none
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /utils/test-auth:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_utilsTestAuth
+      tags:
+        - Utilities
+      summary: "Get: /utils test-auth"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
   /v2/.well-known/oauth-authorization-server:
     servers: *PublicServers
     get:
@@ -18600,6 +19483,43 @@ paths:
                 credentials:
                   type: object
                   additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /v2/logs/groups/{groupBy}:
+    servers: *PublicServers
+    get:
+      operationId: Albus_get_v2LogsGroupsGroupBy
+      tags:
+        - Portkey
+      summary: "Get: /v2 logs groups"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: groupBy
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
+        - name: includeTotal
+          in: query
+          schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
       responses:
         "200":
           description: OK
@@ -20483,6 +21403,10 @@ paths:
   /logs/exports/{exportId}/start:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Logs Export
       summary: Start log export
@@ -20576,6 +21500,10 @@ paths:
   /logs/exports/{exportId}/cancel:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Logs Export
       summary: Cancel log export
@@ -20669,6 +21597,10 @@ paths:
   /logs/exports/{exportId}/download:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Logs Export
       summary: Download log export
@@ -20762,6 +21694,10 @@ paths:
   /audit-logs:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       tags:
         - Audit Logs
       summary: Get Audit Logs
@@ -22055,12 +22991,14 @@ paths:
 
   /policies/usage-limits:
     post:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: Create Usage Limits Policy
       description: Create a new usage limits policy to control total usage (cost or tokens) over a period.
       operationId: createUsageLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       requestBody:
         required: true
@@ -22113,15 +23051,29 @@ paths:
           description: Server error
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: List Usage Limits Policies
       description: List all usage limits policies with optional filtering.
       operationId: listUsageLimitsPolicies
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/WorkspaceIdQuery'
+        - name: organisation_id
+          in: query
+          description: Filter by organisation id.
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search policies by name.
+          required: false
+          schema:
+            type: string
         - name: status
           in: query
           description: Filter by status
@@ -22159,12 +23111,14 @@ paths:
 
   /policies/usage-limits/{policyUsageLimitsId}:
     get:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: Get Usage Limits Policy
       description: Get a single usage limits policy by ID.
       operationId: getUsageLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/PolicyUsageLimitsId'
@@ -22202,12 +23156,14 @@ paths:
           description: Server error
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: Update Usage Limits Policy
       description: Update an existing usage limits policy.
       operationId: updateUsageLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/PolicyUsageLimitsId'
@@ -22246,12 +23202,14 @@ paths:
           description: Server error
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: Delete Usage Limits Policy
       description: Archive (soft delete) a usage limits policy.
       operationId: deleteUsageLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/PolicyUsageLimitsId'
@@ -22281,12 +23239,14 @@ paths:
 
   /policies/usage-limits/{policyUsageLimitsId}/entities:
     get:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: List Usage Limits Policy Entities
       description: List entities tracked by a usage limits policy with their current usage.
       operationId: listUsageLimitsPolicyEntities
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/PolicyUsageLimitsId'
@@ -22332,12 +23292,14 @@ paths:
 
   /policies/usage-limits/{policyUsageLimitsId}/entities/{entityId}/reset:
     put:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Usage Limits Policies
       summary: Reset Usage Limits Policy Entity
       description: Reset the current usage for a specific entity in a usage limits policy.
       operationId: resetUsageLimitsPolicyEntity
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/PolicyUsageLimitsId'
@@ -22363,12 +23325,14 @@ paths:
 
   /policies/rate-limits:
     post:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Rate Limits Policies
       summary: Create Rate Limits Policy
       description: Create a new rate limits policy to control the rate of requests or tokens consumed per minute, hour, or day.
       operationId: createRateLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       requestBody:
         required: true
@@ -22418,15 +23382,29 @@ paths:
           description: Server error
 
     get:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Rate Limits Policies
       summary: List Rate Limits Policies
       description: List all rate limits policies with optional filtering.
       operationId: listRateLimitsPolicies
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/WorkspaceIdQuery'
+        - name: organisation_id
+          in: query
+          description: Filter by organisation id.
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search policies by name.
+          required: false
+          schema:
+            type: string
         - name: status
           in: query
           description: Filter by status
@@ -22471,12 +23449,14 @@ paths:
 
   /policies/rate-limits/{rateLimitsPolicyId}:
     get:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Rate Limits Policies
       summary: Get Rate Limits Policy
       description: Get a single rate limits policy by ID.
       operationId: getRateLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/RateLimitsPolicyId'
@@ -22507,12 +23487,14 @@ paths:
           description: Server error
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Rate Limits Policies
       summary: Update Rate Limits Policy
       description: Update an existing rate limits policy.
       operationId: updateRateLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/RateLimitsPolicyId'
@@ -22550,12 +23532,14 @@ paths:
           description: Server error
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
       tags:
         - Rate Limits Policies
       summary: Delete Rate Limits Policy
       description: Delete a rate limits policy.
       operationId: deleteRateLimitsPolicy
       security:
+        - BearerAuth: []
         - Portkey-Key: []
       parameters:
         - $ref: '#/components/parameters/RateLimitsPolicyId'
@@ -22586,6 +23570,9 @@ paths:
   /analytics/graphs/requests:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get requests graph
@@ -22661,6 +23648,9 @@ paths:
   /analytics/graphs/cost:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get cost graph
@@ -22744,6 +23734,9 @@ paths:
   /analytics/graphs/latency:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get latency graph
@@ -22844,6 +23837,9 @@ paths:
   /analytics/graphs/tokens:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get tokens graph
@@ -22927,6 +23923,9 @@ paths:
   /analytics/graphs/users:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get users graph. Returns unique user count across different time buckets
@@ -23002,6 +24001,9 @@ paths:
   /analytics/graphs/users/requests:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get users requests graph. Returns average requests per user across different time buckets
@@ -23085,6 +24087,9 @@ paths:
   /analytics/graphs/errors:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get errors graph
@@ -23160,6 +24165,9 @@ paths:
   /analytics/graphs/errors/rate:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get percentage error rate graph
@@ -23235,6 +24243,9 @@ paths:
   /analytics/graphs/errors/stacks:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get status code wise stacked error graph
@@ -23318,6 +24329,9 @@ paths:
   /analytics/graphs/errors/status-codes:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get status code wise grouped error graph.
@@ -23396,6 +24410,9 @@ paths:
   /analytics/graphs/requests/rescued:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get retry and fallback rescued requests graph
@@ -23487,6 +24504,9 @@ paths:
   /analytics/graphs/cache/hit-rate:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get cache hit rate graph
@@ -23582,6 +24602,9 @@ paths:
   /analytics/graphs/cache/latency:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get cache hit latency graph
@@ -23651,6 +24674,9 @@ paths:
   /analytics/graphs/feedbacks:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get feedbacks graph
@@ -23726,6 +24752,9 @@ paths:
   /analytics/graphs/feedbacks/scores:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get score-wise feedbacks distribution graph
@@ -23800,6 +24829,9 @@ paths:
   /analytics/graphs/feedbacks/weighted:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get weighted feedbacks graph. Weighted feedback is (value * score)
@@ -23875,6 +24907,9 @@ paths:
   /analytics/graphs/feedbacks/ai-models:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Graphs
       summary: Get feedbacks per ai_models graph
@@ -23947,6 +24982,9 @@ paths:
   /analytics/summary/cache:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Summary
       summary: Get cache summary data for the selected time period
@@ -24012,6 +25050,9 @@ paths:
   /analytics/groups/users:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Groups
       summary: Get metadata users grouped data.
@@ -24085,6 +25126,9 @@ paths:
   /analytics/groups/ai-models:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Groups
       summary: Get ai model grouped data.
@@ -24155,6 +25199,9 @@ paths:
   /analytics/groups/metadata/{metadataKey}:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
       tags:
         - Analytics > Groups
       summary: Get metadata key based grouped data.
@@ -41002,6 +42049,11 @@ components:
           maxLength: 255
           description: Policy name
           example: Monthly Cost Limit
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+          description: Optional policy description.
         conditions:
           type: array
           minItems: 1
@@ -41016,7 +42068,7 @@ components:
           description: Array of group by fields that define how usage is aggregated
         type:
           type: string
-          enum: [cost, tokens]
+          enum: [cost, tokens, requests]
           description: Policy type
         credit_limit:
           type: number
@@ -41032,6 +42084,17 @@ components:
           nullable: true
           enum: [monthly, weekly]
           description: Reset period. If not provided, limit is cumulative.
+        periodic_reset_days:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 365
+          description: Custom reset period in days. Mutually exclusive with periodic_reset.
+        next_usage_reset_at:
+          type: string
+          nullable: true
+          format: date-time
+          description: Next scheduled reset timestamp.
         workspace_id:
           type: string
           description: Workspace ID or slug. Required if not using API key authentication.
@@ -41047,6 +42110,17 @@ components:
           type: string
           maxLength: 255
           description: Policy name
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+          description: Optional policy description.
+        conditions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Condition'
+          description: Conditions that define which requests the policy applies to.
         credit_limit:
           type: number
           minimum: 0
@@ -41061,6 +42135,17 @@ components:
           nullable: true
           enum: [monthly, weekly]
           description: Reset period. Set to null to remove periodic reset.
+        periodic_reset_days:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 365
+          description: Custom reset period in days. Mutually exclusive with periodic_reset.
+        next_usage_reset_at:
+          type: string
+          nullable: true
+          format: date-time
+          description: Next scheduled reset timestamp.
         reset_usage_for_value:
           type: string
           description: Reset usage for a specific value key (e.g., API key). This will reset the usage counter for that key to 0.
@@ -41079,6 +42164,11 @@ components:
           maxLength: 255
           description: Policy name
           example: 100 Requests per Minute
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+          description: Optional policy description.
         conditions:
           type: array
           minItems: 1
@@ -41097,12 +42187,13 @@ components:
           description: Policy type
         unit:
           type: string
-          enum: [rpm, rph, rpd]
+          enum: [rpm, rph, rpd, rpw]
           description: |
             Rate unit:
             - `rpm` - Requests/Tokens per minute
             - `rph` - Requests/Tokens per hour
             - `rpd` - Requests/Tokens per day
+            - `rpw` - Requests/Tokens per week
         value:
           type: number
           description: Rate limit value
@@ -41121,9 +42212,20 @@ components:
           type: string
           maxLength: 255
           description: Policy name
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+          description: Optional policy description.
+        conditions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Condition'
+          description: Conditions that define which requests the policy applies to.
         unit:
           type: string
-          enum: [rpm, rph, rpd]
+          enum: [rpm, rph, rpd, rpw]
           description: Rate unit
         value:
           type: number
