@@ -11303,6 +11303,10 @@ paths:
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Create a Integration
       tags:
         - Integrations
@@ -11420,6 +11424,10 @@ paths:
   /integrations/{slug}:
     servers: *ControlPlaneServers
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Get a Integration
       tags:
         - Integrations
@@ -11509,6 +11517,10 @@ paths:
             console.log(vKey);
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Update a Integration
       tags:
         - Integrations
@@ -11622,6 +11634,10 @@ paths:
             console.log(integration);
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Delete a Integration
       tags:
         - Integrations
@@ -11710,6 +11726,10 @@ paths:
 
   /integrations/{slug}/models:
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List integration models
       description: Retrieves all model access for a specific integration with their configuration and pricing details.
       tags:
@@ -11729,6 +11749,10 @@ paths:
                 $ref: '#/components/schemas/IntegrationModelsResponse'
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Bulk update integration models
       description: |
         Updates model access, pricing configuration, and settings for multiple models in an integration.
@@ -11756,6 +11780,10 @@ paths:
                   type: object
 
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Bulk delete integration custom models
       description: Removes multiple custom models from an integration by their slugs.
       tags:
@@ -11783,6 +11811,10 @@ paths:
 
   /integrations/{slug}/workspaces:
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: List integration workspace access
       description: Retrieves workspace access configuration for an integration, including usage limits and rate limits.
       tags:
@@ -11802,6 +11834,10 @@ paths:
                 $ref: '#/components/schemas/IntegrationWorkspacesResponse'
 
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       summary: Bulk update workspace access
       description: |
         Updates workspace access permissions, usage limits, and rate limits for an integration.
@@ -15783,6 +15819,10 @@ paths:
   /mcp-integrations:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrations_create
       tags:
         - MCP Integrations
@@ -15810,6 +15850,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpIntegrationCreateResponse"
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrations_list
       tags:
         - MCP Integrations
@@ -15869,6 +15913,10 @@ paths:
           type: string
         description: MCP Integration ID (UUID) or slug
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrations_retrieve
       tags:
         - MCP Integrations
@@ -15881,6 +15929,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpIntegration"
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrations_update
       tags:
         - MCP Integrations
@@ -15898,6 +15950,10 @@ paths:
               schema:
                 type: object
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrations_delete
       tags:
         - MCP Integrations
@@ -15920,6 +15976,10 @@ paths:
           type: string
         description: MCP Integration ID (UUID) or slug
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrationWorkspaces_list
       tags:
         - MCP Integrations > Workspaces
@@ -15940,6 +16000,10 @@ paths:
                   - $ref: "#/components/schemas/McpIntegrationWorkspacesListResponse"
                   - $ref: "#/components/schemas/McpIntegrationWorkspacesLegacyResponse"
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrationWorkspaces_bulkUpdate
       tags:
         - MCP Integrations > Workspaces
@@ -15968,6 +16032,10 @@ paths:
           type: string
         description: MCP Integration ID (UUID) or slug
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrationCapabilities_list
       tags:
         - MCP Integrations > Capabilities
@@ -16003,6 +16071,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpIntegrationCapabilitiesListResponse"
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrationCapabilities_bulkUpdate
       tags:
         - MCP Integrations > Capabilities
@@ -16030,6 +16102,10 @@ paths:
           type: string
         description: MCP Integration ID (UUID) or slug
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpIntegrationMetadata_retrieve
       tags:
         - MCP Integrations > Metadata
@@ -16045,6 +16121,10 @@ paths:
   /mcp-servers:
     servers: *ControlPlaneServers
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServers_create
       tags:
         - MCP Servers
@@ -16070,6 +16150,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpServerCreateResponse"
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServers_list
       tags:
         - MCP Servers
@@ -16122,6 +16206,10 @@ paths:
           type: string
         description: MCP Server ID (UUID) or slug
     get:
+      x-albus-auth-mode: service_token_or_user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServers_retrieve
       tags:
         - MCP Servers
@@ -16134,6 +16222,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpServer"
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServers_update
       tags:
         - MCP Servers
@@ -16151,6 +16243,10 @@ paths:
               schema:
                 type: object
     delete:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServers_delete
       tags:
         - MCP Servers
@@ -16173,6 +16269,10 @@ paths:
           type: string
         description: MCP Server ID (UUID) or slug
     post:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServers_test
       tags:
         - MCP Servers
@@ -16196,6 +16296,10 @@ paths:
           type: string
         description: MCP Server ID (UUID) or slug
     get:
+      x-albus-auth-mode: service_token_or_user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServerCapabilities_list
       tags:
         - MCP Servers > Capabilities
@@ -16231,6 +16335,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpServerCapabilitiesListResponse"
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServerCapabilities_bulkUpdate
       tags:
         - MCP Servers > Capabilities
@@ -16259,6 +16367,10 @@ paths:
           type: string
         description: MCP Server ID (UUID) or slug
     get:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServerUserAccess_list
       tags:
         - MCP Servers > User Access
@@ -16290,6 +16402,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/McpServerUserAccessListResponse"
     put:
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
       operationId: McpServerUserAccess_bulkUpdate
       tags:
         - MCP Servers > User Access
@@ -16357,6 +16473,708 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkspaceUser"
 
+  /agent-integrations:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentIntegrations
+      tags:
+        - Agent Integrations
+      summary: "Get: /agent-integrations"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - workspace
+              - organisation
+              - all
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    post:
+      operationId: Albus_post_agentIntegrations
+      tags:
+        - Agent Integrations
+      summary: "Post: /agent-integrations"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                workspace_id:
+                  type: string
+                organisation_id:
+                  type: string
+                  format: uuid
+                slug:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                configurations:
+                  type: object
+                  additionalProperties: true
+                url:
+                  type: string
+                  format: uri
+                auth_type:
+                  type: string
+                  enum:
+                    - headers
+                    - none
+                agent_card:
+                  type: object
+                  additionalProperties: true
+              required:
+                - name
+                - url
+                - auth_type
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-integrations/{agentIntegrationId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentIntegrationsAgentIntegrationId
+      tags:
+        - Agent Integrations
+      summary: "Get: /agent-integrations"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    put:
+      operationId: Albus_put_agentIntegrationsAgentIntegrationId
+      tags:
+        - Agent Integrations
+      summary: "Put: /agent-integrations"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                configurations:
+                  type: object
+                  additionalProperties: true
+                url:
+                  type: string
+                  format: uri
+                auth_type:
+                  type: string
+                  enum:
+                    - oauth_auto
+                    - oauth_client_credentials
+                    - headers
+                    - none
+                agent_card:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    delete:
+      operationId: Albus_delete_agentIntegrationsAgentIntegrationId
+      tags:
+        - Agent Integrations
+      summary: "Delete: /agent-integrations"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-integrations/{agentIntegrationId}/skills:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentIntegrationsAgentIntegrationIdSkills
+      tags:
+        - Agent Integrations > Skills
+      summary: "Get: /agent-integrations skills"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    put:
+      operationId: Albus_put_agentIntegrationsAgentIntegrationIdSkills
+      tags:
+        - Agent Integrations > Skills
+      summary: "Put: /agent-integrations skills"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                skills:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - skills
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-integrations/{agentIntegrationId}/workspaces:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentIntegrationsAgentIntegrationIdWorkspaces
+      tags:
+        - Agent Integrations > Workspaces
+      summary: "Get: /agent-integrations workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    put:
+      operationId: Albus_put_agentIntegrationsAgentIntegrationIdWorkspaces
+      tags:
+        - Agent Integrations > Workspaces
+      summary: "Put: /agent-integrations workspaces"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                workspaces:
+                  type: array
+                  items:
+                    type: string
+                global_workspace_access:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    enabled:
+                      type: boolean
+                override_existing_workspace_access:
+                  type: boolean
+              required:
+                - workspaces
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-integrations/fetch-agent-card:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_agentIntegrationsFetchAgentCard
+      tags:
+        - Agent Integrations
+      summary: "Post: /agent-integrations fetch-agent-card"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                organisation_id:
+                  type: string
+                  format: uuid
+                authType:
+                  type: string
+                  enum:
+                    - oauth_auto
+                    - oauth_client_credentials
+                    - headers
+                    - none
+                authToken:
+                  type: string
+                authHeader:
+                  type: string
+              required:
+                - endpoint
+                - organisation_id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-servers:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentServers
+      tags:
+        - Agent Servers
+      summary: "Get: /agent-servers"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: id
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+            maxLength: 255
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    post:
+      operationId: Albus_post_agentServers
+      tags:
+        - Agent Servers
+      summary: "Post: /agent-servers"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                description:
+                  type: string
+                  maxLength: 500
+                workspace_id:
+                  type: string
+                agent_integration_id:
+                  type: string
+                slug:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+              required:
+                - name
+                - agent_integration_id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-servers/{agentServerId}:
+    servers: *ControlPlaneServers
+    put:
+      operationId: Albus_put_agentServersAgentServerId
+      tags:
+        - Agent Servers
+      summary: "Put: /agent-servers"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                description:
+                  type: string
+                  maxLength: 500
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    delete:
+      operationId: Albus_delete_agentServersAgentServerId
+      tags:
+        - Agent Servers
+      summary: "Delete: /agent-servers"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-servers/{agentServerId}/skills:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentServersAgentServerIdSkills
+      tags:
+        - Agent Servers > Skills
+      summary: "Get: /agent-servers skills"
+      description: "Requires service token or user token or api key."
+      x-albus-auth-mode: service_token_or_user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    put:
+      operationId: Albus_put_agentServersAgentServerIdSkills
+      tags:
+        - Agent Servers > Skills
+      summary: "Put: /agent-servers skills"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                skills:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - skills
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-servers/{agentServerId}/test:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_agentServersAgentServerIdTest
+      tags:
+        - Agent Servers
+      summary: "Post: /agent-servers test"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /agent-servers/{agentServerId}/user-access:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_agentServersAgentServerIdUserAccess
+      tags:
+        - Agent Servers > User Access
+      summary: "Get: /agent-servers user-access"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    put:
+      operationId: Albus_put_agentServersAgentServerIdUserAccess
+      tags:
+        - Agent Servers > User Access
+      summary: "Put: /agent-servers user-access"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: agentServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                user_access:
+                  type: array
+                  items:
+                    type: string
+                default_user_access:
+                  type: string
+                  enum:
+                    - allow
+                    - deny
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
   /health:
     servers: *PublicServers
     get:
@@ -16367,6 +17185,286 @@ paths:
       description: "Unauthenticated public endpoint."
       x-albus-auth-mode: none
       security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /mcp-integrations/{mcpIntegrationId}/sync:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_mcpIntegrationsMcpIntegrationIdSync
+      tags:
+        - Portkey
+      summary: "Post: /mcp-integrations sync"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: mcpIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                server_info:
+                  type: object
+                  additionalProperties: true
+                  properties:
+                    name:
+                      type: string
+                    version:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    website_url:
+                      type: string
+                    icons:
+                      type: array
+                      items:
+                        type: object
+                        additionalProperties: true
+                    protocol_version:
+                      type: string
+                    capabilities:
+                      type: object
+                      additionalProperties: true
+                    instructions:
+                      type: string
+                capabilities:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /mcp-integrations/{mcpIntegrationId}/test:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_mcpIntegrationsMcpIntegrationIdTest
+      tags:
+        - Portkey
+      summary: "Post: /mcp-integrations test"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: mcpIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /mcp-servers/{mcpServerId}/connections:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_mcpServersMcpServerIdConnections
+      tags:
+        - Portkey
+      summary: "Get: /mcp-servers connections"
+      description: "Requires api key."
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
+      parameters:
+        - name: mcpServerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: string
+        - name: current_page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+    delete:
+      operationId: Albus_delete_mcpServersMcpServerIdConnections
+      tags:
+        - Portkey
+      summary: "Delete: /mcp-servers connections"
+      description: "Requires api key."
+      x-albus-auth-mode: api_key
+      security:
+        - Portkey-Key: []
+      parameters:
+        - name: mcpServerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /mcp-servers/{mcpServerId}/metadata:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Albus_get_mcpServersMcpServerIdMetadata
+      tags:
+        - Portkey
+      summary: "Get: /mcp-servers metadata"
+      description: "Requires service token or user token or api key."
+      x-albus-auth-mode: service_token_or_user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: mcpServerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /plugins:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Albus_post_plugins
+      tags:
+        - Plugins
+      summary: "Post: /plugins"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                plugin_provider_id:
+                  type: string
+                integration_id:
+                  type: string
+                  format: uuid
+                credentials:
+                  type: object
+                  additionalProperties: true
+              required:
+                - credentials
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
+
+  /plugins/{organisationIntegrationId}:
+    servers: *ControlPlaneServers
+    put:
+      operationId: Albus_put_pluginsOrganisationIntegrationId
+      tags:
+        - Plugins
+      summary: "Put: /plugins"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisationIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                status:
+                  type: string
+                credentials:
+                  type: object
+                  additionalProperties: true
       responses:
         "200":
           description: OK
@@ -17175,6 +18273,47 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AlbusValidateTokenResponse"
+
+  /v2/integrations/{organisationIntegrationId}:
+    servers: *PublicServers
+    put:
+      operationId: Albus_put_v2IntegrationsOrganisationIntegrationId
+      tags:
+        - Portkey
+      summary: "Put: /v2 integrations"
+      description: "Requires user token or api key."
+      x-albus-auth-mode: user_token_or_api_key
+      security:
+        - BearerAuth: []
+        - Portkey-Key: []
+      parameters:
+        - name: organisationIntegrationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+                status:
+                  type: string
+                credentials:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbusPublicApiResponse"
 
   /v2/oauth/{resourceId}/authorize:
     servers: *PublicServers
@@ -34633,6 +35772,21 @@ components:
         - name
         - ai_provider_id
       properties:
+        organisation_id:
+          type: string
+          format: uuid
+          description: Organisation id for legacy plugin integrations. Required unless provided by API key.
+        plugin_provider_id:
+          type: string
+          description: Legacy plugin provider id. Mutually exclusive with integration_id.
+        integration_id:
+          type: string
+          format: uuid
+          description: Legacy integration id. Mutually exclusive with plugin_provider_id.
+        credentials:
+          type: object
+          additionalProperties: true
+          description: Credentials object for legacy plugin integrations.
         name:
           type: string
           description: Human-readable name for the integration
@@ -34696,6 +35850,8 @@ components:
           items:
             $ref: '#/components/schemas/SecretMapping'
           description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique. When "key" is mapped, the key body field can be omitted.
+        pricing_adjustments:
+          $ref: '#/components/schemas/PricingAdjustments'
 
     UpdateIntegrationRequest:
       type: object
@@ -34712,6 +35868,11 @@ components:
           type: string
           description: Optional description of the integration
           example: "Production OpenAI integration for customer-facing applications"
+        tags:
+          type: object
+          nullable: true
+          additionalProperties: true
+          description: User-defined integration tags.
         configurations:
           type: object
           description: Provider-specific configuration object
@@ -34741,6 +35902,8 @@ components:
           items:
             $ref: '#/components/schemas/SecretMapping'
           description: Dynamically resolve secrets from secret references at runtime. Valid target_field values are "key" or "configurations.<field>" (e.g. "configurations.aws_secret_access_key", "configurations.azure_entra_client_secret"). Each target_field must be unique.
+        pricing_adjustments:
+          $ref: '#/components/schemas/PricingAdjustments'
 
     IntegrationDetailResponse:
       allOf:
@@ -34796,7 +35959,153 @@ components:
               items:
                 $ref: '#/components/schemas/SecretMapping'
               description: Secret reference mappings for this integration. Valid target_field values are "key" or "configurations.<field>".
-  
+            pricing_adjustments:
+              $ref: '#/components/schemas/PricingAdjustments'
+
+    PricingAdjustments:
+      type: object
+      nullable: true
+      additionalProperties: false
+      description: |
+        Per-Integration pricing adjustments applied on top of Portkey's base model pricing
+        for cost tracking, analytics, and budget limits. Use to reflect negotiated discounts,
+        committed-use rates, or internal markups for cost showback.
+      properties:
+        multiplier:
+          $ref: '#/components/schemas/PricingMultiplier'
+      example:
+        multiplier:
+          default: 0.8
+          cache_read_input_token: 0.9
+          cache_write_input_token: 0.9
+
+    PricingMultiplier:
+      type: object
+      additionalProperties: false
+      description: |
+        Multipliers applied to the corresponding pricing keys from
+        [Portkey Models](https://portkey.ai/models). A multiplier of `1` leaves pricing
+        unchanged, `0.8` applies a 20% discount, `1.2` applies a 20% markup. Missing or
+        `null` fields inherit from `default`; if `default` is also unset, no change is applied.
+        All values must be non-negative numbers.
+      properties:
+        default:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier applied to every token type unless a more specific multiplier is set.
+        request_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for input/request token cost.
+        response_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for output/response token cost.
+        cache_read_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read input token cost.
+        cache_write_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-write input token cost.
+        cache_read_audio_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read audio input token cost.
+        request_audio_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for audio input token cost.
+        response_audio_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for audio output token cost.
+        reasoning_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for reasoning/thinking token cost.
+        prediction_accepted_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for accepted predicted-output token cost.
+        prediction_rejected_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for rejected predicted-output token cost.
+        request_image_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for image-modality input token cost.
+        response_image_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for image-modality output token cost.
+        request_text_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for text-modality input token cost.
+        response_text_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for text-modality output token cost.
+        cache_read_image_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read image-input token cost.
+        cache_read_text_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-read text-input token cost.
+        cache_write_text_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-write text-input token cost.
+        cache_write_image_input_token:
+          type: number
+          nullable: true
+          minimum: 0
+          description: Multiplier for cache-write image-input token cost.
+        image:
+          type: object
+          nullable: true
+          additionalProperties: false
+          description: Image generation pricing multipliers.
+          properties:
+            default:
+              type: number
+              nullable: true
+              minimum: 0
+              description: Multiplier applied to image generation pricing across all qualities and sizes.
+        additional_units:
+          type: object
+          nullable: true
+          description: |
+            Multipliers for per-unit charges such as `web_search`, `file_search`, `input_image`,
+            `input_video_standard`. Keys must match those returned by Portkey Models for the provider.
+          additionalProperties:
+            type: number
+            nullable: true
+            minimum: 0
+
     GlobalWorkspaceAccess:
       type: object
       required:
@@ -39222,8 +40531,15 @@ components:
           type: string
           enum:
             - oauth_auto
+            - oauth_client_credentials
             - headers
             - none
+        secret_mappings:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/SecretMapping'
+          description: Secret reference mappings for MCP auth/configuration fields.
         transport:
           type: string
           enum:
@@ -39318,8 +40634,15 @@ components:
           type: string
           enum:
             - oauth_auto
+            - oauth_client_credentials
             - headers
             - none
+        secret_mappings:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/SecretMapping'
+          description: Secret reference mappings for MCP auth/configuration fields.
         transport:
           type: string
           enum:
@@ -39397,8 +40720,15 @@ components:
           type: string
           enum:
             - oauth_auto
+            - oauth_client_credentials
             - headers
             - none
+        secret_mappings:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/SecretMapping'
+          description: Secret reference mappings for MCP auth/configuration fields.
         transport:
           type: string
           enum:
