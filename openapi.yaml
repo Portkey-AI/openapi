@@ -10201,8 +10201,6 @@ paths:
                         workspace_id:
                           type: string
                           format: uuid
-                        is_default:
-                          type: integer
                         status:
                           type: string
                         owner_id:
@@ -10230,7 +10228,6 @@ paths:
                             "slug": "pc-pplx-c-ca7a87",
                             "organisation_id": "472d2804-d054-4226-b4ae-9d4e2e61e69e",
                             "workspace_id": "472d2804-d054-4226-b4ae-9d4e2e61e69e",
-                            "is_default": 0,
                             "status": "active",
                             "owner_id": "c4c7996d-be62-429d-b787-5d48fe94da86",
                             "updated_by": "439268ba-94a2-4031-9ca7-ca88ddda5096",
@@ -10316,8 +10313,6 @@ paths:
                   type: string
                 config:
                   type: object
-                isDefault:
-                  type: integer
                 workspace_id:
                   type: string
                   format: uuid
@@ -10328,8 +10323,7 @@ paths:
                   {
                     "name": "New config",
                     "config": { "retry": { "attempts": 3 } },
-                    "workspace_id": "",
-                    "isDefault": 1,
+                    "workspace_id": ""
                   }
       responses:
         "200":
@@ -10887,8 +10881,6 @@ paths:
                         organisation_id:
                           type: string
                           format: uuid
-                        is_default:
-                          type: integer
                         status:
                           type: string
                         owner_id:
@@ -10928,7 +10920,6 @@ paths:
                           "workspace_id": "8610029e-692a-4df6-9052-3fa3eff69911",
                           "slug": "pc-pii-re-7f1051",
                           "organisation_id": "472d2804-d054-4226-b4ae-9d4e2e61e69e",
-                          "is_default": 0,
                           "status": "active",
                           "owner_id": "c4c7996d-be62-429d-b787-5d48fe94da86",
                           "updated_by": "c4c7996d-be62-429d-b787-5d48fe94da86",
