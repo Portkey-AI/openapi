@@ -16602,6 +16602,35 @@ paths:
           required: true
           schema:
             type: string
+        - name: path_format
+          in: query
+          required: false
+          description: >
+            Storage path format used to reconstruct the log file location.
+            Defaults to `v1`. When set to `v2`, `created_at` becomes required.
+          schema:
+            type: string
+            enum: [v1, v2]
+            default: v1
+        - name: created_at
+          in: query
+          required: false
+          description: >
+            ISO 8601 timestamp of when the log was created, used to reconstruct
+            the storage path. Required when `path_format=v2`.
+          schema:
+            type: string
+            format: date-time
+          example: "2026-07-13T09:17:00.000Z"
+        - name: type
+          in: query
+          required: false
+          description: >
+            Log type used to locate the correct storage path. Currently only
+            `hooks` is supported; omit for standard request logs.
+          schema:
+            type: string
+            enum: [hooks]
       responses:
         "200":
           description: Successful response
