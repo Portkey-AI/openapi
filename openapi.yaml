@@ -33145,6 +33145,16 @@ components:
             custom_host:
               type: string
               description: Custom Host URL for the model.
+            custom_headers:
+              type: object
+              description: Custom Headers for the model.
+              properties:
+                key:
+                  type: string
+                  description: Header key
+                value:
+                  type: string
+                  description: Header value
 
     TokenPricing:
       type: object
