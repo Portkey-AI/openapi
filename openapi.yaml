@@ -22822,6 +22822,46 @@ paths:
         "200":
           description: List of available API key scopes
 
+  # ─── Admin Organisation Defaults Endpoint ────────────────────────────────────
+
+  /admin/organisation/defaults:
+    servers: *ControlPlaneServers
+    get:
+      operationId: AdminOrganisation_getDefaults
+      tags:
+        - Organisations
+      summary: Get organisation defaults
+      description: Get organisation-level default settings (e.g. default guardrails).
+      responses:
+        "200":
+          description: Organisation defaults
+    put:
+      operationId: AdminOrganisation_updateDefaults
+      tags:
+        - Organisations
+      summary: Update organisation defaults
+      description: Update organisation-level default settings (e.g. default guardrails applied to all workspaces).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input_guardrails:
+                  type: array
+                  items:
+                    type: string
+                  description: List of input guardrail IDs to apply by default
+                output_guardrails:
+                  type: array
+                  items:
+                    type: string
+                  description: List of output guardrail IDs to apply by default
+      responses:
+        "200":
+          description: Defaults updated
+
   # ─── OAuth Endpoints ──────────────────────────────────────────────────────────
 
   /oauth/register:
