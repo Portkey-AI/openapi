@@ -150,8 +150,18 @@ tags:
     description: Organisation management
   - name: Agent Servers
     description: Agent server management
+  - name: Agent Servers > Skills
+    description: Manage skills for Agent Servers.
+  - name: Agent Servers > User Access
+    description: Manage user access for Agent Servers.
   - name: Agent Integrations
     description: Agent integration management
+  - name: Agent Integrations > Workspaces
+    description: Manage workspace access for Agent Integrations.
+  - name: Agent Integrations > Skills
+    description: Manage skills for Agent Integrations.
+  - name: Workspace Exclusions
+    description: Manage workspace-level guardrail exclusions.
   - name: Deployments
     description: Deployment management
   - name: OAuth
@@ -22293,6 +22303,27 @@ paths:
       tags:
         - Agent Integrations
       summary: List agent integrations
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [workspace, organisation, all]
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - name: search
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: List of agent integrations
@@ -22301,9 +22332,495 @@ paths:
       tags:
         - Agent Integrations
       summary: Create agent integration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, url, auth_type]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                slug:
+                  type: string
+                  pattern: "^[a-zA-Z0-9_-]+$"
+                workspace_id:
+                  type: string
+                organisation_id:
+                  type: string
+                  format: uuid
+                url:
+                  type: string
+                  format: uri
+                auth_type:
+                  type: string
+                  enum: [headers, none]
+                configurations:
+                  type: object
+                agent_card:
+                  type: object
       responses:
         "201":
           description: Agent integration created
+
+  /agent-integrations/{agentIntegrationId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Integration ID (UUID) or slug
+    get:
+      operationId: AgentIntegrations_retrieve
+      tags:
+        - Agent Integrations
+      summary: Get agent integration
+      responses:
+        "200":
+          description: Agent integration details
+    put:
+      operationId: AgentIntegrations_update
+      tags:
+        - Agent Integrations
+      summary: Update agent integration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                url:
+                  type: string
+                  format: uri
+                auth_type:
+                  type: string
+                  enum: [oauth_auto, oauth_client_credentials, headers, none]
+                configurations:
+                  type: object
+                agent_card:
+                  type: object
+      responses:
+        "200":
+          description: Agent integration updated
+    delete:
+      operationId: AgentIntegrations_delete
+      tags:
+        - Agent Integrations
+      summary: Delete agent integration
+      responses:
+        "200":
+          description: Agent integration deleted
+
+  /agent-integrations/fetch-agent-card:
+    servers: *ControlPlaneServers
+    post:
+      operationId: AgentIntegrations_fetchAgentCard
+      tags:
+        - Agent Integrations
+      summary: Fetch agent card from remote endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [endpoint, organisation_id]
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                organisation_id:
+                  type: string
+                  format: uuid
+                authType:
+                  type: string
+                  enum: [oauth_auto, oauth_client_credentials, headers, none]
+                authToken:
+                  type: string
+                authHeader:
+                  type: string
+      responses:
+        "200":
+          description: Agent card fetched successfully
+
+  /agent-integrations/{agentIntegrationId}/workspaces:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Integration ID (UUID) or slug
+    get:
+      operationId: AgentIntegrationWorkspaces_list
+      tags:
+        - Agent Integrations > Workspaces
+      summary: List agent integration workspaces
+      responses:
+        "200":
+          description: List of workspace access entries
+    put:
+      operationId: AgentIntegrationWorkspaces_bulkUpdate
+      tags:
+        - Agent Integrations > Workspaces
+      summary: Bulk update agent integration workspace access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workspaces]
+              properties:
+                workspaces:
+                  type: array
+                  items:
+                    type: object
+                    required: [id, enabled]
+                    properties:
+                      id:
+                        type: string
+                      enabled:
+                        type: boolean
+                global_workspace_access:
+                  type: object
+                  nullable: true
+                  properties:
+                    enabled:
+                      type: boolean
+                override_existing_workspace_access:
+                  type: boolean
+      responses:
+        "200":
+          description: Workspace access updated
+
+  /agent-integrations/{agentIntegrationId}/skills:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Integration ID (UUID) or slug
+    get:
+      operationId: AgentIntegrationSkills_list
+      tags:
+        - Agent Integrations > Skills
+      summary: List agent integration skills
+      responses:
+        "200":
+          description: List of skills
+    put:
+      operationId: AgentIntegrationSkills_bulkUpdate
+      tags:
+        - Agent Integrations > Skills
+      summary: Bulk update agent integration skills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [skills]
+              properties:
+                skills:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [id, enabled]
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      enabled:
+                        type: boolean
+      responses:
+        "200":
+          description: Skills updated
+
+  # ─── Agent Server Sub-resource Endpoints ─────────────────────────────────────
+
+  /agent-servers/{agentServerId}/skills:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Server ID (UUID) or slug
+    get:
+      operationId: AgentServerSkills_list
+      tags:
+        - Agent Servers > Skills
+      summary: List agent server skills
+      responses:
+        "200":
+          description: List of skills
+    put:
+      operationId: AgentServerSkills_bulkUpdate
+      tags:
+        - Agent Servers > Skills
+      summary: Bulk update agent server skills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [skills]
+              properties:
+                skills:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [name, type, enabled]
+                    properties:
+                      name:
+                        type: string
+                      type:
+                        type: string
+                        enum: [tool, prompt, resource, resource_template]
+                      enabled:
+                        type: boolean
+      responses:
+        "200":
+          description: Skills updated
+
+  /agent-servers/{agentServerId}/user-access:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Server ID (UUID) or slug
+    get:
+      operationId: AgentServerUserAccess_list
+      tags:
+        - Agent Servers > User Access
+      summary: List agent server user access
+      responses:
+        "200":
+          description: List of user access entries
+    put:
+      operationId: AgentServerUserAccess_bulkUpdate
+      tags:
+        - Agent Servers > User Access
+      summary: Bulk update agent server user access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_access:
+                  type: array
+                  items:
+                    type: object
+                    required: [enabled]
+                    properties:
+                      id:
+                        type: string
+                        description: User org map ID
+                      user_id:
+                        type: string
+                        description: Global user ID (alternative to id)
+                      enabled:
+                        type: boolean
+                default_user_access:
+                  type: string
+                  enum: [allow, deny]
+      responses:
+        "200":
+          description: User access updated
+
+  # ─── MCP Server Metadata Endpoint ───────────────────────────────────────────
+
+  /mcp-servers/{mcpServerId}/metadata:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServerMetadata_get
+      tags:
+        - MCP Servers
+      summary: Get MCP server metadata
+      description: Get metadata for an MCP server (inherited from parent integration)
+      responses:
+        "200":
+          description: MCP server metadata
+
+  # ─── Workspace Exclusions Endpoints ──────────────────────────────────────────
+
+  /workspace-exclusions/input-guardrails:
+    servers: *ControlPlaneServers
+    get:
+      operationId: WorkspaceExclusions_listInputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: List input guardrail workspace exclusions
+      parameters:
+        - name: organisation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of input guardrail exclusions
+    put:
+      operationId: WorkspaceExclusions_updateInputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: Bulk update input guardrail workspace exclusions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [organisation_id, workspaces]
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                workspaces:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [workspace_id, excluded]
+                    properties:
+                      workspace_id:
+                        type: string
+                      excluded:
+                        type: boolean
+                override_existing:
+                  type: boolean
+      responses:
+        "200":
+          description: Exclusions updated
+
+  /workspace-exclusions/output-guardrails:
+    servers: *ControlPlaneServers
+    get:
+      operationId: WorkspaceExclusions_listOutputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: List output guardrail workspace exclusions
+      parameters:
+        - name: organisation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of output guardrail exclusions
+    put:
+      operationId: WorkspaceExclusions_updateOutputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: Bulk update output guardrail workspace exclusions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [organisation_id, workspaces]
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                workspaces:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [workspace_id, excluded]
+                    properties:
+                      workspace_id:
+                        type: string
+                      excluded:
+                        type: boolean
+                override_existing:
+                  type: boolean
+      responses:
+        "200":
+          description: Exclusions updated
+
+  # ─── API Scopes Endpoint ─────────────────────────────────────────────────────
+
+  /api-scopes:
+    servers: *ControlPlaneServers
+    get:
+      operationId: ApiScopes_list
+      tags:
+        - Api-Keys
+      summary: List API key scopes
+      description: List available scopes for API keys. Requires session authentication (API key auth not supported).
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [organisation, workspace]
+        - name: sub_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [service, user, "service,user"]
+        - name: organisation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: List of available API key scopes
 
   # ─── OAuth Endpoints ──────────────────────────────────────────────────────────
 
