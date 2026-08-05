@@ -64,6 +64,8 @@ tags:
     description: Get a vector representation of a given input that can be easily consumed by machine learning models and algorithms.
   - name: Rerank
     description: Rerank a list of documents based on their relevance to a query. Supported providers include Cohere, Voyage, Jina, Pinecone, Bedrock, and Azure AI.
+  - name: OCR
+    description: Extract text and structured content from documents (PDFs and images) using OCR models. Supported providers include Mistral AI and Azure AI Foundry.
   - name: Fine-tuning
     description: Manage fine-tuning jobs to tailor a model to your specific training data.
   - name: Batch
@@ -3502,6 +3504,183 @@ paths:
               });
 
               console.log(response);
+            }
+
+            main();
+
+  /ocr:
+    servers: *DataPlaneServers
+    post:
+      operationId: createOcr
+      tags:
+        - OCR
+      summary: OCR
+      description: |
+        Extract text and structured content from documents (PDFs and images) using OCR models. This endpoint provides a unified interface to document processing models from providers including Mistral AI and Azure AI Foundry.
+
+        The response contains extracted markdown content for each page, along with optional base64-encoded images of the pages.
+      parameters:
+        - $ref: "#/components/parameters/PortkeyTraceId"
+        - $ref: "#/components/parameters/PortkeySpanId"
+        - $ref: "#/components/parameters/PortkeyParentSpanId"
+        - $ref: "#/components/parameters/PortkeySpanName"
+        - $ref: "#/components/parameters/PortkeyMetadata"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOcrRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOcrResponse"
+      security:
+        - Portkey-Key: []
+          Virtual-Key: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+        - Portkey-Key: []
+          Config: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+          Custom-Host: []
+
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl https://api.portkey.ai/v1/ocr \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "model": "mistral-ocr-latest",
+                "document": {
+                  "type": "document_url",
+                  "document_url": "https://example.com/document.pdf"
+                },
+                "include_image_base64": true
+              }'
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+              api_key = "PORTKEY_API_KEY",
+              virtual_key = "PROVIDER_VIRTUAL_KEY"
+            )
+
+            response = client.post(
+              "/v1/ocr",
+              body={
+                "model": "mistral-ocr-latest",
+                "document": {
+                  "type": "document_url",
+                  "document_url": "https://example.com/document.pdf"
+                },
+                "include_image_base64": True
+              }
+            )
+
+            for page in response["pages"]:
+              print(f"Page {page['index']}: {page['markdown'][:100]}")
+        - lang: javascript
+          label: Default
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY'
+            });
+
+            async function main() {
+              const response = await client.post('/v1/ocr', {
+                model: 'mistral-ocr-latest',
+                document: {
+                  type: 'document_url',
+                  document_url: 'https://example.com/document.pdf'
+                },
+                include_image_base64: true
+              });
+
+              for (const page of response.pages) {
+                console.log(`Page ${page.index}: ${page.markdown.slice(0, 100)}`);
+              }
+            }
+
+            main();
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST "SELF_HOSTED_GATEWAY_URL/ocr" \
+              -H "Content-Type: application/json" \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -d '{
+                "model": "mistral-ocr-latest",
+                "document": {
+                  "type": "document_url",
+                  "document_url": "https://example.com/document.pdf"
+                },
+                "include_image_base64": true
+              }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+                api_key="PORTKEY_API_KEY",
+                virtual_key="PROVIDER_VIRTUAL_KEY",
+                base_url="SELF_HOSTED_GATEWAY_URL"
+            )
+
+            response = client.post(
+              "/v1/ocr",
+              body={
+                "model": "mistral-ocr-latest",
+                "document": {
+                  "type": "document_url",
+                  "document_url": "https://example.com/document.pdf"
+                },
+                "include_image_base64": True
+              }
+            )
+
+            for page in response["pages"]:
+              print(f"Page {page['index']}: {page['markdown'][:100]}")
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY',
+              baseURL: 'SELF_HOSTED_GATEWAY_URL'
+            });
+
+            async function main() {
+              const response = await client.post('/v1/ocr', {
+                model: 'mistral-ocr-latest',
+                document: {
+                  type: 'document_url',
+                  document_url: 'https://example.com/document.pdf'
+                },
+                include_image_base64: true
+              });
+
+              for (const page of response.pages) {
+                console.log(`Page ${page.index}: ${page.markdown.slice(0, 100)}`);
+              }
             }
 
             main();
@@ -24786,6 +24965,110 @@ components:
         - object
         - results
         - model
+
+    CreateOcrRequest:
+      type: object
+      description: |
+        Request body for extracting text from documents using OCR. Supported providers include Mistral AI and Azure AI Foundry.
+      properties:
+        model:
+          description: |
+            ID of the model to use for OCR processing. Model availability depends on the provider:
+            - **Mistral AI**: `mistral-ocr-latest`, `mistral-ocr-4-0`
+            - **Azure AI Foundry**: `mistral-ocr-4-0`, `mistral-document-ai-2505`, `mistral-document-ai-2512`
+          type: string
+          example: "mistral-ocr-latest"
+        document:
+          description: The document to process. Specify either a URL or base64-encoded content.
+          type: object
+          properties:
+            type:
+              description: The type of document source.
+              type: string
+              enum: [document_url, image_url, base64]
+              example: "document_url"
+            document_url:
+              description: URL of the document to process. Can be an HTTPS URL or a base64 data URI (e.g. `data:application/pdf;base64,...`).
+              type: string
+              example: "https://example.com/document.pdf"
+            image_url:
+              description: URL of an image to process.
+              type: string
+          required:
+            - type
+        include_image_base64:
+          description: Whether to include base64-encoded images of each page in the response.
+          type: boolean
+          default: false
+        image_limit:
+          description: Maximum number of pages to process. If not specified, all pages are processed.
+          type: integer
+          minimum: 1
+        image_min_size:
+          description: Minimum size (in pixels) for images to be included in the response.
+          type: integer
+          minimum: 1
+        pages:
+          description: Specific page numbers to process (0-indexed). If not specified, all pages are processed.
+          type: array
+          items:
+            type: integer
+      required:
+        - model
+        - document
+
+    CreateOcrResponse:
+      type: object
+      description: Response from the OCR endpoint containing extracted content per page.
+      properties:
+        pages:
+          type: array
+          description: Array of processed pages with extracted content.
+          items:
+            $ref: "#/components/schemas/OcrPage"
+        model:
+          type: string
+          description: The model used for OCR processing.
+          example: "mistral-ocr-latest"
+        usage_info:
+          type: object
+          description: Usage information for the request.
+          properties:
+            pages_processed:
+              type: integer
+              description: Number of pages processed.
+              example: 3
+      required:
+        - pages
+        - model
+
+    OcrPage:
+      type: object
+      description: Extracted content from a single page.
+      properties:
+        index:
+          type: integer
+          description: Zero-based page index.
+          example: 0
+        markdown:
+          type: string
+          description: Extracted content in markdown format.
+          example: "# Document Title\n\nThis is the extracted text content..."
+        images:
+          type: array
+          description: Base64-encoded images found on this page (only present when `include_image_base64` is true).
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Unique identifier for the image.
+              image_base64:
+                type: string
+                description: Base64-encoded image data.
+      required:
+        - index
+        - markdown
 
     CreateTranscriptionRequest:
       type: object
