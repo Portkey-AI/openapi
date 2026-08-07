@@ -21469,7 +21469,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeploymentCreateResponse"
         "400":
-          description: Validation failure (unknown workspace slug, or `use_private_link_proxy` without both `gateway_base_url` and `private_link_endpoint`)
+          description: Validation failure (for example, an unknown workspace slug)
         "403":
           description: Gateway registration not enabled on the subscription, plan gateway limit reached, or no active entitlement
         "404":
@@ -21526,11 +21526,6 @@ paths:
           schema:
             type: string
             format: uuid
-        - in: query
-          name: include_credentials
-          schema:
-            type: boolean
-          description: Return `credentials` and `client_auth` unmasked. Honoured only for token auth or private deployments.
       responses:
         "200":
           description: Successful response
@@ -38248,6 +38243,37 @@ components:
             type: string
           description: Maps a JWT `sub` to a workspace slug. Subs and workspaces here are merged into the allowed lists.
 
+    DeploymentAuthSettingsInput:
+      type: object
+      properties:
+        gateway_base_url:
+          type: string
+          format: uri
+          description: Base URL of the self-hosted Gateway. Validated against the allowed-host rules.
+        mcp_gateway_base_url:
+          type: string
+          format: uri
+        is_dataservice_hosted:
+          type: integer
+          enum: [0, 1]
+        is_playground_proxy_allowed:
+          type: integer
+          enum: [0, 1]
+        workspaces_allowed:
+          type: array
+          items:
+            type: string
+          description: Workspace slugs this deployment may serve. Empty means all workspaces.
+        jwt_subs_allowed:
+          type: array
+          items:
+            type: string
+        jwt_sub_workspace_mapping:
+          type: object
+          additionalProperties:
+            type: string
+          description: Maps a JWT `sub` to a workspace slug. Subs and workspaces here are merged into the allowed lists.
+
     DeploymentCredentials:
       type: object
       properties:
@@ -38282,12 +38308,8 @@ components:
         is_default:
           type: boolean
           description: The first active deployment in an organisation is always made default.
-        credentials:
-          allOf:
-            - $ref: "#/components/schemas/DeploymentCredentials"
-          description: Container registry credentials. Overridden by the organisation's registry credentials when set.
         auth_settings:
-          $ref: "#/components/schemas/DeploymentAuthSettings"
+          $ref: "#/components/schemas/DeploymentAuthSettingsInput"
 
     UpdateDeploymentRequest:
       type: object
@@ -38305,22 +38327,14 @@ components:
           nullable: true
         is_default:
           type: boolean
-        ch_db:
-          type: string
-          pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
-          minLength: 1
-          maxLength: 64
-          description: ClickHouse database name. Super-admin only.
         rotate_auth:
           type: boolean
           description: Issues a new `client_auth` token
         override_existing:
           type: boolean
-        credentials:
-          $ref: "#/components/schemas/DeploymentCredentials"
         auth_settings:
           allOf:
-            - $ref: "#/components/schemas/DeploymentAuthSettings"
+            - $ref: "#/components/schemas/DeploymentAuthSettingsInput"
             - type: object
               properties:
                 allow_all_workspaces:
@@ -38429,10 +38443,10 @@ components:
             credentials:
               allOf:
                 - $ref: "#/components/schemas/DeploymentCredentials"
-              description: Masked unless `include_credentials=true`
+              description: Always masked
             client_auth:
               type: string
-              description: Masked unless `include_credentials=true`
+              description: Always masked. Returned unmasked only on create and on `rotate_auth`.
 
     DeploymentPingResponse:
       type: object
