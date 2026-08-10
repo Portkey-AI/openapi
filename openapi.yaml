@@ -138,6 +138,8 @@ tags:
     description: Model pricing configurations for 2300+ LLMs across 40+ providers
   - name: Secret-References
     description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
+  - name: Deployments
+    description: Register, List, Retrieve, Update, and Delete self-hosted Gateway deployments.
 
 paths:
   # Note: When adding an endpoint, make sure you also add it in the `groups` section, in the end of this file,
@@ -21374,6 +21376,318 @@ paths:
             curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/secret-references/SECRET_REFERENCE_ID \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
+  /deployments:
+    servers: *ControlPlaneServers
+    get:
+      operationId: listDeployments
+      summary: List All Gateway Deployments
+      tags:
+        - Deployments
+      parameters:
+        - in: query
+          name: organisation_id
+          schema:
+            type: string
+            format: uuid
+          description: Required if not using API key auth
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, archived]
+          description: Filter by status
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [production, non_production]
+          description: Filter by deployment type
+        - in: query
+          name: workspace_slug
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Only return deployments attached to these workspace slugs
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search by name
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DeploymentListItem"
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET "https://api.portkey.ai/v1/deployments?status=active" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/deployments?status=active" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    post:
+      operationId: createDeployment
+      summary: Register a Gateway Deployment
+      description: |
+        Registers a self-hosted Gateway with the control plane and issues its `client_auth` token.
+        The token is returned in full only here and when rotated via the update endpoint; all reads mask it.
+      tags:
+        - Deployments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeploymentRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentCreateResponse"
+        "400":
+          description: Validation failure (for example, an unknown workspace slug)
+        "403":
+          description: Gateway registration not enabled on the subscription, plan gateway limit reached, or no active entitlement
+        "404":
+          description: Organisation not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/deployments \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "prod-gateway-us-east",
+                "type": "production",
+                "auth_settings": {
+                    "gateway_base_url": "https://gateway.example.com"
+                }
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/deployments \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "prod-gateway-us-east",
+                "type": "production",
+                "auth_settings": {
+                    "gateway_base_url": "https://gateway.example.com"
+                }
+            }'
+
+  /deployments/{deploymentId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: getDeployment
+      summary: Get a Gateway Deployment
+      description: |
+        Accepts a deployment UUID, or the literal `self` when the request is authenticated with the
+        Gateway's own `client_auth` token in the `authorization` header.
+      tags:
+        - Deployments
+      parameters:
+        - in: path
+          name: deploymentId
+          required: true
+          schema:
+            type: string
+          description: UUID of the deployment, or `self`
+        - in: query
+          name: organisation_id
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentDetailResponse"
+        "404":
+          description: Deployment not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/deployments/DEPLOYMENT_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/deployments/DEPLOYMENT_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    put:
+      operationId: updateDeployment
+      summary: Update a Gateway Deployment
+      tags:
+        - Deployments
+      parameters:
+        - in: path
+          name: deploymentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeploymentRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Validation failure, or attempt to unset `is_default` on the only active deployment
+        "403":
+          description: Plan gateway limit reached for the requested `type`
+        "404":
+          description: Deployment not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X PUT https://api.portkey.ai/v1/deployments/DEPLOYMENT_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "prod-gateway-us-east-1",
+                "auth_settings": {
+                    "gateway_base_url": "https://gateway.example.com"
+                }
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X PUT SELF_HOSTED_CONTROL_PLANE_URL/deployments/DEPLOYMENT_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "name": "prod-gateway-us-east-1",
+                "auth_settings": {
+                    "gateway_base_url": "https://gateway.example.com"
+                }
+            }'
+
+    delete:
+      operationId: deleteDeployment
+      summary: Delete a Gateway Deployment
+      description: Archives the deployment. The record is soft-deleted, not removed.
+      tags:
+        - Deployments
+      parameters:
+        - in: path
+          name: deploymentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Deployment not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/deployments/DEPLOYMENT_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/deployments/DEPLOYMENT_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+  /deployments/{deploymentId}/ping:
+    servers: *ControlPlaneServers
+    get:
+      operationId: pingDeployment
+      summary: Ping a Gateway Deployment
+      description: |
+        Runs a two-way connectivity check against the registered `gateway_base_url`.
+
+        - **Outbound** — the control plane calls `GET {gateway_base_url}/v1/health` and expects `{"status": "success", "version": "x.y.z"}`.
+        - **Inbound** — the control plane calls `POST {gateway_base_url}/v1/verify-ping` with a one-time code, then waits up to 10s for the Gateway to call back.
+      tags:
+        - Deployments
+      parameters:
+        - in: path
+          name: deploymentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeploymentPingResponse"
+        "400":
+          description: No `gateway_base_url` configured for this deployment
+        "404":
+          description: Deployment not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/deployments/DEPLOYMENT_ID/ping \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/deployments/DEPLOYMENT_ID/ping \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
 
 components:
   securitySchemes:
@@ -37886,6 +38200,288 @@ components:
         success:
           type: boolean
           example: true
+
+    DeploymentAuthSettings:
+      type: object
+      properties:
+        gateway_base_url:
+          type: string
+          format: uri
+          description: Base URL of the self-hosted Gateway. Validated against the allowed-host rules.
+        mcp_gateway_base_url:
+          type: string
+          format: uri
+        private_link_endpoint:
+          type: string
+          format: uri
+        use_private_link_proxy:
+          type: integer
+          enum: [0, 1]
+          description: When enabled, `gateway_base_url` and `private_link_endpoint` are both required.
+        is_dataservice_hosted:
+          type: integer
+          enum: [0, 1]
+        is_playground_proxy_allowed:
+          type: integer
+          enum: [0, 1]
+        disable_portkey_gateway:
+          type: integer
+          enum: [0, 1]
+          description: Defaults to the organisation-level setting.
+        workspaces_allowed:
+          type: array
+          items:
+            type: string
+          description: Workspace slugs this deployment may serve. Empty means all workspaces.
+        jwt_subs_allowed:
+          type: array
+          items:
+            type: string
+        jwt_sub_workspace_mapping:
+          type: object
+          additionalProperties:
+            type: string
+          description: Maps a JWT `sub` to a workspace slug. Subs and workspaces here are merged into the allowed lists.
+
+    DeploymentAuthSettingsInput:
+      type: object
+      properties:
+        gateway_base_url:
+          type: string
+          format: uri
+          description: Base URL of the self-hosted Gateway. Validated against the allowed-host rules.
+        mcp_gateway_base_url:
+          type: string
+          format: uri
+        is_dataservice_hosted:
+          type: integer
+          enum: [0, 1]
+        is_playground_proxy_allowed:
+          type: integer
+          enum: [0, 1]
+        workspaces_allowed:
+          type: array
+          items:
+            type: string
+          description: Workspace slugs this deployment may serve. Empty means all workspaces.
+        jwt_subs_allowed:
+          type: array
+          items:
+            type: string
+        jwt_sub_workspace_mapping:
+          type: object
+          additionalProperties:
+            type: string
+          description: Maps a JWT `sub` to a workspace slug. Subs and workspaces here are merged into the allowed lists.
+
+    DeploymentCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    CreateDeploymentRequest:
+      type: object
+      required:
+        - name
+      properties:
+        organisation_id:
+          type: string
+          format: uuid
+          description: Required if not using API key auth
+        name:
+          type: string
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Auto-generated from name as `dp-<slug>` if omitted
+        type:
+          type: string
+          enum: [production, non_production]
+          default: production
+        deployment_config:
+          type: object
+          description: Freeform deployment configuration
+        is_default:
+          type: boolean
+          description: The first active deployment in an organisation is always made default.
+        auth_settings:
+          $ref: "#/components/schemas/DeploymentAuthSettingsInput"
+
+    UpdateDeploymentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [production, non_production]
+        status:
+          type: string
+          enum: [active, archived]
+        deployment_config:
+          type: object
+          nullable: true
+        is_default:
+          type: boolean
+        rotate_auth:
+          type: boolean
+          description: Issues a new `client_auth` token
+        override_existing:
+          type: boolean
+        auth_settings:
+          allOf:
+            - $ref: "#/components/schemas/DeploymentAuthSettingsInput"
+            - type: object
+              properties:
+                allow_all_workspaces:
+                  type: boolean
+                remove_workspaces_allowed:
+                  type: array
+                  items:
+                    type: string
+                  description: Workspace slugs to detach
+                remove_subs_allowed:
+                  type: array
+                  items:
+                    type: string
+                  description: JWT subs to remove
+
+    DeploymentCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organisation_id:
+          type: string
+          format: uuid
+        client_auth:
+          type: string
+          description: Gateway authentication token. Returned unmasked only on create and on `rotate_auth`.
+        credentials:
+          allOf:
+            - $ref: "#/components/schemas/DeploymentCredentials"
+          description: Present only when the organisation has registry credentials configured.
+        object:
+          type: string
+          enum: [deployment]
+
+    DeploymentListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+          enum: [production, non_production]
+        status:
+          type: string
+          enum: [active, archived]
+        is_default:
+          type: integer
+          enum: [0, 1]
+        connection_status:
+          type: string
+          enum: [healthy, unhealthy, unknown]
+          description: Derived from `last_synced_at` — `healthy` within the last 5 minutes, `unknown` if never synced.
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        last_synced_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_resynced_at:
+          type: string
+          format: date-time
+          nullable: true
+        object:
+          type: string
+          enum: [deployment]
+
+    DeploymentDetailResponse:
+      allOf:
+        - $ref: "#/components/schemas/DeploymentListItem"
+        - type: object
+          properties:
+            auth_settings:
+              allOf:
+                - $ref: "#/components/schemas/DeploymentAuthSettings"
+                - type: object
+                  properties:
+                    allow_all_workspaces:
+                      type: integer
+                      enum: [0, 1]
+              description: When `use_private_link_proxy` is enabled, the private link endpoint is returned as `gateway_base_url` and `private_link_endpoint` is omitted.
+            deployment_config:
+              type: object
+              nullable: true
+            workspaces:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  slug:
+                    type: string
+            credentials:
+              allOf:
+                - $ref: "#/components/schemas/DeploymentCredentials"
+              description: Always masked
+            client_auth:
+              type: string
+              description: Always masked. Returned unmasked only on create and on `rotate_auth`.
+
+    DeploymentPingResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, partial, unhealthy]
+          description: "`partial` when exactly one of the two checks passes"
+        gateway_base_url:
+          type: string
+          format: uri
+        outbound:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [healthy, unhealthy, unreachable]
+            status_code:
+              type: integer
+            version:
+              type: string
+              description: Gateway version reported by `/v1/health`
+            error:
+              type: string
+        inbound:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [healthy, failed]
+            error:
+              type: string
+        object:
+          type: string
+          enum: [deployment]
 
 security:
   - Portkey-Key: []
