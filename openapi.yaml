@@ -3578,7 +3578,7 @@ paths:
             )
 
             response = client.post(
-              "/v1/ocr",
+              "/ocr",
               body={
                 "model": "mistral-ocr-latest",
                 "document": {
@@ -3602,7 +3602,7 @@ paths:
             });
 
             async function main() {
-              const response = await client.post('/v1/ocr', {
+              const response = await client.post('/ocr', {
                 model: 'mistral-ocr-latest',
                 document: {
                   type: 'document_url',
@@ -3644,7 +3644,7 @@ paths:
             )
 
             response = client.post(
-              "/v1/ocr",
+              "/ocr",
               body={
                 "model": "mistral-ocr-latest",
                 "document": {
@@ -3669,7 +3669,7 @@ paths:
             });
 
             async function main() {
-              const response = await client.post('/v1/ocr', {
+              const response = await client.post('/ocr', {
                 model: 'mistral-ocr-latest',
                 document: {
                   type: 'document_url',
@@ -24985,7 +24985,7 @@ components:
             type:
               description: The type of document source.
               type: string
-              enum: [document_url, image_url, base64]
+              enum: [document_url, image_url]
               example: "document_url"
             document_url:
               description: URL of the document to process. Can be an HTTPS URL or a base64 data URI (e.g. `data:application/pdf;base64,...`).
