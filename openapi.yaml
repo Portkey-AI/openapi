@@ -21044,6 +21044,83 @@ paths:
                   - object
                   - data
 
+  /analytics/groups/provider:
+    servers: *ControlPlaneServers
+    get:
+      tags:
+        - Analytics > Groups
+      summary: Get provider grouped data.
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/TimeOfGenerationMin"
+        - $ref: "#/components/parameters/TimeOfGenerationMax"
+        - $ref: "#/components/parameters/TotalUnitsMin"
+        - $ref: "#/components/parameters/TotalUnitsMax"
+        - $ref: "#/components/parameters/CostMin"
+        - $ref: "#/components/parameters/CostMax"
+        - $ref: "#/components/parameters/PromptTokenMin"
+        - $ref: "#/components/parameters/PromptTokenMax"
+        - $ref: "#/components/parameters/CompletionTokenMin"
+        - $ref: "#/components/parameters/CompletionTokenMax"
+        - $ref: "#/components/parameters/StatusCode"
+        - $ref: "#/components/parameters/WeightedFeedbackMin"
+        - $ref: "#/components/parameters/WeightedFeedbackMax"
+        - $ref: "#/components/parameters/VirtualKeys"
+        - $ref: "#/components/parameters/Configs"
+        - $ref: "#/components/parameters/ApiKeyIds"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Metadata"
+        - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/OrderBy"
+        - $ref: "#/components/parameters/OrderByType"
+        - name: columns
+          in: query
+          schema:
+            type: string
+          description: "Comma-separated list of metric columns to return. Valid values: requests, cost, total_tokens, avg_tokens, avg_input_tokens, avg_output_tokens, avg_latency, p95_latency, p99_latency, success_rate, error_count, cache_hit_rate, last_seen, first_seen. Defaults to requests."
+          example: "requests,cost,avg_latency"
+        - name: include_total
+          in: query
+          schema:
+            type: string
+            enum: ["true", "false"]
+            default: "true"
+          description: Whether to include the overall total count in the response.
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total records present across all pages
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        provider:
+                          type: string
+                          description: The virtual key (provider) for which the data is calculated
+                        requests:
+                          type: integer
+                          description: Total requests made for this provider
+                required:
+                  - object
+                  - data
+
   /analytics/groups/metadata/{metadataKey}:
     servers: *ControlPlaneServers
     get:
