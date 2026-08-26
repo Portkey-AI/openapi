@@ -142,6 +142,38 @@ tags:
     description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
   - name: Deployments
     description: Register, List, Retrieve, Update, and Delete self-hosted Gateway deployments.
+  - name: Health
+    description: Health check endpoints
+  - name: Auth
+    description: Authentication and session management
+  - name: Workspaces > CRUD
+    description: Workspace CRUD and member management
+  - name: Traces
+    description: Distributed trace exploration
+  - name: Organisations
+    description: Organisation management
+  - name: Agent Servers
+    description: Agent server management
+  - name: Agent Servers > Skills
+    description: Manage skills for Agent Servers.
+  - name: Agent Servers > User Access
+    description: Manage user access for Agent Servers.
+  - name: Agent Integrations
+    description: Agent integration management
+  - name: Agent Integrations > Workspaces
+    description: Manage workspace access for Agent Integrations.
+  - name: Agent Integrations > Skills
+    description: Manage skills for Agent Integrations.
+  - name: Workspace Exclusions
+    description: Manage workspace-level guardrail exclusions.
+  - name: OAuth
+    description: OAuth 2.0 authorization server
+  - name: Logs > Charts
+    description: Generation log charts and analytics
+  - name: Logs > Groups
+    description: Generation log group analytics
+  - name: MCP Servers > Tokens
+    description: MCP Server user token management
 
 paths:
   # Note: When adding an endpoint, make sure you also add it in the `groups` section, in the end of this file,
@@ -10379,6 +10411,12 @@ paths:
       tags:
         - Configs
       operationId: listConfigs
+      parameters:
+        - name: return_last_used
+          in: query
+          schema:
+            type: boolean
+          description: Include last used timestamp for each config
       responses:
         "200":
           description: A list of configs
@@ -10514,9 +10552,12 @@ paths:
           application/json:
             schema:
               type: object
+              required: [name, config]
               properties:
                 name:
                   type: string
+                  maxLength: 50
+                  pattern: '^[a-zA-Z0-9_-]+$'
                 config:
                   type: object
                 workspace_id:
@@ -10913,13 +10954,14 @@ paths:
                       type: string
                 status:
                   type: string
+                  enum: [ACTIVE, ARCHIVED]
             examples:
               example-1:
                 value:
                   {
                     "name": "testConf",
                     "config": { "virtual_key": "copy-of-anthrop-b20259" },
-                    "status": "active",
+                    "status": "ACTIVE",
                   }
       responses:
         "200":
@@ -11385,6 +11427,11 @@ paths:
             enum: [workspace, organisation, all]
             default: all
           description: For type=workspace, the API will only return Workpace-Scoped integrations. For type=organisation, the API will only return Global (organisation level) integrations. For type=all, both types of integrations will be returned.
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Comma-separated tags to filter integrations
           
       responses:
         "200":
@@ -12258,7 +12305,19 @@ paths:
                 "integrationId": "",
                 "workspaceId": ""
             }'
-  
+
+  /providers/models:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Providers_listModels
+      tags:
+        - Providers
+      summary: List provider models
+      description: Returns a list of available models across providers.
+      responses:
+        "200":
+          description: List of provider models
+
   /providers/{slug}:
     servers: *ControlPlaneServers
     get:
@@ -12622,6 +12681,12 @@ paths:
             type: integer
           required: true
           description: Page size, default to 50
+        - in: query
+          name: return_last_used
+          schema:
+            type: boolean
+          required: false
+          description: Include last used timestamp for each key
           
       responses:
         "200":
@@ -18963,6 +19028,29 @@ paths:
                 "key_transition_period_ms": 3600000
               }'
 
+  /api-keys/{id}/details:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: ApiKeys_getDetails
+      tags:
+        - Api-Keys
+      summary: Get API Key Details
+      description: Retrieve detailed information about an API key including its scopes and associated entities.
+      responses:
+        "200":
+          description: API key details
+          content:
+            application/json:
+              schema:
+                type: object
+
   /policies/usage-limits:
     post:
       tags:
@@ -21976,6 +22064,2083 @@ paths:
             curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/deployments/DEPLOYMENT_ID/ping \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
+  # ─── Auth Endpoints ───────────────────────────────────────────────────────────
+
+  /auth/login:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Auth_login
+      tags:
+        - Auth
+      summary: Initiate login
+      description: Initiate authentication via OIDC/SSO. Returns a redirect URL.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                provider:
+                  type: string
+                  description: OAuth provider name
+                redirect_uri:
+                  type: string
+                  description: Client redirect URI after authentication
+      responses:
+        "200":
+          description: Login initiation response with redirect URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      redirect_url:
+                        type: string
+
+  /auth/callback:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Auth_callback
+      tags:
+        - Auth
+      summary: Auth callback
+      description: Handle OAuth/SSO callback after provider authentication.
+      parameters:
+        - name: code
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      refresh_token:
+                        type: string
+                      user:
+                        type: object
+
+  /auth/self:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Auth_self
+      tags:
+        - Auth
+      summary: Get current user
+      description: Returns the currently authenticated user's details.
+      responses:
+        "200":
+          description: Current user details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+
+  /auth/refresh:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Auth_refresh
+      tags:
+        - Auth
+      summary: Refresh token
+      description: Exchange a refresh token for a new access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        "200":
+          description: New tokens issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      refresh_token:
+                        type: string
+
+  /auth/validate-token:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Auth_validateToken
+      tags:
+        - Auth
+      summary: Validate token
+      description: Validate an authentication token and return user info.
+      responses:
+        "200":
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+
+  /auth/saml/metadata/{organisationId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: organisationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Auth_samlMetadata
+      tags:
+        - Auth
+      summary: Get SAML metadata
+      description: Returns SAML service provider metadata for the organisation.
+      security: []
+      responses:
+        "200":
+          description: SAML metadata XML
+          content:
+            application/xml:
+              schema:
+                type: string
+
+  /auth/saml/callback/{organisationId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: organisationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: Auth_samlCallback
+      tags:
+        - Auth
+      summary: SAML callback
+      description: Handle SAML assertion callback from identity provider.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                SAMLResponse:
+                  type: string
+                RelayState:
+                  type: string
+      responses:
+        "302":
+          description: Redirect after successful SAML authentication
+
+  # ─── Workspaces Endpoints ─────────────────────────────────────────────────────
+
+  /workspaces:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Workspaces_list
+      tags:
+        - Workspaces > CRUD
+      summary: List workspaces
+      description: List all workspaces accessible to the caller.
+      parameters:
+        - $ref: "#/components/parameters/OrganisationId"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [ACTIVE, ARCHIVED]
+      responses:
+        "200":
+          description: List of workspaces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Workspace"
+    post:
+      operationId: Workspaces_create
+      tags:
+        - Workspaces > CRUD
+      summary: Create workspace
+      description: Create a new workspace in an organisation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [organisation_id, name]
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                description:
+                  type: string
+                defaults:
+                  type: object
+                users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                      role:
+                        type: string
+                usage_limits:
+                  type: array
+                  items:
+                    type: object
+                rate_limits:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "201":
+          description: Workspace created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Workspace"
+
+  /workspaces/{workspaceId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Workspaces_retrieve
+      tags:
+        - Workspaces > CRUD
+      summary: Get workspace
+      parameters:
+        - name: include_usage
+          in: query
+          schema:
+            type: boolean
+        - name: name_format
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: "#/components/schemas/Workspace"
+    put:
+      operationId: Workspaces_update
+      tags:
+        - Workspaces > CRUD
+      summary: Update workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                defaults:
+                  type: object
+                usage_limits:
+                  type: object
+                rate_limits:
+                  type: array
+                  items:
+                    type: object
+                security_settings:
+                  type: object
+                settings:
+                  type: object
+      responses:
+        "200":
+          description: Workspace updated
+    delete:
+      operationId: Workspaces_delete
+      tags:
+        - Workspaces > CRUD
+      summary: Delete workspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Workspace name for confirmation
+                force_delete:
+                  type: boolean
+      responses:
+        "200":
+          description: Workspace deleted
+
+  /workspaces/{workspaceId}/users:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Workspaces_listMembers
+      tags:
+        - Workspaces > CRUD
+      summary: List workspace members
+      parameters:
+        - name: email
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/CurrentPage"
+      responses:
+        "200":
+          description: List of workspace members
+    post:
+      operationId: Workspaces_addMembers
+      tags:
+        - Workspaces > CRUD
+      summary: Add users to workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [users]
+              properties:
+                users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                      role:
+                        type: string
+                        enum: [admin, manager, member, viewer]
+      responses:
+        "200":
+          description: Users added
+
+  /workspaces/{workspaceId}/users/{userId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: workspaceId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: Workspaces_getMember
+      tags:
+        - Workspaces > CRUD
+      summary: Get workspace member
+      responses:
+        "200":
+          description: Member details
+    put:
+      operationId: Workspaces_updateMember
+      tags:
+        - Workspaces > CRUD
+      summary: Update user role in workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+                  enum: [admin, manager, member, viewer]
+      responses:
+        "200":
+          description: Role updated
+    delete:
+      operationId: Workspaces_removeMember
+      tags:
+        - Workspaces > CRUD
+      summary: Remove user from workspace
+      responses:
+        "200":
+          description: User removed
+
+  # ─── Organisations Endpoints ──────────────────────────────────────────────────
+
+  /organisations/{organisationId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: organisationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Organisations_retrieve
+      tags:
+        - Organisations
+      summary: Get organisation
+      responses:
+        "200":
+          description: Organisation details
+
+  /organisations/{organisationId}/details:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: organisationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Organisations_getDetails
+      tags:
+        - Organisations
+      summary: Get organisation details
+      description: Returns detailed organisation information including subscription and usage.
+      responses:
+        "200":
+          description: Detailed organisation info
+
+  /organisations/{organisationId}/filter-boundaries:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: organisationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Organisations_getFilterBoundaries
+      tags:
+        - Organisations
+      summary: Get analytics filter boundaries
+      description: Returns available filter boundary values for analytics queries.
+      responses:
+        "200":
+          description: Filter boundary values
+
+  /organisations/{organisationId}/members:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: organisationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: Organisations_listMembers
+      tags:
+        - Organisations
+      summary: List all organisation members
+      responses:
+        "200":
+          description: List of organisation members
+
+  # ─── Agent Servers Endpoints ──────────────────────────────────────────────────
+
+  /agent-servers:
+    servers: *ControlPlaneServers
+    get:
+      operationId: AgentServers_list
+      tags:
+        - Agent Servers
+      summary: List agent servers
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceIdQuery"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - name: id
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of agent servers
+    post:
+      operationId: AgentServers_create
+      tags:
+        - Agent Servers
+      summary: Create agent server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, workspace_id, agent_integration_id]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                workspace_id:
+                  type: string
+                agent_integration_id:
+                  type: string
+                slug:
+                  type: string
+      responses:
+        "201":
+          description: Agent server created
+
+  /agent-servers/{agentServerId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: AgentServers_retrieve
+      tags:
+        - Agent Servers
+      summary: Get agent server
+      responses:
+        "200":
+          description: Agent server details
+    put:
+      operationId: AgentServers_update
+      tags:
+        - Agent Servers
+      summary: Update agent server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "200":
+          description: Agent server updated
+    delete:
+      operationId: AgentServers_delete
+      tags:
+        - Agent Servers
+      summary: Delete agent server
+      responses:
+        "200":
+          description: Agent server deleted
+
+  /agent-servers/{agentServerId}/test:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: AgentServers_test
+      tags:
+        - Agent Servers
+      summary: Test agent server connection
+      responses:
+        "200":
+          description: Connection test result
+
+  /agent-servers/{agentServerId}/agent-card:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: AgentServers_getAgentCard
+      tags:
+        - Agent Servers
+      summary: Fetch agent card
+      responses:
+        "200":
+          description: Agent card data
+
+  # ─── Agent Integrations Endpoints ─────────────────────────────────────────────
+
+  /agent-integrations:
+    servers: *ControlPlaneServers
+    get:
+      operationId: AgentIntegrations_list
+      tags:
+        - Agent Integrations
+      summary: List agent integrations
+      parameters:
+        - name: organisation_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [workspace, organisation, all]
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of agent integrations
+    post:
+      operationId: AgentIntegrations_create
+      tags:
+        - Agent Integrations
+      summary: Create agent integration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, url, auth_type]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                slug:
+                  type: string
+                  pattern: "^[a-zA-Z0-9_-]+$"
+                workspace_id:
+                  type: string
+                organisation_id:
+                  type: string
+                  format: uuid
+                url:
+                  type: string
+                  format: uri
+                auth_type:
+                  type: string
+                  enum: [headers, none]
+                configurations:
+                  type: object
+                agent_card:
+                  type: object
+      responses:
+        "201":
+          description: Agent integration created
+
+  /agent-integrations/{agentIntegrationId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Integration ID (UUID) or slug
+    get:
+      operationId: AgentIntegrations_retrieve
+      tags:
+        - Agent Integrations
+      summary: Get agent integration
+      responses:
+        "200":
+          description: Agent integration details
+    put:
+      operationId: AgentIntegrations_update
+      tags:
+        - Agent Integrations
+      summary: Update agent integration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                url:
+                  type: string
+                  format: uri
+                auth_type:
+                  type: string
+                  enum: [oauth_auto, oauth_client_credentials, headers, none]
+                configurations:
+                  type: object
+                agent_card:
+                  type: object
+      responses:
+        "200":
+          description: Agent integration updated
+    delete:
+      operationId: AgentIntegrations_delete
+      tags:
+        - Agent Integrations
+      summary: Delete agent integration
+      responses:
+        "200":
+          description: Agent integration deleted
+
+  /agent-integrations/fetch-agent-card:
+    servers: *ControlPlaneServers
+    post:
+      operationId: AgentIntegrations_fetchAgentCard
+      tags:
+        - Agent Integrations
+      summary: Fetch agent card from remote endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [endpoint, organisation_id]
+              properties:
+                endpoint:
+                  type: string
+                  format: uri
+                organisation_id:
+                  type: string
+                  format: uuid
+                authType:
+                  type: string
+                  enum: [oauth_auto, oauth_client_credentials, headers, none]
+                authToken:
+                  type: string
+                authHeader:
+                  type: string
+      responses:
+        "200":
+          description: Agent card fetched successfully
+
+  /agent-integrations/{agentIntegrationId}/workspaces:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Integration ID (UUID) or slug
+    get:
+      operationId: AgentIntegrationWorkspaces_list
+      tags:
+        - Agent Integrations > Workspaces
+      summary: List agent integration workspaces
+      responses:
+        "200":
+          description: List of workspace access entries
+    put:
+      operationId: AgentIntegrationWorkspaces_bulkUpdate
+      tags:
+        - Agent Integrations > Workspaces
+      summary: Bulk update agent integration workspace access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workspaces]
+              properties:
+                workspaces:
+                  type: array
+                  items:
+                    type: object
+                    required: [id, enabled]
+                    properties:
+                      id:
+                        type: string
+                      enabled:
+                        type: boolean
+                global_workspace_access:
+                  type: object
+                  nullable: true
+                  properties:
+                    enabled:
+                      type: boolean
+                override_existing_workspace_access:
+                  type: boolean
+      responses:
+        "200":
+          description: Workspace access updated
+
+  /agent-integrations/{agentIntegrationId}/skills:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentIntegrationId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Integration ID (UUID) or slug
+    get:
+      operationId: AgentIntegrationSkills_list
+      tags:
+        - Agent Integrations > Skills
+      summary: List agent integration skills
+      responses:
+        "200":
+          description: List of skills
+    put:
+      operationId: AgentIntegrationSkills_bulkUpdate
+      tags:
+        - Agent Integrations > Skills
+      summary: Bulk update agent integration skills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [skills]
+              properties:
+                skills:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [id, enabled]
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      enabled:
+                        type: boolean
+      responses:
+        "200":
+          description: Skills updated
+
+  # ─── Agent Server Sub-resource Endpoints ─────────────────────────────────────
+
+  /agent-servers/{agentServerId}/skills:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Server ID (UUID) or slug
+    get:
+      operationId: AgentServerSkills_list
+      tags:
+        - Agent Servers > Skills
+      summary: List agent server skills
+      responses:
+        "200":
+          description: List of skills
+    put:
+      operationId: AgentServerSkills_bulkUpdate
+      tags:
+        - Agent Servers > Skills
+      summary: Bulk update agent server skills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [skills]
+              properties:
+                skills:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [name, type, enabled]
+                    properties:
+                      name:
+                        type: string
+                      type:
+                        type: string
+                        enum: [tool, prompt, resource, resource_template]
+                      enabled:
+                        type: boolean
+      responses:
+        "200":
+          description: Skills updated
+
+  /agent-servers/{agentServerId}/user-access:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: agentServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Agent Server ID (UUID) or slug
+    get:
+      operationId: AgentServerUserAccess_list
+      tags:
+        - Agent Servers > User Access
+      summary: List agent server user access
+      responses:
+        "200":
+          description: List of user access entries
+    put:
+      operationId: AgentServerUserAccess_bulkUpdate
+      tags:
+        - Agent Servers > User Access
+      summary: Bulk update agent server user access
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_access:
+                  type: array
+                  items:
+                    type: object
+                    required: [enabled]
+                    properties:
+                      id:
+                        type: string
+                        description: User org map ID
+                      user_id:
+                        type: string
+                        description: Global user ID (alternative to id)
+                      enabled:
+                        type: boolean
+                default_user_access:
+                  type: string
+                  enum: [allow, deny]
+      responses:
+        "200":
+          description: User access updated
+
+  # ─── MCP Server Metadata Endpoint ───────────────────────────────────────────
+
+  /mcp-servers/{mcpServerId}/metadata:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServerMetadata_get
+      tags:
+        - MCP Servers
+      summary: Get MCP server metadata
+      description: Get metadata for an MCP server (inherited from parent integration)
+      responses:
+        "200":
+          description: MCP server metadata
+
+  # ─── Workspace Exclusions Endpoints ──────────────────────────────────────────
+
+  /workspace-exclusions/input-guardrails:
+    servers: *ControlPlaneServers
+    get:
+      operationId: WorkspaceExclusions_listInputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: List input guardrail workspace exclusions
+      parameters:
+        - name: organisation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of input guardrail exclusions
+    put:
+      operationId: WorkspaceExclusions_updateInputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: Bulk update input guardrail workspace exclusions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [organisation_id, workspaces]
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                workspaces:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [workspace_id, excluded]
+                    properties:
+                      workspace_id:
+                        type: string
+                      excluded:
+                        type: boolean
+                override_existing:
+                  type: boolean
+      responses:
+        "200":
+          description: Exclusions updated
+
+  /workspace-exclusions/output-guardrails:
+    servers: *ControlPlaneServers
+    get:
+      operationId: WorkspaceExclusions_listOutputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: List output guardrail workspace exclusions
+      parameters:
+        - name: organisation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of output guardrail exclusions
+    put:
+      operationId: WorkspaceExclusions_updateOutputGuardrails
+      tags:
+        - Workspace Exclusions
+      summary: Bulk update output guardrail workspace exclusions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [organisation_id, workspaces]
+              properties:
+                organisation_id:
+                  type: string
+                  format: uuid
+                workspaces:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [workspace_id, excluded]
+                    properties:
+                      workspace_id:
+                        type: string
+                      excluded:
+                        type: boolean
+                override_existing:
+                  type: boolean
+      responses:
+        "200":
+          description: Exclusions updated
+
+  # ─── API Scopes Endpoint ─────────────────────────────────────────────────────
+
+  /api-scopes:
+    servers: *ControlPlaneServers
+    get:
+      operationId: ApiScopes_list
+      tags:
+        - Api-Keys
+      summary: List API key scopes
+      description: List available scopes for API keys. Requires session authentication (API key auth not supported).
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [organisation, workspace]
+        - name: sub_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [service, user, "service,user"]
+        - name: organisation_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: List of available API key scopes
+
+  # ─── Admin Organisation Defaults Endpoint ────────────────────────────────────
+
+  /admin/organisation/defaults:
+    servers: *ControlPlaneServers
+    get:
+      operationId: AdminOrganisation_getDefaults
+      tags:
+        - Organisations
+      summary: Get organisation defaults
+      description: Get organisation-level default settings (e.g. default guardrails).
+      responses:
+        "200":
+          description: Organisation defaults
+    put:
+      operationId: AdminOrganisation_updateDefaults
+      tags:
+        - Organisations
+      summary: Update organisation defaults
+      description: Update organisation-level default settings (e.g. default guardrails applied to all workspaces).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input_guardrails:
+                  type: array
+                  items:
+                    type: string
+                  description: List of input guardrail IDs to apply by default
+                output_guardrails:
+                  type: array
+                  items:
+                    type: string
+                  description: List of output guardrail IDs to apply by default
+      responses:
+        "200":
+          description: Defaults updated
+
+  # ─── OAuth Endpoints ──────────────────────────────────────────────────────────
+
+  /oauth/register:
+    servers: *ControlPlaneServers
+    post:
+      operationId: OAuth_register
+      tags:
+        - OAuth
+      summary: Register OAuth client
+      security: []
+      responses:
+        "201":
+          description: OAuth client registered
+
+  /oauth/authorize:
+    servers: *ControlPlaneServers
+    get:
+      operationId: OAuth_authorize
+      tags:
+        - OAuth
+      summary: OAuth authorization endpoint
+      security: []
+      parameters:
+        - name: response_type
+          in: query
+          schema:
+            type: string
+        - name: client_id
+          in: query
+          schema:
+            type: string
+        - name: redirect_uri
+          in: query
+          schema:
+            type: string
+        - name: scope
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Authorization page
+    post:
+      operationId: OAuth_authorizeConsent
+      tags:
+        - OAuth
+      summary: OAuth authorization consent
+      responses:
+        "302":
+          description: Redirect with authorization code
+
+  /oauth/token:
+    servers: *ControlPlaneServers
+    post:
+      operationId: OAuth_token
+      tags:
+        - OAuth
+      summary: OAuth token endpoint
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  enum: [authorization_code, refresh_token, client_credentials]
+                code:
+                  type: string
+                redirect_uri:
+                  type: string
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+                refresh_token:
+                  type: string
+      responses:
+        "200":
+          description: Token response
+
+  /oauth/revoke:
+    servers: *ControlPlaneServers
+    post:
+      operationId: OAuth_revoke
+      tags:
+        - OAuth
+      summary: Revoke OAuth token
+      responses:
+        "200":
+          description: Token revoked
+
+  /oauth/introspect:
+    servers: *ControlPlaneServers
+    post:
+      operationId: OAuth_introspect
+      tags:
+        - OAuth
+      summary: Introspect OAuth token
+      responses:
+        "200":
+          description: Token info
+
+  # ─── Traces Endpoints ─────────────────────────────────────────────────────────
+
+  /traces:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Traces_list
+      tags:
+        - Traces
+      summary: List traces
+      parameters:
+        - $ref: "#/components/parameters/OrganisationId"
+        - $ref: "#/components/parameters/WorkspaceIdQuery"
+        - name: time_of_generation_start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: time_of_generation_end
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: metadata
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of traces
+
+  /traces/{traceId}/spans:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: traceId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: Traces_listSpans
+      tags:
+        - Traces
+      summary: List trace spans
+      responses:
+        "200":
+          description: List of spans
+
+  /traces/{traceId}/spans/{spanId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: traceId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: spanId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: Traces_getSpan
+      tags:
+        - Traces
+      summary: Get span details
+      responses:
+        "200":
+          description: Span details
+
+  # ─── Logs Search / Charts / Groups Endpoints ──────────────────────────────────
+
+  /logs/search:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Logs_search
+      tags:
+        - Logs
+      summary: List generation logs
+      description: Search and list generation logs with filters.
+      parameters:
+        - $ref: "#/components/parameters/OrganisationId"
+        - $ref: "#/components/parameters/WorkspaceIdQuery"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - name: time_of_generation_start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: time_of_generation_end
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: metadata
+          in: query
+          schema:
+            type: string
+            description: JSON-encoded metadata filter
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: provider
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of generation logs
+
+  /logs/records:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Logs_records
+      tags:
+        - Logs
+      summary: Export log records
+      parameters:
+        - $ref: "#/components/parameters/OrganisationId"
+        - name: filters
+          in: query
+          schema:
+            type: string
+        - name: time_of_generation_start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: time_of_generation_end
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: select_columns
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Log records
+
+  /logs/charts/requests:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_requests
+      tags:
+        - Logs > Charts
+      summary: Request count chart
+      parameters:
+        - name: time_of_generation_start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: time_of_generation_end
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Request chart data
+
+  /logs/charts/cost:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_cost
+      tags:
+        - Logs > Charts
+      summary: Cost chart
+      responses:
+        "200":
+          description: Cost chart data
+
+  /logs/charts/latency:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_latency
+      tags:
+        - Logs > Charts
+      summary: Latency chart
+      responses:
+        "200":
+          description: Latency chart data
+
+  /logs/charts/tokens:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_tokens
+      tags:
+        - Logs > Charts
+      summary: Token usage chart
+      responses:
+        "200":
+          description: Token chart data
+
+  /logs/charts/users:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_users
+      tags:
+        - Logs > Charts
+      summary: Users chart
+      responses:
+        "200":
+          description: Users chart data
+
+  /logs/charts/user-trends:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_userTrends
+      tags:
+        - Logs > Charts
+      summary: User trends chart
+      responses:
+        "200":
+          description: User trends data
+
+  /logs/charts/errors:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_errors
+      tags:
+        - Logs > Charts
+      summary: Errors chart
+      responses:
+        "200":
+          description: Errors chart data
+
+  /logs/charts/error-trends:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_errorTrends
+      tags:
+        - Logs > Charts
+      summary: Error trends chart
+      responses:
+        "200":
+          description: Error trends data
+
+  /logs/charts/grouped-errors:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_groupedErrors
+      tags:
+        - Logs > Charts
+      summary: Grouped errors chart
+      responses:
+        "200":
+          description: Grouped errors data
+
+  /logs/charts/error-category-trends:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_errorCategoryTrends
+      tags:
+        - Logs > Charts
+      summary: Error category trends chart
+      responses:
+        "200":
+          description: Error category trends data
+
+  /logs/charts/error-retry-chart:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_errorRetry
+      tags:
+        - Logs > Charts
+      summary: Error retry chart
+      responses:
+        "200":
+          description: Retry chart data
+
+  /logs/charts/rescued-retries:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_rescuedRetries
+      tags:
+        - Logs > Charts
+      summary: Rescued retries chart
+      responses:
+        "200":
+          description: Rescued retries data
+
+  /logs/charts/cache-summary:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_cacheSummary
+      tags:
+        - Logs > Charts
+      summary: Cache summary chart
+      responses:
+        "200":
+          description: Cache summary data
+
+  /logs/charts/cache-hit-trend:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_cacheHitTrend
+      tags:
+        - Logs > Charts
+      summary: Cache hit trend chart
+      responses:
+        "200":
+          description: Cache hit trend data
+
+  /logs/charts/cache-response-time-trend:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_cacheResponseTimeTrend
+      tags:
+        - Logs > Charts
+      summary: Cache response time trend chart
+      responses:
+        "200":
+          description: Cache response time data
+
+  /logs/charts/feedback-trend:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_feedbackTrend
+      tags:
+        - Logs > Charts
+      summary: Feedback trend chart
+      responses:
+        "200":
+          description: Feedback trend data
+
+  /logs/charts/feedback-score-distribution:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_feedbackScoreDistribution
+      tags:
+        - Logs > Charts
+      summary: Feedback score distribution chart
+      responses:
+        "200":
+          description: Feedback score distribution data
+
+  /logs/charts/feedback-weighted:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_feedbackWeighted
+      tags:
+        - Logs > Charts
+      summary: Feedback weighted chart
+      responses:
+        "200":
+          description: Feedback weighted data
+
+  /logs/charts/feedback-models:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsCharts_feedbackModels
+      tags:
+        - Logs > Charts
+      summary: Feedback by models chart
+      responses:
+        "200":
+          description: Feedback models data
+
+  /logs/groups/users:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsGroups_users
+      tags:
+        - Logs > Groups
+      summary: Logs grouped by users
+      responses:
+        "200":
+          description: User-grouped logs
+
+  /logs/groups/ai-models:
+    servers: *ControlPlaneServers
+    get:
+      operationId: LogsGroups_aiModels
+      tags:
+        - Logs > Groups
+      summary: Logs grouped by AI models
+      responses:
+        "200":
+          description: Model-grouped logs
+
+  /logs/groups/metadata/{metadataKey}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: metadataKey
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: LogsGroups_metadata
+      tags:
+        - Logs > Groups
+      summary: Logs grouped by metadata key
+      responses:
+        "200":
+          description: Metadata-grouped logs
+
+  /logs/groups/{groupBy}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: groupBy
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: LogsGroups_byField
+      tags:
+        - Logs > Groups
+      summary: Logs grouped by field
+      responses:
+        "200":
+          description: Grouped logs
+
+  # ─── Analytics Generic Endpoints ──────────────────────────────────────────────
+
+  /analytics/graphs:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Analytics_graphs
+      tags:
+        - Analytics > Graphs
+      summary: Get analytics graphs
+      description: Generic analytics graphs endpoint.
+      responses:
+        "200":
+          description: Analytics graph data
+
+  /analytics/groups:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Analytics_groups
+      tags:
+        - Analytics > Groups
+      summary: Get analytics groups
+      description: Generic analytics groups endpoint.
+      responses:
+        "200":
+          description: Analytics group data
+
+  /analytics/summary:
+    servers: *ControlPlaneServers
+    get:
+      operationId: Analytics_summary
+      tags:
+        - Analytics > Summary
+      summary: Get analytics summary
+      description: Generic analytics summary endpoint.
+      responses:
+        "200":
+          description: Analytics summary data
+
+  # ─── Prompts Extension Endpoints ──────────────────────────────────────────────
+
+  /prompts/{promptId}/share:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: promptId
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: Prompts_share
+      tags:
+        - Prompts
+      summary: Share prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workspace_id:
+                  type: string
+                title:
+                  type: string
+                access_level:
+                  type: string
+                allow_all_workspaces:
+                  type: boolean
+      responses:
+        "200":
+          description: Prompt shared
+    put:
+      operationId: Prompts_updateShare
+      tags:
+        - Prompts
+      summary: Update prompt share
+      responses:
+        "200":
+          description: Share updated
+
+  /prompts/{promptId}/unshare:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: promptId
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: Prompts_unshare
+      tags:
+        - Prompts
+      summary: Unshare prompt
+      responses:
+        "200":
+          description: Prompt unshared
+
+  /prompts/{promptId}/fork:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: promptId
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: Prompts_fork
+      tags:
+        - Prompts
+      summary: Fork prompt from library
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workspace_id:
+                  type: string
+                collection_id:
+                  type: string
+                name:
+                  type: string
+      responses:
+        "201":
+          description: Prompt forked
+
+  /prompts/playground/chat/completions:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Prompts_playgroundChat
+      tags:
+        - Prompts
+      summary: Playground chat completions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                organisationId:
+                  type: string
+                template_metadata:
+                  type: object
+      responses:
+        "200":
+          description: Chat completion result
+
+  /prompts/playground/completions:
+    servers: *ControlPlaneServers
+    post:
+      operationId: Prompts_playgroundCompletions
+      tags:
+        - Prompts
+      summary: Playground completions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                organisationId:
+                  type: string
+      responses:
+        "200":
+          description: Completion result
+
+  # ─── MCP Server Extension Endpoints ───────────────────────────────────────────
+
+  /mcp-servers/{mcpServerId}/tokens:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServers_getTokens
+      tags:
+        - MCP Servers > Tokens
+      summary: Get user tokens for MCP server
+      responses:
+        "200":
+          description: User tokens
+    put:
+      operationId: McpServers_setTokens
+      tags:
+        - MCP Servers > Tokens
+      summary: Set user tokens for MCP server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+      responses:
+        "200":
+          description: Tokens set
+    delete:
+      operationId: McpServers_deleteTokens
+      tags:
+        - MCP Servers > Tokens
+      summary: Delete user tokens for MCP server
+      responses:
+        "200":
+          description: Tokens deleted
+
+  /mcp-servers/{mcpServerId}/client-info:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: mcpServerId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: MCP Server ID (UUID) or slug
+    get:
+      operationId: McpServers_getClientInfo
+      tags:
+        - MCP Servers
+      summary: Get MCP server client info
+      responses:
+        "200":
+          description: Client info
+
+  # ─── Virtual Keys Extension Endpoints ─────────────────────────────────────────
+
+  /virtual-keys/migrate:
+    servers: *ControlPlaneServers
+    post:
+      operationId: VirtualKeys_migrate
+      tags:
+        - Virtual-keys
+      summary: Migrate virtual key to integration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [virtual_key_id, organisation_id]
+              properties:
+                virtual_key_id:
+                  type: string
+                organisation_id:
+                  type: string
+      responses:
+        "200":
+          description: Migration successful
+
+  # ─── Config Version Detail Endpoint ───────────────────────────────────────────
+
+  /configs/{slug}/versions/{configVersionId}:
+    servers: *ControlPlaneServers
+    parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: configVersionId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: Configs_getVersion
+      tags:
+        - Configs
+      summary: Get config by version
+      responses:
+        "200":
+          description: Config version details
+
 
 components:
   securitySchemes:
@@ -22268,6 +24433,14 @@ components:
       description: Workspace ID or slug
       schema:
         type: string
+    OrganisationId:
+      name: organisation_id
+      in: query
+      required: false
+      description: Organisation ID filter
+      schema:
+        type: string
+        format: uuid
 
   schemas:
     ModelPricingConfig:
@@ -34339,6 +36512,50 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Workspace"
+
+    Deployment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        deployment_config:
+          type: object
+        auth_settings:
+          type: object
+        organisation_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AgentServer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        workspace_id:
+          type: string
+        agent_integration_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
 
     WorkspaceWithUsers:
       type: object
