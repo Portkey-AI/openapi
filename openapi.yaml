@@ -15174,6 +15174,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Workspace"
+              example:
+                id: "2f4f5b8f-6d12-447a-b4b2-e3e5f28380a7"
+                slug: "ws-workspace-name-0909"
+                name: "WORKSPACE_NAME_0909"
+                description: "WORKSPACE_DESCRIPTION"
+                created_at: "2026-05-27T05:36:01.987Z"
+                last_updated_at: "2026-05-27T05:36:01.987Z"
+                defaults:
+                  metadata:
+                    environment: production
+                    foo: bar
       x-code-samples:
         - lang: python
           label: Default
@@ -15348,13 +15359,15 @@ paths:
                 total: 2
                 object: list
                 data:
-                  - id: test-prod-ws-12345
+                  - id: "2f4f5b8f-6d12-447a-b4b2-e3e5f28380a7"
+                    slug: "ws-test-prod-12345"
                     name: Test prod workspace
                     description: This is a production workspace
                     created_at: "2023-07-13 13:51:27"
                     last_updated_at: "2023-07-13 14:51:27"
                     object: workspace
-                  - id: test-prod-ws-12345
+                  - id: "a03ced4b-95d0-4d6a-92db-2c7af6df8e53"
+                    slug: "ws-test-stage-12345"
                     name: Test prod workspace
                     description: This is a production workspace
                     created_at: "2023-07-13 13:51:27"
@@ -15478,6 +15491,7 @@ paths:
           schema:
             type: string
           required: true
+          description: Workspace UUID. Workspace slug is also accepted for backward compatibility.
       responses:
         "200":
           description: OK
@@ -15609,6 +15623,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/WorkspaceWithUsers"
+              example:
+                id: "2f4f5b8f-6d12-447a-b4b2-e3e5f28380a7"
+                slug: "ws-test-a-174eb1"
+                name: "New Workspace"
+                description: null
+                created_at: "2026-07-30T13:27:29.000Z"
+                last_updated_at: "2024-07-30T13:27:29.000Z"
+                defaults:
+                  metadata:
+                    foo: bar
+                users: []
+                usage_limits: []
+                rate_limits: []
       x-code-samples:
         - lang: python
           label: Default
@@ -15622,7 +15649,7 @@ paths:
 
             # Get workspace details
             workspace = portkey.admin.workspaces.retrieve(
-                workspace_id='WORKSPACE_SLUG'
+                workspace_id='WORKSPACE_ID'
             )
 
             print(workspace)
@@ -15636,7 +15663,7 @@ paths:
             })
 
             const workspace=await portkey.admin.workspaces.retrieve({
-                workspaceId: 'WORKSPACE_SLUG',
+                workspaceId: 'WORKSPACE_ID',
             })
             console.log(workspace);
         - lang: curl
@@ -15662,7 +15689,7 @@ paths:
 
             # Get workspace details
             workspace = portkey.admin.workspaces.retrieve(
-                workspace_id='WORKSPACE_SLUG'
+                workspace_id='WORKSPACE_ID'
             )
 
             print(workspace)
@@ -15677,7 +15704,7 @@ paths:
             })
 
             const workspace=await portkey.admin.workspaces.retrieve({
-                workspaceId: 'WORKSPACE_SLUG',
+                workspaceId: 'WORKSPACE_ID',
             })
             console.log(workspace);
 
@@ -15691,6 +15718,7 @@ paths:
           schema:
             type: string
           required: true
+          description: Workspace UUID. Workspace slug is also accepted for backward compatibility.
       responses:
         "200":
           description: OK
@@ -15707,7 +15735,7 @@ paths:
 
             # Delete workspace
             result = portkey.admin.workspaces.delete(
-                workspace_id='WORKSPACE_SLUG'
+                workspace_id='WORKSPACE_ID'
             )
 
             print(result)
@@ -15721,7 +15749,7 @@ paths:
             })
 
             const workspace=await portkey.admin.workspaces.delete({
-                workspaceId: 'WORKSPACE_SLUG',
+                workspaceId: 'WORKSPACE_ID',
             })
             console.log(workspace);
         - lang: curl
@@ -15747,7 +15775,7 @@ paths:
 
             # Delete workspace
             result = portkey.admin.workspaces.delete(
-                workspace_id='WORKSPACE_SLUG'
+                workspace_id='WORKSPACE_ID'
             )
 
             print(result)
@@ -15762,7 +15790,7 @@ paths:
             })
 
             const workspace=await portkey.admin.workspaces.delete({
-                workspaceId: 'WORKSPACE_SLUG',
+                workspaceId: 'WORKSPACE_ID',
             })
             console.log(workspace);
 
@@ -34280,9 +34308,12 @@ components:
       properties:
         id:
           type: string
-          example: ws-test-a-174eb1
+          format: uuid
+          description: Unique workspace UUID.
+          example: "2f4f5b8f-6d12-447a-b4b2-e3e5f28380a7"
         slug:
           type: string
+          description: Workspace slug identifier.
           example: ws-test-a-174eb1
         name:
           type: string
@@ -34345,9 +34376,12 @@ components:
       properties:
         id:
           type: string
-          example: ws-test-a-174eb1
+          format: uuid
+          description: Unique workspace UUID.
+          example: "2f4f5b8f-6d12-447a-b4b2-e3e5f28380a7"
         slug:
           type: string
+          description: Workspace slug identifier.
           example: ws-test-a-174eb1
         name:
           type: string
