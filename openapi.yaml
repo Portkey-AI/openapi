@@ -21669,6 +21669,9 @@ paths:
     get:
       operationId: listDeployments
       summary: List All Gateway Deployments
+      description: |
+        List deployments with optional filters. Tags can be filtered using either
+        a JSON string or bracket-notation query parameters.
       tags:
         - Deployments
       parameters:
@@ -21704,6 +21707,31 @@ paths:
           schema:
             type: string
           description: Search by name
+        - in: query
+          name: tags
+          description: |
+            Filter by tags. Accepts either a JSON string or bracket notation.
+
+            **JSON string:** `?tags={"cloud":"aws"}`
+
+            **Bracket notation:** `?tags[cloud]=aws&tags[region]=us-west-2`
+
+            All specified key-value pairs are AND-matched.
+          required: false
+          schema:
+            oneOf:
+              - type: string
+                description: JSON-encoded object
+                example: '{"cloud":"aws","region":"us-west-2"}'
+              - type: object
+                description: Bracket-notation key-value pairs
+                additionalProperties:
+                  type: string
+                example:
+                  cloud: aws
+                  region: us-west-2
+          style: deepObject
+          explode: true
       responses:
         "200":
           description: Successful response
@@ -21741,6 +21769,7 @@ paths:
       description: |
         Registers a self-hosted Gateway with the control plane and issues its `client_auth` token.
         The token is returned in full only here and when rotated via the update endpoint; all reads mask it.
+        Tags can be optionally attached at creation time.
       tags:
         - Deployments
       requestBody:
@@ -21800,6 +21829,7 @@ paths:
       description: |
         Accepts a deployment UUID, or the literal `self` when the request is authenticated with the
         Gateway's own `client_auth` token in the `authorization` header.
+        Tags are included in the response.
       tags:
         - Deployments
       parameters:
@@ -21840,6 +21870,12 @@ paths:
     put:
       operationId: updateDeployment
       summary: Update a Gateway Deployment
+      description: |
+        Update a deployment. Tags can be set, replaced, or cleared.
+
+        - Send a tags object to set/replace tags.
+        - Send `"tags": null` to remove all tags.
+        - Omit the tags field to leave tags unchanged.
       tags:
         - Deployments
       parameters:
@@ -38764,6 +38800,8 @@ components:
           description: The first active deployment in an organisation is always made default.
         auth_settings:
           $ref: "#/components/schemas/DeploymentAuthSettingsInput"
+        tags:
+          $ref: "#/components/schemas/DeploymentTags"
 
     UpdateDeploymentRequest:
       type: object
@@ -38803,6 +38841,8 @@ components:
                   items:
                     type: string
                   description: JWT subs to remove
+        tags:
+          $ref: "#/components/schemas/DeploymentTags"
 
     DeploymentCreateResponse:
       type: object
@@ -38863,6 +38903,8 @@ components:
           type: string
           format: date-time
           nullable: true
+        tags:
+          $ref: "#/components/schemas/DeploymentTags"
         object:
           type: string
           enum: [deployment]
@@ -38936,6 +38978,20 @@ components:
         object:
           type: string
           enum: [deployment]
+
+    DeploymentTags:
+      type: object
+      nullable: true
+      description: |
+        Flat key-value string pairs. Keys must be alphanumeric with underscores
+        and hyphens (`^[a-zA-Z0-9_-]+$`). Values are arbitrary strings.
+        Setting tags to `null` removes all tags from the deployment.
+      additionalProperties:
+        type: string
+      example:
+        fw-id: fw-01234
+        cloud: aws
+        region: us-west-2
 
 security:
   - Portkey-Key: []
