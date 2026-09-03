@@ -57,7 +57,7 @@ tags:
   - name: Prompts
     description: Given a prompt template ID and variables, will run the saved prompt template and return a response.
   - name: Guardrails
-    description: Create, List, Retrieve, Update, and Delete prompt Guardrails.
+    description: Create, List, Retrieve, Update, and Delete Guardrails for LLM requests and MCP tool calls. Includes endpoints to map guardrails to MCP servers.
   - name: Completions
     description: Given a prompt, the model will return one or more predicted completions, and can also return the probabilities of alternative tokens at each position.
   - name: Embeddings
@@ -2632,6 +2632,158 @@ paths:
                     onFail: "block"
                     message: "Prisma AIRS blocked request"
 
+              # MCP GUARDRAIL EXAMPLES
+              mcp_regex_filter:
+                summary: "[MCP] Regex Filter for MCP Tools"
+                value:
+                  name: "MCP Regex Filter"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.regexMatch"
+                      parameters:
+                        rule: "(?i)(password|secret|api_key)"
+                        not: false
+                    - id: "default.contains"
+                      parameters:
+                        words: ["DROP TABLE", "DELETE FROM"]
+                        operator: "none"
+                  actions:
+                    on_fail: "deny"
+
+              mcp_sql_injection_guard:
+                summary: "[MCP] SQL Injection Guard for MCP Tools"
+                value:
+                  name: "MCP SQL Injection Guard"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.contains"
+                      parameters:
+                        words: ["DROP TABLE", "DELETE FROM", "TRUNCATE", "ALTER TABLE"]
+                        operator: "none"
+                    - id: "default.containsCode"
+                      parameters:
+                        format: "SQL"
+                        not: true
+                  actions:
+                    on_fail: "deny"
+
+              mcp_webhook_validation:
+                summary: "[MCP] Custom Webhook Validation for MCP Tools"
+                value:
+                  name: "MCP External Validation"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.webhook"
+                      parameters:
+                        webhookURL: "https://api.example.com/validate-mcp-call"
+                        headers:
+                          "Authorization": "Bearer token123"
+                          "Content-Type": "application/json"
+                        timeout: 5000
+                        failOnError: true
+                  actions:
+                    on_fail: "deny"
+
+              mcp_json_schema_validation:
+                summary: "[MCP] JSON Schema Validation for MCP Tools"
+                value:
+                  name: "MCP JSON Schema Validator"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.jsonSchema"
+                      parameters:
+                        schema:
+                          type: "object"
+                          properties:
+                            query:
+                              type: "string"
+                              maxLength: 1000
+                          required: ["query"]
+                    - id: "default.jsonKeys"
+                      parameters:
+                        keys: ["query", "context"]
+                        operator: "all"
+                  actions:
+                    on_fail: "deny"
+
+              mcp_content_quality:
+                summary: "[MCP] Content Quality Checks for MCP Tools"
+                value:
+                  name: "MCP Content Quality"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.wordCount"
+                      parameters:
+                        minWords: 1
+                        maxWords: 5000
+                    - id: "default.characterCount"
+                      parameters:
+                        minCharacters: 1
+                        maxCharacters: 50000
+                    - id: "default.validUrls"
+                      parameters:
+                        onlyDNS: true
+                    - id: "default.notNull"
+                  actions:
+                    on_fail: "deny"
+
+              mcp_output_format_guard:
+                summary: "[MCP] Output Format Guard for MCP Tools"
+                value:
+                  name: "MCP Output Format Guard"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.notNull"
+                    - id: "default.sentenceCount"
+                      parameters:
+                        minSentences: 1
+                        maxSentences: 100
+                    - id: "default.isAllLowerCase"
+                      parameters:
+                        not: true
+                  actions:
+                    on_fail: "deny"
+
+              mcp_metadata_enforcement:
+                summary: "[MCP] Metadata Enforcement for MCP Tools"
+                value:
+                  name: "MCP Metadata Enforcement"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.requiredMetadataKeys"
+                      parameters:
+                        metadataKeys: ["user_id", "session_id", "tool_name"]
+                        operator: "all"
+                    - id: "default.requiredMetadataKeyPairs"
+                      parameters:
+                        metadataKeyPairs:
+                          environment: "production"
+                  actions:
+                    on_fail: "deny"
+
+              mcp_regex_replace:
+                summary: "[MCP] Regex Replace for MCP Tools"
+                value:
+                  name: "MCP PII Regex Redaction"
+                  target: "mcp_tools"
+                  checks:
+                    - id: "default.regexReplace"
+                      parameters:
+                        rule: "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"
+                        replace: "[REDACTED_EMAIL]"
+                    - id: "default.regexReplace"
+                      parameters:
+                        rule: "\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b"
+                        replace: "[REDACTED_PHONE]"
+                  actions:
+                    on_fail: "deny"
+
+              mcp_minimal:
+                summary: "[MCP] Minimal MCP Guardrail (no checks)"
+                value:
+                  name: "MCP Audit Guardrail"
+                  target: "mcp_tools"
+
       responses:
         '200':
           description: Guardrail created successfully
@@ -2794,7 +2946,10 @@ paths:
 
     delete:
       summary: Delete a guardrail
-      description: Deletes an existing guardrail
+      description: >-
+        Deletes an existing guardrail. This also removes all associated MCP server mappings.
+        A guardrail cannot be deleted if it is currently used in workspace or organisation defaults
+        (including mcp_input_guardrails and mcp_output_guardrails). Remove it from defaults first.
       operationId: deleteGuardrail
       tags:
         - Guardrails
@@ -2810,6 +2965,189 @@ paths:
           description: Guardrail deleted successfully
         '403':
           description: Forbidden - guardrail not found or insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /guardrails/{guardrailId}/mcp-servers:
+    parameters:
+      - name: guardrailId
+        in: path
+        required: true
+        description: Guardrail UUID or slug (e.g., pg-pii-filter-a1b2c3)
+        schema:
+          type: string
+    put:
+      summary: Bulk sync MCP server mappings
+      description: >-
+        Declaratively sync all MCP server mappings for a guardrail. This replaces the entire set —
+        servers not included in the request body are removed. The guardrail must have target "mcp_tools".
+      operationId: bulkSyncGuardrailMcpServers
+      tags:
+        - Guardrails
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkSyncMcpServerMappingsRequest'
+            examples:
+              two_servers:
+                summary: Map guardrail to two MCP servers
+                value:
+                  mcp_servers:
+                    "550e8400-e29b-41d4-a716-446655440001":
+                      run_on: ["input", "output"]
+                    "550e8400-e29b-41d4-a716-446655440002":
+                      run_on: ["input"]
+                      mcp_integration_capability_ids:
+                        - "660e8400-e29b-41d4-a716-446655440001"
+              single_server_input_only:
+                summary: Map guardrail to a single server (input only)
+                value:
+                  mcp_servers:
+                    "550e8400-e29b-41d4-a716-446655440001":
+                      run_on: ["input"]
+              clear_all:
+                summary: Remove all MCP server mappings
+                value:
+                  mcp_servers: {}
+      responses:
+        '200':
+          description: MCP server mappings synced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkSyncMcpServerMappingsResponse'
+        '400':
+          description: Bad request - validation failed (e.g., invalid UUIDs, invalid run_on values)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient permissions or feature not enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found - guardrail, MCP server, or capability not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: List MCP server mappings
+      description: >-
+        List all MCP server mappings for a guardrail. Only applicable when the guardrail has target "mcp_tools".
+      operationId: listGuardrailMcpServers
+      tags:
+        - Guardrails
+      responses:
+        '200':
+          description: MCP server mappings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/McpServerMapping'
+        '403':
+          description: Forbidden - insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found - guardrail not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /guardrails/{guardrailId}/mcp-servers/{mcpServerId}:
+    parameters:
+      - name: guardrailId
+        in: path
+        required: true
+        description: Guardrail UUID or slug
+        schema:
+          type: string
+      - name: mcpServerId
+        in: path
+        required: true
+        description: MCP server UUID
+        schema:
+          type: string
+          format: uuid
+    put:
+      summary: Upsert single MCP server mapping
+      description: >-
+        Create or update a guardrail mapping for a single MCP server. The guardrail must have
+        target "mcp_tools". If a mapping already exists for this MCP server, it is updated;
+        otherwise a new mapping is created.
+      operationId: upsertGuardrailMcpServer
+      tags:
+        - Guardrails
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertMcpServerMappingRequest'
+            examples:
+              input_and_output:
+                summary: Apply guardrail on both input and output
+                value:
+                  run_on: ["input", "output"]
+              input_with_capabilities:
+                summary: Apply guardrail on input for specific tools
+                value:
+                  run_on: ["input"]
+                  mcp_integration_capability_ids:
+                    - "660e8400-e29b-41d4-a716-446655440001"
+                    - "660e8400-e29b-41d4-a716-446655440002"
+      responses:
+        '200':
+          description: MCP server mapping created or updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertMcpServerMappingResponse'
+        '400':
+          description: Bad request - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient permissions or feature not enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found - guardrail, MCP server, or capability not found
           content:
             application/json:
               schema:
@@ -35939,13 +36277,20 @@ components:
       type: object
       required:
         - name
-        - checks
-        - actions
       properties:
         name:
           type: string
           description: Name of the guardrail
           example: "Content Safety Check"
+        target:
+          type: string
+          description: >-
+            Target type for the guardrail. Use "llm" for LLM API requests (default)
+            or "mcp_tools" for MCP tool calls.
+          enum:
+            - llm
+            - mcp_tools
+          default: llm
         workspace_id:
           type: string
           format: uuid
@@ -35956,11 +36301,16 @@ components:
           description: Organisation UUID (required if workspace_id not provided and not using API key)
         checks:
           type: array
-          description: Array of guardrail checks to apply
+          description: >-
+            Array of guardrail checks to apply.
+            Required for "llm" target; optional for "mcp_tools" target.
           items:
             $ref: '#/components/schemas/GuardrailCheck'
           minItems: 1
         actions:
+          description: >-
+            Actions to take when guardrail checks fail or pass.
+            Required for "llm" target; optional for "mcp_tools" target.
           $ref: '#/components/schemas/GuardrailActions'
 
     UpdateGuardrailRequest:
@@ -36217,6 +36567,15 @@ components:
         slug:
           type: string
           description: URL-friendly slug
+        target:
+          type: string
+          description: >-
+            Target type for the guardrail. "llm" for LLM API requests,
+            "mcp_tools" for MCP tool calls.
+          enum:
+            - llm
+            - mcp_tools
+          default: llm
         organisation_id:
           type: string
           format: uuid
@@ -36260,6 +36619,144 @@ components:
                 $ref: '#/components/schemas/GuardrailCheck'
             actions:
               $ref: '#/components/schemas/GuardrailActions'
+            mcp_server_mappings:
+              type: array
+              description: >-
+                MCP server mappings for this guardrail. Only included when target is "mcp_tools".
+              items:
+                $ref: '#/components/schemas/McpServerMapping'
+
+    McpServerMapping:
+      type: object
+      description: Represents a mapping between a guardrail and an MCP server.
+      required:
+        - id
+        - guardrail_id
+        - mcp_server_id
+        - run_on
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the mapping
+        guardrail_id:
+          type: string
+          format: uuid
+          description: UUID of the guardrail
+        mcp_server_id:
+          type: string
+          format: uuid
+          description: UUID of the MCP server
+        run_on:
+          type: array
+          description: >-
+            Stages at which the guardrail runs. "input" runs on tool call arguments (before execution),
+            "output" runs on tool call results (after execution).
+          items:
+            type: string
+            enum:
+              - input
+              - output
+          minItems: 1
+        capability_ids:
+          type: array
+          description: >-
+            Optional list of MCP tool capability UUIDs to scope this guardrail to.
+            When empty or omitted, the guardrail applies to all tools on the server.
+          items:
+            type: string
+            format: uuid
+
+    BulkSyncMcpServerMappingsRequest:
+      type: object
+      required:
+        - mcp_servers
+      properties:
+        mcp_servers:
+          type: object
+          description: >-
+            Map of MCP server UUID to its guardrail configuration. Servers not included
+            in this map will have their mappings removed. Pass an empty object to remove all mappings.
+          additionalProperties:
+            type: object
+            properties:
+              run_on:
+                type: array
+                description: >-
+                  Stages at which the guardrail runs. Defaults to ["input", "output"] if not specified.
+                items:
+                  type: string
+                  enum:
+                    - input
+                    - output
+                minItems: 1
+                default: ["input", "output"]
+              mcp_integration_capability_ids:
+                type: array
+                description: >-
+                  Optional list of tool capability UUIDs to scope the guardrail to specific tools.
+                  Omit or pass an empty array to apply to all tools on the server.
+                items:
+                  type: string
+                  format: uuid
+
+    BulkSyncMcpServerMappingsResponse:
+      type: object
+      description: Summary of changes made by the bulk sync operation.
+      required:
+        - changed
+        - added
+        - updated
+        - removed
+      properties:
+        changed:
+          type: boolean
+          description: Whether any changes were made
+        added:
+          type: integer
+          description: Number of new MCP server mappings added
+          minimum: 0
+        updated:
+          type: integer
+          description: Number of existing MCP server mappings updated
+          minimum: 0
+        removed:
+          type: integer
+          description: Number of MCP server mappings removed
+          minimum: 0
+
+    UpsertMcpServerMappingRequest:
+      type: object
+      properties:
+        run_on:
+          type: array
+          description: >-
+            Stages at which the guardrail runs. Defaults to ["input", "output"] if not specified.
+          items:
+            type: string
+            enum:
+              - input
+              - output
+          minItems: 1
+          default: ["input", "output"]
+        mcp_integration_capability_ids:
+          type: array
+          description: >-
+            Optional list of tool capability UUIDs to scope the guardrail to specific tools.
+            Omit or pass an empty array to apply to all tools on the server.
+          items:
+            type: string
+            format: uuid
+
+    UpsertMcpServerMappingResponse:
+      type: object
+      required:
+        - map_id
+      properties:
+        map_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the created or updated mapping
 
 # Detailed parameter schemas for specific guardrail types
     JWTParameters:
