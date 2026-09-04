@@ -19857,6 +19857,8 @@ paths:
       summary: Get requests graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -19932,6 +19934,8 @@ paths:
       summary: Get cost graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20015,6 +20019,8 @@ paths:
       summary: Get latency graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20115,6 +20121,8 @@ paths:
       summary: Get tokens graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20198,6 +20206,8 @@ paths:
       summary: Get users graph. Returns unique user count across different time buckets
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20273,6 +20283,8 @@ paths:
       summary: Get users requests graph. Returns average requests per user across different time buckets
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20356,6 +20368,8 @@ paths:
       summary: Get errors graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20431,6 +20445,8 @@ paths:
       summary: Get percentage error rate graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20506,6 +20522,8 @@ paths:
       summary: Get status code wise stacked error graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20604,6 +20622,8 @@ paths:
         - $ref: "#/components/parameters/VirtualKeys"
         - $ref: "#/components/parameters/Configs"
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
@@ -20667,6 +20687,8 @@ paths:
       summary: Get retry and fallback rescued requests graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20758,6 +20780,8 @@ paths:
       summary: Get cache hit rate graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20853,6 +20877,8 @@ paths:
       summary: Get cache hit latency graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20922,6 +20948,8 @@ paths:
       summary: Get feedbacks graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -20997,6 +21025,8 @@ paths:
       summary: Get score-wise feedbacks distribution graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21071,6 +21101,8 @@ paths:
       summary: Get weighted feedbacks graph. Weighted feedback is (value * score)
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21146,6 +21178,8 @@ paths:
       summary: Get feedbacks per ai_models graph
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21218,6 +21252,8 @@ paths:
       summary: Get cache summary data for the selected time period
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21283,6 +21319,8 @@ paths:
       summary: Get metadata users grouped data.
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21356,6 +21394,8 @@ paths:
       summary: Get ai model grouped data.
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21426,6 +21466,8 @@ paths:
       summary: Get provider grouped data.
       parameters:
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -21508,6 +21550,8 @@ paths:
             type: string
           required: true
         - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/IncludeAllWorkspaces"
+        - $ref: "#/components/parameters/ExcludeWorkspaceSlugs"
         - $ref: "#/components/parameters/TimeOfGenerationMin"
         - $ref: "#/components/parameters/TimeOfGenerationMax"
         - $ref: "#/components/parameters/TotalUnitsMin"
@@ -22533,6 +22577,19 @@ components:
       schema:
         type: string
       description: Workspace slug filter. If a workspace API key is being used, this filter will not be taken into consideration. If an organisation API key is used and no workspace slug is passed, default workspace will be used.
+    IncludeAllWorkspaces:
+      in: query
+      name: include_all_workspaces
+      schema:
+        type: boolean
+      description: When `true`, returns data aggregated across all workspaces in the organisation. Only takes effect for organisation API keys; ignored for workspace API keys, which are already scoped to a single workspace. Do not combine with `workspace_slug` — if `workspace_slug` is present, it takes precedence and this parameter is ignored. One of `workspace_slug`, `include_all_workspaces`, or `exclude_workspace_slugs` is required.
+    ExcludeWorkspaceSlugs:
+      in: query
+      name: exclude_workspace_slugs
+      schema:
+        type: string
+      description: Comma separated workspace slugs to exclude. Behaves like `include_all_workspaces` (aggregates across all workspaces) but filters out the listed slugs. Only takes effect for organisation API keys; ignored for workspace API keys. Do not combine with `workspace_slug` — if `workspace_slug` is present, it takes precedence and this parameter is ignored. One of `workspace_slug`, `include_all_workspaces`, or `exclude_workspace_slugs` is required.
+      example: ws-legacy,ws-archived
     ApiKeyIds:
       in: query
       name: api_key_ids
