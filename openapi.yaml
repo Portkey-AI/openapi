@@ -11723,7 +11723,12 @@ paths:
             enum: [workspace, organisation, all]
             default: all
           description: For type=workspace, the API will only return Workpace-Scoped integrations. For type=organisation, the API will only return Global (organisation level) integrations. For type=all, both types of integrations will be returned.
-          
+        - in: query
+          name: tags
+          schema:
+            type: string
+          description: Filter integrations by tags. A JSON-encoded object of key-value pairs, e.g. `{"env":"prod"}`.
+
       responses:
         "200":
           description: Successful response
@@ -33414,6 +33419,12 @@ components:
               title: Cortex
             - $ref: '#/components/schemas/CustomHostConfiguration'
               title: Custom Base URL
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags to associate with the integration.
         create_default_provider:
           type: boolean
           default: true
@@ -33472,6 +33483,12 @@ components:
               title: Cortex
             - $ref: '#/components/schemas/CustomHostConfiguration'
               title: Custom Base URL
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags to associate with the integration.
         secret_mappings:
           type: array
           items:
