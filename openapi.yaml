@@ -20022,6 +20022,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20097,6 +20098,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20180,6 +20182,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20280,6 +20283,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20363,6 +20367,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20438,6 +20443,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20521,6 +20527,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20596,6 +20603,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20671,6 +20679,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20754,6 +20763,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20832,6 +20842,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -20923,6 +20934,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21018,6 +21030,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21087,6 +21100,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21162,6 +21176,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21236,6 +21251,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21311,6 +21327,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21383,6 +21400,7 @@ paths:
         - $ref: "#/components/parameters/ApiKeyIds"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21450,6 +21468,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21523,6 +21542,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21593,6 +21613,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/OrderBy"
         - $ref: "#/components/parameters/OrderByType"
         - name: columns
@@ -21675,6 +21696,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Metadata"
         - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
         - $ref: "#/components/parameters/TraceId"
         - $ref: "#/components/parameters/SpanId"
         - $ref: "#/components/parameters/PromptSlug"
@@ -21730,6 +21752,222 @@ paths:
                           enum: [analytics-group]
                 required:
                   - total
+                  - object
+                  - data
+
+  /analytics/groups/mcp:
+    servers: *ControlPlaneServers
+    get:
+      tags:
+        - Analytics > Groups
+      summary: Get MCP server grouped data.
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/TimeOfGenerationMin"
+        - $ref: "#/components/parameters/TimeOfGenerationMax"
+        - $ref: "#/components/parameters/TotalUnitsMin"
+        - $ref: "#/components/parameters/TotalUnitsMax"
+        - $ref: "#/components/parameters/CostMin"
+        - $ref: "#/components/parameters/CostMax"
+        - $ref: "#/components/parameters/PromptTokenMin"
+        - $ref: "#/components/parameters/PromptTokenMax"
+        - $ref: "#/components/parameters/CompletionTokenMin"
+        - $ref: "#/components/parameters/CompletionTokenMax"
+        - $ref: "#/components/parameters/StatusCode"
+        - $ref: "#/components/parameters/WeightedFeedbackMin"
+        - $ref: "#/components/parameters/WeightedFeedbackMax"
+        - $ref: "#/components/parameters/VirtualKeys"
+        - $ref: "#/components/parameters/Configs"
+        - $ref: "#/components/parameters/ApiKeyIds"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Metadata"
+        - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
+        - $ref: "#/components/parameters/TraceId"
+        - $ref: "#/components/parameters/SpanId"
+        - $ref: "#/components/parameters/PromptSlug"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total records present across all pages
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: The MCP server for which the data is calculated
+                        requests:
+                          type: integer
+                          description: Total requests made for this MCP server
+                        object:
+                          type: string
+                          description: The type of object being returned
+                          enum: [analytics-group]
+                required:
+                  - object
+                  - data
+
+  /analytics/groups/a2a:
+    servers: *ControlPlaneServers
+    get:
+      tags:
+        - Analytics > Groups
+      summary: Get A2A (agent-to-agent) grouped data.
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/TimeOfGenerationMin"
+        - $ref: "#/components/parameters/TimeOfGenerationMax"
+        - $ref: "#/components/parameters/TotalUnitsMin"
+        - $ref: "#/components/parameters/TotalUnitsMax"
+        - $ref: "#/components/parameters/CostMin"
+        - $ref: "#/components/parameters/CostMax"
+        - $ref: "#/components/parameters/PromptTokenMin"
+        - $ref: "#/components/parameters/PromptTokenMax"
+        - $ref: "#/components/parameters/CompletionTokenMin"
+        - $ref: "#/components/parameters/CompletionTokenMax"
+        - $ref: "#/components/parameters/StatusCode"
+        - $ref: "#/components/parameters/WeightedFeedbackMin"
+        - $ref: "#/components/parameters/WeightedFeedbackMax"
+        - $ref: "#/components/parameters/VirtualKeys"
+        - $ref: "#/components/parameters/Configs"
+        - $ref: "#/components/parameters/ApiKeyIds"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Metadata"
+        - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
+        - $ref: "#/components/parameters/TraceId"
+        - $ref: "#/components/parameters/SpanId"
+        - $ref: "#/components/parameters/PromptSlug"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total records present across all pages
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: The agent for which the data is calculated
+                        requests:
+                          type: integer
+                          description: Total requests made for this agent
+                        object:
+                          type: string
+                          description: The type of object being returned
+                          enum: [analytics-group]
+                required:
+                  - object
+                  - data
+
+  /analytics/groups/workspaces:
+    servers: *ControlPlaneServers
+    get:
+      tags:
+        - Analytics > Groups
+      summary: Get workspace grouped data.
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - $ref: "#/components/parameters/TimeOfGenerationMin"
+        - $ref: "#/components/parameters/TimeOfGenerationMax"
+        - $ref: "#/components/parameters/TotalUnitsMin"
+        - $ref: "#/components/parameters/TotalUnitsMax"
+        - $ref: "#/components/parameters/CostMin"
+        - $ref: "#/components/parameters/CostMax"
+        - $ref: "#/components/parameters/PromptTokenMin"
+        - $ref: "#/components/parameters/PromptTokenMax"
+        - $ref: "#/components/parameters/CompletionTokenMin"
+        - $ref: "#/components/parameters/CompletionTokenMax"
+        - $ref: "#/components/parameters/StatusCode"
+        - $ref: "#/components/parameters/WeightedFeedbackMin"
+        - $ref: "#/components/parameters/WeightedFeedbackMax"
+        - $ref: "#/components/parameters/VirtualKeys"
+        - $ref: "#/components/parameters/Configs"
+        - $ref: "#/components/parameters/ApiKeyIds"
+        - $ref: "#/components/parameters/CurrentPage"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Metadata"
+        - $ref: "#/components/parameters/AiOrgModel"
+        - $ref: "#/components/parameters/DeploymentId"
+        - $ref: "#/components/parameters/TraceId"
+        - $ref: "#/components/parameters/SpanId"
+        - $ref: "#/components/parameters/PromptSlug"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                    description: Total records present across all pages
+                  is_quota_exceeded:
+                    type: boolean
+                    description: Whether the metric retention quota was exceeded for the requested range
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        workspace_slug:
+                          type: string
+                          description: The workspace for which the data is calculated
+                        requests:
+                          type: integer
+                          description: Total requests made for this workspace
+                        cost:
+                          type: number
+                          description: Total cost for the requests made for this workspace
+                        object:
+                          type: string
+                          description: The type of object being returned
+                          enum: [analytics-group]
+                required:
                   - object
                   - data
 
@@ -22701,6 +22939,13 @@ components:
         type: string
       description: Comma separated ai provider and model combination. Double underscore (__) should be used as a separator for each provider and model combination
       example: openai__gpt-3.5-turbo,azure-openai__gpt-35-turbo
+    DeploymentId:
+      in: query
+      name: deployment_id
+      schema:
+        type: string
+      description: Comma separated list of deployment IDs (UUIDs) to filter by.
+      example: 123e4567-e89b-12d3-a456-426614174000,223e4567-e89b-12d3-a456-426614174001
     TraceId:
       in: query
       name: trace_id
