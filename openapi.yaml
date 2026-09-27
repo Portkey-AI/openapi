@@ -64,6 +64,8 @@ tags:
     description: Get a vector representation of a given input that can be easily consumed by machine learning models and algorithms.
   - name: Rerank
     description: Rerank a list of documents based on their relevance to a query. Supported providers include Cohere, Voyage, Jina, Pinecone, Bedrock, and Azure AI.
+  - name: Decisions
+    description: Get typed judgments — a choice, a score, or a probability — for a given input. Currently supported by TypeSafe, with more providers planned.
   - name: OCR
     description: Extract text and structured content from documents (PDFs and images) using OCR models. Supported providers include Mistral AI and Azure AI Foundry.
   - name: Fine-tuning
@@ -3866,6 +3868,215 @@ paths:
                   'Madrid is the capital of Spain.'
                 ],
                 top_n: 2
+              });
+
+              console.log(response);
+            }
+
+            main();
+
+  /decisions:
+    servers: *DataPlaneServers
+    post:
+      operationId: createDecisions
+      tags:
+        - Decisions
+      summary: Decisions
+      description: |
+        Get typed judgments for a given input. Given a `state` (the content to judge) and a set of `questions`, the model returns a typed answer for each question — a choice, a score, or a probability — instead of free text.
+
+        Decisions is currently supported by TypeSafe's Jev models, with more providers planned.
+      parameters:
+        - $ref: "#/components/parameters/PortkeyTraceId"
+        - $ref: "#/components/parameters/PortkeySpanId"
+        - $ref: "#/components/parameters/PortkeyParentSpanId"
+        - $ref: "#/components/parameters/PortkeySpanName"
+        - $ref: "#/components/parameters/PortkeyMetadata"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDecisionsRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateDecisionsResponse"
+      security:
+        - Portkey-Key: []
+          Virtual-Key: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+        - Portkey-Key: []
+          Config: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+          Custom-Host: []
+
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl https://api.portkey.ai/v1/decisions \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "model": "jev-latest",
+                "state": "Help! My payouts have been failing for 3 days.",
+                "questions": {
+                  "department": {
+                    "type": "choice",
+                    "instructions": "Which team should handle this?",
+                    "criteria": { "billing": "Payments", "technical": "Bugs" }
+                  },
+                  "urgency": {
+                    "type": "score",
+                    "instructions": "How urgent is this on a scale of 0 to 1?"
+                  }
+                }
+              }'
+        - lang: python
+          label: Default
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+              api_key = "PORTKEY_API_KEY",
+              virtual_key = "PROVIDER_VIRTUAL_KEY"
+            )
+
+            response = client.post(
+              "/decisions",
+              model="jev-latest",
+              state="Help! My payouts have been failing for 3 days.",
+              questions={
+                "department": {
+                  "type": "choice",
+                  "instructions": "Which team should handle this?",
+                  "criteria": {"billing": "Payments", "technical": "Bugs"},
+                },
+                "urgency": {
+                  "type": "score",
+                  "instructions": "How urgent is this on a scale of 0 to 1?",
+                },
+              },
+            )
+
+            print(response)
+        - lang: javascript
+          label: Default
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const client = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY'
+            });
+
+            async function main() {
+              const response = await client.post('/decisions', {
+                model: 'jev-latest',
+                state: 'Help! My payouts have been failing for 3 days.',
+                questions: {
+                  department: {
+                    type: 'choice',
+                    instructions: 'Which team should handle this?',
+                    criteria: { billing: 'Payments', technical: 'Bugs' }
+                  },
+                  urgency: {
+                    type: 'score',
+                    instructions: 'How urgent is this on a scale of 0 to 1?'
+                  }
+                }
+              });
+
+              console.log(response);
+            }
+
+            main();
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST "SELF_HOSTED_GATEWAY_URL/decisions" \
+              -H "Content-Type: application/json" \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -d '{
+                "model": "jev-latest",
+                "state": "Help! My payouts have been failing for 3 days.",
+                "questions": {
+                  "department": {
+                    "type": "choice",
+                    "instructions": "Which team should handle this?",
+                    "criteria": { "billing": "Payments", "technical": "Bugs" }
+                  },
+                  "urgency": {
+                    "type": "score",
+                    "instructions": "How urgent is this on a scale of 0 to 1?"
+                  }
+                }
+              }'
+        - lang: python
+          label: Self-Hosted
+          source: |
+            from portkey_ai import Portkey
+
+            client = Portkey(
+                api_key="PORTKEY_API_KEY",
+                virtual_key="PROVIDER_VIRTUAL_KEY",
+                base_url="SELF_HOSTED_GATEWAY_URL"
+            )
+
+            response = client.post(
+              "/decisions",
+              model="jev-latest",
+              state="Help! My payouts have been failing for 3 days.",
+              questions={
+                "department": {
+                  "type": "choice",
+                  "instructions": "Which team should handle this?",
+                  "criteria": {"billing": "Payments", "technical": "Bugs"},
+                },
+                "urgency": {
+                  "type": "score",
+                  "instructions": "How urgent is this on a scale of 0 to 1?",
+                },
+              },
+            )
+
+            print(response)
+        - lang: javascript
+          label: Self-Hosted
+          source: |
+            import Portkey from 'portkey-ai';
+
+            const portkey = new Portkey({
+              apiKey: 'PORTKEY_API_KEY',
+              virtualKey: 'PROVIDER_VIRTUAL_KEY',
+              baseURL: 'SELF_HOSTED_GATEWAY_URL'
+            });
+
+            async function main() {
+              const response = await portkey.post('/decisions', {
+                model: 'jev-latest',
+                state: 'Help! My payouts have been failing for 3 days.',
+                questions: {
+                  department: {
+                    type: 'choice',
+                    instructions: 'Which team should handle this?',
+                    criteria: { billing: 'Payments', technical: 'Bugs' }
+                  },
+                  urgency: {
+                    type: 'score',
+                    instructions: 'How urgent is this on a scale of 0 to 1?'
+                  }
+                }
               });
 
               console.log(response);
@@ -26186,6 +26397,199 @@ components:
         - results
         - model
 
+    DecisionsQuestion:
+      type: object
+      description: A single question to ask about `state`.
+      properties:
+        type:
+          description: |
+            The kind of typed answer to return:
+            - `noul`: a single number.
+            - `choice`: one of the labels defined in `criteria`.
+            - `score`: a score between 0 and 1, optionally labeled by `criteria`.
+          type: string
+          enum: [noul, choice, score]
+          example: "choice"
+        instructions:
+          description: The question to ask about `state`. Can be a plain string, a JSON object, or a JSON array.
+          example: "Which team should handle this?"
+          oneOf:
+            - type: string
+            - type: object
+              additionalProperties: true
+            - type: array
+              items: {}
+          x-oaiExpandable: true
+        criteria:
+          description: |
+            Labels or constraints for the answer. Required for `choice` questions (the set of valid choices); optional for `score` questions (labels for the score range). Not used for `noul` questions.
+          nullable: true
+          example:
+            billing: "Payments"
+            technical: "Bugs"
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items: {}
+          x-oaiExpandable: true
+      required:
+        - type
+        - instructions
+
+    CreateDecisionsRequest:
+      type: object
+      description: |
+        Request body for typed judgments. Given a `state` (the content to judge) and a map of `questions`, the model returns a typed answer for each question — a choice, a score, or a probability. Currently supported by TypeSafe's Jev models, with more providers planned.
+      properties:
+        model:
+          description: |
+            ID of the model to use for making decisions. Defaults to `jev-latest` when omitted. Model availability depends on the provider:
+            - **TypeSafe**: `jev-latest`
+          type: string
+          example: "jev-latest"
+        state:
+          description: |
+            The content to judge. Can be a plain string, a JSON object, or a JSON array. This is the only field guardrails scan on `/v1/decisions` — `questions` and any nested `criteria` are your own application's instructions, not user content.
+          example: "Help! My payouts have been failing for 3 days."
+          oneOf:
+            - type: string
+            - type: object
+              additionalProperties: true
+            - type: array
+              items: {}
+          x-oaiExpandable: true
+        questions:
+          description: |
+            A map of question keys to question definitions. Each question asks the model for one typed judgment about `state`.
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/DecisionsQuestion"
+          example:
+            department:
+              type: choice
+              instructions: "Which team should handle this?"
+              criteria:
+                billing: "Payments"
+                technical: "Bugs"
+      required:
+        - state
+        - model
+        - questions
+
+    DecisionsAnswer:
+      description: A single typed answer, shaped by the matching question's `type`.
+      oneOf:
+        - type: object
+          title: noul
+          description: A single number answer.
+          properties:
+            type:
+              type: string
+              enum: [noul]
+            noul:
+              type: number
+              description: The numeric answer.
+          required:
+            - type
+            - noul
+        - type: object
+          title: choice
+          description: One of the labels defined in the question's `criteria`.
+          properties:
+            type:
+              type: string
+              enum: [choice]
+            choice:
+              type: string
+              description: The selected label.
+              example: "billing"
+            probabilities:
+              type: object
+              description: Probability per candidate label.
+              additionalProperties:
+                type: number
+              example:
+                billing: 0.82
+                technical: 0.18
+            confidence:
+              type: number
+              description: Confidence in the selected choice, between 0 and 1.
+              example: 0.82
+          required:
+            - type
+            - choice
+            - probabilities
+            - confidence
+        - type: object
+          title: score
+          description: A score between 0 and 1, optionally labeled by the question's `criteria`.
+          properties:
+            type:
+              type: string
+              enum: [score]
+            score:
+              type: number
+              description: The score, typically between 0 and 1.
+              example: 0.91
+            legend:
+              type: object
+              description: Labels for points on the score range.
+              additionalProperties:
+                type: string
+              example:
+                "0": "low"
+                "1": "high"
+            probabilities:
+              type: object
+              description: Probability per labeled point on the score range.
+              additionalProperties:
+                type: number
+              example:
+                "0": 0.09
+                "1": 0.91
+            confidence:
+              type: number
+              description: Confidence in the score, between 0 and 1.
+              example: 0.91
+          required:
+            - type
+            - score
+            - probabilities
+            - confidence
+      x-oaiExpandable: true
+
+    CreateDecisionsResponse:
+      type: object
+      description: Response from the decisions endpoint.
+      properties:
+        model:
+          type: string
+          description: The model used to make the decisions.
+          example: "jev-latest"
+        answers:
+          type: object
+          description: A map of question keys to typed answers, matching the keys of the request's `questions`.
+          additionalProperties:
+            $ref: "#/components/schemas/DecisionsAnswer"
+        usage:
+          type: object
+          description: The usage information for the request.
+          properties:
+            input_tokens:
+              type: integer
+              description: The number of input tokens used by the request.
+            output_tokens:
+              type: integer
+              description: The number of output tokens used by the request.
+        provider:
+          type: string
+          description: The provider that processed the request.
+          example: "typesafe"
+      required:
+        - model
+        - answers
+
     CreateOcrRequest:
       type: object
       description: |
@@ -40146,6 +40550,18 @@ x-code-samples:
           path: create
         - type: object
           key: CreateRerankResponse
+          path: object
+    - id: decisions
+      title: Decisions
+      description: |
+        Get typed judgments — a choice, a score, or a probability — for a given input. Currently supported by TypeSafe's Jev models, with more providers planned.
+      navigationGroup: endpoints
+      sections:
+        - type: endpoint
+          key: createDecisions
+          path: create
+        - type: object
+          key: CreateDecisionsResponse
           path: object
     - id: fine-tuning
       title: Fine-tuning
