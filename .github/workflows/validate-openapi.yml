@@ -12,8 +12,9 @@ jobs:
     services:
       # Label used to access the service container
       swagger-editor:
-        # Docker Hub image
-        image: swaggerapi/swagger-editor
+        # Docker Hub image. Pinned to v4: `latest` is now SwaggerEditor 5, which
+        # serves on port 80 and lacks the v4 error panel the validator reads.
+        image: swaggerapi/swagger-editor:v4.14.8
         ports:
           # Maps port 8080 on service container to the host 80
           - 80:8080
