@@ -19,7 +19,11 @@ jobs:
           - 80:8080
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      # Ubuntu 24.04 runners block the unprivileged user namespaces Chromium's
+      # sandbox needs, so the validator's headless browser fails to launch.
+      - name: Allow Chromium sandbox
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - name: Validate OpenAPI definition
         uses: char0n/swagger-editor-validate@v1
         with:
