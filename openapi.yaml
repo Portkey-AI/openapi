@@ -142,6 +142,8 @@ tags:
     description: Create, List, Retrieve, Update, and Delete secret references to external secret managers.
   - name: Deployments
     description: Register, List, Retrieve, Update, and Delete self-hosted Gateway deployments.
+  - name: Egress-Allowlist
+    description: Create, List, Retrieve, Update, and Delete organisation egress allowlist entries trusted as custom hosts.
 
 paths:
   # Note: When adding an endpoint, make sure you also add it in the `groups` section, in the end of this file,
@@ -22746,6 +22748,247 @@ paths:
             curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/deployments/DEPLOYMENT_ID/ping \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
 
+  /egress-allowlist:
+    servers: *ControlPlaneServers
+    get:
+      operationId: listEgressAllowlist
+      summary: List All Egress Allowlist Entries
+      tags:
+        - Egress-Allowlist
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          description: Search by domain
+        - in: query
+          name: current_page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page index (0-based), defaults to 0
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page (1-100), defaults to 20
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/EgressAllowlistEntry"
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET "https://api.portkey.ai/v1/egress-allowlist?current_page=0&page_size=20" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/egress-allowlist?current_page=0&page_size=20" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    post:
+      operationId: createEgressAllowlistEntry
+      summary: Create an Egress Allowlist Entry
+      tags:
+        - Egress-Allowlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEgressAllowlistRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  domain:
+                    type: string
+                    description: Normalized (trimmed, lowercased) domain
+                  object:
+                    type: string
+                    enum: [egress-allowlist]
+        "400":
+          description: Validation failure (invalid domain or domain already in the allowlist)
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/egress-allowlist \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "domain": "*.internal.example.com",
+                "description": "Internal model servers"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/egress-allowlist \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "domain": "*.internal.example.com",
+                "description": "Internal model servers"
+            }'
+
+  /egress-allowlist/{egressAllowlistId}:
+    servers: *ControlPlaneServers
+    get:
+      operationId: getEgressAllowlistEntry
+      summary: Get an Egress Allowlist Entry
+      tags:
+        - Egress-Allowlist
+      parameters:
+        - in: path
+          name: egressAllowlistId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the egress allowlist entry
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EgressAllowlistEntry"
+        "404":
+          description: Egress allowlist entry not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/egress-allowlist/EGRESS_ALLOWLIST_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/egress-allowlist/EGRESS_ALLOWLIST_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    put:
+      operationId: updateEgressAllowlistEntry
+      summary: Update an Egress Allowlist Entry
+      tags:
+        - Egress-Allowlist
+      parameters:
+        - in: path
+          name: egressAllowlistId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the egress allowlist entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEgressAllowlistRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Validation failure (invalid domain, domain already in the allowlist, or no valid fields to update)
+        "404":
+          description: Egress allowlist entry not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X PUT https://api.portkey.ai/v1/egress-allowlist/EGRESS_ALLOWLIST_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "description": "Updated description"
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X PUT SELF_HOSTED_CONTROL_PLANE_URL/egress-allowlist/EGRESS_ALLOWLIST_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "description": "Updated description"
+            }'
+
+    delete:
+      operationId: deleteEgressAllowlistEntry
+      summary: Delete an Egress Allowlist Entry
+      tags:
+        - Egress-Allowlist
+      parameters:
+        - in: path
+          name: egressAllowlistId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the egress allowlist entry
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Egress allowlist entry not found
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/egress-allowlist/EGRESS_ALLOWLIST_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/egress-allowlist/EGRESS_ALLOWLIST_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
 
 components:
   securitySchemes:
@@ -40035,6 +40278,74 @@ components:
         cloud: aws
         region: us-west-2
 
+    CreateEgressAllowlistRequest:
+      type: object
+      required:
+        - domain
+      properties:
+        domain:
+          $ref: "#/components/schemas/EgressAllowlistDomain"
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+
+    UpdateEgressAllowlistRequest:
+      type: object
+      description: At least one field must be provided.
+      minProperties: 1
+      anyOf:
+        - required: [domain]
+        - required: [description]
+      properties:
+        domain:
+          $ref: "#/components/schemas/EgressAllowlistDomain"
+        description:
+          type: string
+          nullable: true
+          maxLength: 500
+
+    EgressAllowlistDomain:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: |
+        An exact hostname, an IP literal (IPv4 or IPv6, optionally bracketed), or a `*.` wildcard.
+        No scheme, path, credentials, or port. Stored trimmed and lowercased.
+        Cloud-metadata addresses and hostnames are rejected.
+      example: "*.internal.example.com"
+
+    EgressAllowlistEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organisation_id:
+          type: string
+          format: uuid
+        domain:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active]
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        object:
+          type: string
+          enum: [egress-allowlist]
+
 security:
   - Portkey-Key: []
 
@@ -40293,6 +40604,27 @@ x-code-samples:
         - type: object
           key: CreateModerationResponse
           path: object
+    - id: egress-allowlist
+      title: Egress Allowlist
+      description: |
+        Manage the hosts your organisation trusts as custom hosts, including private or internal addresses.
+      navigationGroup: endpoints
+      sections:
+        - type: endpoint
+          key: listEgressAllowlist
+          path: list
+        - type: endpoint
+          key: createEgressAllowlistEntry
+          path: create
+        - type: endpoint
+          key: getEgressAllowlistEntry
+          path: retrieve
+        - type: endpoint
+          key: updateEgressAllowlistEntry
+          path: update
+        - type: endpoint
+          key: deleteEgressAllowlistEntry
+          path: delete
     - id: assistants
       title: Assistants
       beta: true
