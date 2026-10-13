@@ -20081,7 +20081,7 @@ paths:
                     type: string
                     enum: [access]
         '400':
-          description: Validation failure (invalid subjects or targets, unknown IDs, or duplicate policy name)
+          description: Validation failure (invalid subjects or targets, unknown IDs, or a policy with this name already exists in the workspace)
         '401':
           description: Unauthorized
         '403':
@@ -20089,7 +20089,7 @@ paths:
         '404':
           description: Workspace not found
         '409':
-          description: A policy with this name already exists in the workspace
+          description: A policy with this name was created by a concurrent request
         '500':
           description: Server error
       x-code-samples:
@@ -20152,8 +20152,7 @@ paths:
           description: Filter by enabled state
           required: false
           schema:
-            type: string
-            enum: ['true', 'false']
+            type: boolean
         - name: user_id
           in: query
           description: Only policies that name this user directly or apply to all users
