@@ -4,14 +4,84 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
-  trigger-update:
+  wait-for-spec:
+    # Mintlify always builds from master, so a run on any other ref would check the wrong spec.
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 10
+    # Safe to cancel: nothing has been sent to Mintlify yet.
+    concurrency:
+      group: mintlify-wait
+      cancel-in-progress: true
+    env:
+      SPEC_URL: https://raw.githubusercontent.com/Portkey-AI/openapi/refs/heads/master/openapi.yaml
+
     steps:
-      - name: Trigger Mintlify Update
+      - uses: actions/checkout@v4
+
+      # Mintlify builds from SPEC_URL, which raw.githubusercontent.com caches for up to 300s.
+      - name: Wait for the raw spec cache to expire
+        if: github.event_name == 'push'
+        run: sleep 310
+
+      - name: Check that the raw spec matches this commit
         run: |
-          curl --request POST \
-            --url https://api.mintlify.com/v1/project/update/${{ secrets.MINTLIFY_PROJECT_ID }} \
-            --header 'Authorization: Bearer ${{ secrets.MINTLIFY_TOKEN }}'
+          expected=$(sha256sum openapi.yaml | cut -d' ' -f1)
+          actual=$(curl -sSfL "$SPEC_URL" | sha256sum | cut -d' ' -f1)
+          if [ "$expected" != "$actual" ]; then
+            echo "::error::$SPEC_URL does not match openapi.yaml at $GITHUB_SHA"
+            exit 1
+          fi
+
+  deploy:
+    needs: wait-for-spec
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Never cancel: a cancelled run cannot stop a Mintlify build it already started.
+    # Queueing makes each build finish before the next one starts.
+    concurrency:
+      group: mintlify-deploy
+      cancel-in-progress: false
+    env:
+      MINTLIFY_TOKEN: ${{ secrets.MINTLIFY_TOKEN }}
+      MINTLIFY_PROJECT_ID: ${{ secrets.MINTLIFY_PROJECT_ID }}
+
+    steps:
+      - name: Trigger Mintlify update
+        id: trigger
+        run: |
+          resp=$(curl -sS --fail-with-body --request POST \
+            --url "https://api.mintlify.com/v1/project/update/$MINTLIFY_PROJECT_ID" \
+            --header "Authorization: Bearer $MINTLIFY_TOKEN")
+          status_id=$(jq -r '.statusId // empty' <<<"$resp")
+          if [ -z "$status_id" ]; then
+            echo "::error::No statusId in Mintlify response: $resp"
+            exit 1
+          fi
+          echo "status_id=$status_id" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for Mintlify deployment
+        env:
+          STATUS_ID: ${{ steps.trigger.outputs.status_id }}
+        run: |
+          for _ in $(seq 1 60); do
+            resp=$(curl -sS --fail-with-body \
+              --url "https://api.mintlify.com/v1/project/update-status/$STATUS_ID" \
+              --header "Authorization: Bearer $MINTLIFY_TOKEN")
+            status=$(jq -r '.status' <<<"$resp")
+            echo "Mintlify status: $status"
+            case "$status" in
+              success) exit 0 ;;
+              failure)
+                jq -r '.summary // empty, (.logs // [])[]' <<<"$resp"
+                echo "::error::Mintlify deployment failed"
+                exit 1
+                ;;
+            esac
+            sleep 20
+          done
+          echo "::error::Mintlify deployment did not finish in 20 minutes"
+          exit 1
