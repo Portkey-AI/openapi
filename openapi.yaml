@@ -136,6 +136,8 @@ tags:
     description: Manage usage limits policies to control total usage over time
   - name: Rate Limits Policies
     description: Manage rate limits policies to control request or token rates
+  - name: Access Policies
+    description: Manage access policies that allow or deny users, groups, and agents access to MCP servers and providers
   - name: Model Pricing
     description: Model pricing configurations for 2300+ LLMs across 40+ providers
   - name: Secret-References
@@ -19998,6 +20000,409 @@ paths:
         '500':
           description: Server error
 
+  /policies/access:
+    servers: *ControlPlaneServers
+    post:
+      tags:
+        - Access Policies
+      summary: Create Access Policy
+      description: |
+        Create an access policy that allows or denies a set of subjects (users, groups, agents) access to a set of targets (MCP servers and providers) in a workspace.
+
+        - `allow` policies must name at least one specific user, group, or agent.
+        - When `effect` is omitted it is inferred: `deny` if `subjects` contains both a user `ANY` and an agent `ANY` entry, otherwise `allow`.
+      operationId: createAccessPolicy
+      security:
+        - Portkey-Key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccessPolicyRequest'
+            examples:
+              allowUsersOnServer:
+                summary: Allow a user and a group to use specific tools on an MCP server
+                value:
+                  workspace_id: ws-engineering
+                  name: Engineering GitHub tools
+                  effect: allow
+                  subjects:
+                    - type: user
+                      id: 8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f
+                    - type: group
+                      id: 3a7d9e2b-5c6f-4a1b-8d9e-0f1a2b3c4d5e
+                  targets:
+                    - type: mcp_server
+                      server_id: github-mcp
+                      tools:
+                        - list_issues
+                        - create_issue
+              allowAgentOnProvider:
+                summary: Allow an agent to use specific models on a provider
+                value:
+                  workspace_id: ws-engineering
+                  name: Support agent models
+                  subjects:
+                    - type: agent
+                      id: 6b2e4f1a-7c8d-4e9f-a0b1-c2d3e4f5a6b7
+                  targets:
+                    - type: provider
+                      provider_id: openai-prod
+                      models:
+                        - gpt-4o-mini
+              denyEveryone:
+                summary: Deny everyone access to an MCP server
+                value:
+                  workspace_id: ws-engineering
+                  name: Block filesystem server
+                  effect: deny
+                  subjects:
+                    - type: user
+                      id: ANY
+                    - type: agent
+                      id: ANY
+                  targets:
+                    - type: mcp_server
+                      server_id: filesystem-mcp
+                      tools: ALL
+      responses:
+        '200':
+          description: Policy created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  object:
+                    type: string
+                    enum: [access]
+        '400':
+          description: Validation failure (invalid subjects or targets, unknown IDs, or duplicate policy name)
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace not found
+        '409':
+          description: A policy with this name already exists in the workspace
+        '500':
+          description: Server error
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST https://api.portkey.ai/v1/policies/access \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "workspace_id": "ws-engineering",
+                "name": "Engineering GitHub tools",
+                "effect": "allow",
+                "subjects": [
+                  { "type": "user", "id": "8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f" },
+                  { "type": "group", "id": "3a7d9e2b-5c6f-4a1b-8d9e-0f1a2b3c4d5e" }
+                ],
+                "targets": [
+                  { "type": "mcp_server", "server_id": "github-mcp", "tools": ["list_issues", "create_issue"] }
+                ]
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST SELF_HOSTED_CONTROL_PLANE_URL/policies/access \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "workspace_id": "ws-engineering",
+                "name": "Engineering GitHub tools",
+                "effect": "allow",
+                "subjects": [
+                  { "type": "user", "id": "8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f" },
+                  { "type": "group", "id": "3a7d9e2b-5c6f-4a1b-8d9e-0f1a2b3c4d5e" }
+                ],
+                "targets": [
+                  { "type": "mcp_server", "server_id": "github-mcp", "tools": ["list_issues", "create_issue"] }
+                ]
+            }'
+
+    get:
+      tags:
+        - Access Policies
+      summary: List Access Policies
+      description: List active access policies with optional filtering, newest first.
+      operationId: listAccessPolicies
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceIdQuery'
+        - name: effect
+          in: query
+          description: Filter by effect
+          required: false
+          schema:
+            type: string
+            enum: [allow, deny]
+        - name: enabled
+          in: query
+          description: Filter by enabled state
+          required: false
+          schema:
+            type: string
+            enum: ['true', 'false']
+        - name: user_id
+          in: query
+          description: Only policies that name this user directly or apply to all users
+          required: false
+          schema:
+            type: string
+            maxLength: 36
+        - name: agent_id
+          in: query
+          description: Only policies that name this agent directly or apply to all agents
+          required: false
+          schema:
+            type: string
+            maxLength: 36
+        - name: server_id
+          in: query
+          description: Only policies that target this MCP server ID
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+        - name: search
+          in: query
+          description: Search by policy name
+          required: false
+          schema:
+            type: string
+            maxLength: 64
+        - name: created_by
+          in: query
+          description: Filter by the ID of the user who created the policy
+          required: false
+          schema:
+            type: string
+            maxLength: 255
+        - name: start_time
+          in: query
+          description: Only policies created at or after this time
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          description: Only policies created at or before this time
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/CurrentPage'
+      responses:
+        '200':
+          description: List of access policies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    enum: [list]
+                  total:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccessPolicyListItem'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Server error
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET "https://api.portkey.ai/v1/policies/access?workspace_id=ws-engineering&current_page=0&page_size=20" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/policies/access?workspace_id=ws-engineering&current_page=0&page_size=20" \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+  /policies/access/{accessPolicyId}:
+    servers: *ControlPlaneServers
+    get:
+      tags:
+        - Access Policies
+      summary: Get Access Policy
+      description: Get a single access policy, including its subjects and targets.
+      operationId: getAccessPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/AccessPolicyId'
+      responses:
+        '200':
+          description: Access policy details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPolicy'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Access policy not found
+        '500':
+          description: Server error
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X GET https://api.portkey.ai/v1/policies/access/ACCESS_POLICY_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X GET SELF_HOSTED_CONTROL_PLANE_URL/policies/access/ACCESS_POLICY_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
+    put:
+      tags:
+        - Access Policies
+      summary: Update Access Policy
+      description: |
+        Replace an access policy's subjects and targets. `subjects`, `targets`, and `version` are required; `name`, `description`, `effect`, and `enabled` keep their stored values when omitted.
+
+        `version` must match the policy's current version (optimistic concurrency). A mismatch returns `409`.
+      operationId: updateAccessPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/AccessPolicyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccessPolicyRequest'
+            example:
+              version: 1
+              subjects:
+                - type: user
+                  id: 8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f
+              targets:
+                - type: mcp_server
+                  server_id: github-mcp
+                  tools: ALL
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Validation failure
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Access policy not found
+        '409':
+          description: Version conflict, the policy was modified by another request
+        '500':
+          description: Server error
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X PUT https://api.portkey.ai/v1/policies/access/ACCESS_POLICY_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "version": 1,
+                "subjects": [
+                  { "type": "user", "id": "8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f" }
+                ],
+                "targets": [
+                  { "type": "mcp_server", "server_id": "github-mcp", "tools": "ALL" }
+                ]
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X PUT SELF_HOSTED_CONTROL_PLANE_URL/policies/access/ACCESS_POLICY_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+                "version": 1,
+                "subjects": [
+                  { "type": "user", "id": "8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f" }
+                ],
+                "targets": [
+                  { "type": "mcp_server", "server_id": "github-mcp", "tools": "ALL" }
+                ]
+            }'
+
+    delete:
+      tags:
+        - Access Policies
+      summary: Delete Access Policy
+      description: Delete an access policy.
+      operationId: deleteAccessPolicy
+      security:
+        - Portkey-Key: []
+      parameters:
+        - $ref: '#/components/parameters/AccessPolicyId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Access policy not found
+        '500':
+          description: Server error
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X DELETE https://api.portkey.ai/v1/policies/access/ACCESS_POLICY_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X DELETE SELF_HOSTED_CONTROL_PLANE_URL/policies/access/ACCESS_POLICY_ID \
+            -H "x-portkey-api-key: PORTKEY_API_KEY"
+
   /analytics/graphs/requests:
     servers: *ControlPlaneServers
     get:
@@ -23278,6 +23683,14 @@ components:
       in: path
       required: true
       description: Rate limits policy UUID
+      schema:
+        type: string
+        format: uuid
+    AccessPolicyId:
+      name: accessPolicyId
+      in: path
+      required: true
+      description: Access policy UUID
       schema:
         type: string
         format: uuid
@@ -40346,6 +40759,273 @@ components:
           type: string
           enum: [egress-allowlist]
 
+    AccessPolicySubject:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum: [user, group, agent]
+        id:
+          type: string
+          description: |
+            ID of the user, group, or agent. Use `ANY` to match every user (`type: user`) or every agent (`type: agent`).
+            The user side and the agent side are matched independently; if a side has no entries, the policy matches requests without a principal on that side.
+      example:
+        type: user
+        id: 8f1c2a4e-1b2c-4d3e-9f00-1a2b3c4d5e6f
+
+    AccessPolicySubjectDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [user, group, agent]
+        id:
+          type: string
+          description: Subject ID, or `ANY` when the policy matches every user or every agent
+        name:
+          type: string
+          nullable: true
+          description: Display name. Absent on `ANY` entries.
+        email:
+          type: string
+          nullable: true
+          description: Present on `user` entries only
+
+    AccessPolicyTarget:
+      oneOf:
+        - $ref: '#/components/schemas/AccessPolicyMcpServerTarget'
+        - $ref: '#/components/schemas/AccessPolicyProviderTarget'
+      discriminator:
+        propertyName: type
+        mapping:
+          mcp_server: '#/components/schemas/AccessPolicyMcpServerTarget'
+          provider: '#/components/schemas/AccessPolicyProviderTarget'
+
+    AccessPolicyMcpServerTarget:
+      type: object
+      required:
+        - type
+        - server_id
+        - tools
+      properties:
+        type:
+          type: string
+          enum: [mcp_server]
+        server_id:
+          type: string
+          description: MCP server ID or slug in the workspace. Responses always return the ID.
+        tools:
+          description: '`ALL` for every tool on the server, or a non-empty list of tool names'
+          oneOf:
+            - type: string
+              enum: [ALL]
+            - type: array
+              minItems: 1
+              items:
+                type: string
+                minLength: 1
+
+    AccessPolicyProviderTarget:
+      type: object
+      required:
+        - type
+        - provider_id
+      properties:
+        type:
+          type: string
+          enum: [provider]
+        provider_id:
+          type: string
+          description: Provider ID or slug in the workspace. Responses always return the ID.
+        models:
+          description: '`ALL` for every model on the provider, or a non-empty list of model slugs. Defaults to `ALL` when omitted.'
+          oneOf:
+            - type: string
+              enum: [ALL]
+            - type: array
+              minItems: 1
+              items:
+                type: string
+                minLength: 1
+
+    CreateAccessPolicyRequest:
+      type: object
+      required:
+        - name
+        - subjects
+        - targets
+      properties:
+        workspace_id:
+          type: string
+          description: Workspace ID or slug. Required when using an organisation-level API key.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: Unique within the workspace
+        description:
+          type: string
+          nullable: true
+          maxLength: 256
+        effect:
+          type: string
+          enum: [allow, deny]
+          description: Inferred when omitted (see endpoint description)
+        subjects:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AccessPolicySubject'
+        targets:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AccessPolicyTarget'
+        enabled:
+          type: boolean
+          default: true
+
+    UpdateAccessPolicyRequest:
+      type: object
+      required:
+        - version
+        - subjects
+        - targets
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: Current version of the policy, as returned by Get Access Policy
+        name:
+          type: string
+          minLength: 1
+          maxLength: 64
+        description:
+          type: string
+          nullable: true
+          maxLength: 256
+        effect:
+          type: string
+          enum: [allow, deny]
+          description: Keeps the stored effect when omitted
+        subjects:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AccessPolicySubject'
+        targets:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AccessPolicyTarget'
+        enabled:
+          type: boolean
+
+    AccessPolicy:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+        effect:
+          type: string
+          enum: [allow, deny]
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessPolicySubjectDetails'
+        targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessPolicyTarget'
+        version:
+          type: integer
+          description: Incremented on every update; send it back on Update Access Policy
+        status:
+          type: string
+          enum: [active]
+        workspace_id:
+          type: string
+          format: uuid
+        organisation_id:
+          type: string
+          format: uuid
+        created_by:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        object:
+          type: string
+          enum: [access]
+
+    AccessPolicyListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+        effect:
+          type: string
+          enum: [allow, deny]
+        allow_all_users:
+          type: boolean
+          description: Whether the policy applies to every user
+        allow_all_agents:
+          type: boolean
+          description: Whether the policy applies to every agent
+        target_server_count:
+          type: integer
+          description: Number of MCP server targets
+        target_provider_count:
+          type: integer
+          description: Number of provider targets
+        version:
+          type: integer
+        status:
+          type: string
+          enum: [active]
+        workspace_id:
+          type: string
+          format: uuid
+        organisation_id:
+          type: string
+          format: uuid
+        created_by:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        last_updated_at:
+          type: string
+          format: date-time
+        object:
+          type: string
+          enum: [access]
+
 security:
   - Portkey-Key: []
 
@@ -40624,6 +41304,27 @@ x-code-samples:
           path: update
         - type: endpoint
           key: deleteEgressAllowlistEntry
+          path: delete
+    - id: access-policies
+      title: Access Policies
+      description: |
+        Allow or deny users, groups, and agents access to MCP servers and providers.
+      navigationGroup: endpoints
+      sections:
+        - type: endpoint
+          key: listAccessPolicies
+          path: list
+        - type: endpoint
+          key: createAccessPolicy
+          path: create
+        - type: endpoint
+          key: getAccessPolicy
+          path: retrieve
+        - type: endpoint
+          key: updateAccessPolicy
+          path: update
+        - type: endpoint
+          key: deleteAccessPolicy
           path: delete
     - id: assistants
       title: Assistants
