@@ -44,6 +44,8 @@ tags:
     description: Turn audio into text or text into audio.
   - name: Chat
     description: Given a list of messages comprising a conversation, the model will return a response.
+  - name: Messages
+    description: Anthropic-native Messages API. Send a structured list of input messages and receive a response. Supported on Anthropic, AWS Bedrock, Google Vertex AI, and Azure AI Foundry (Anthropic models).
   - name: Realtime
     description: WebSocket proxy for provider Realtime APIs
   - name: Collections
@@ -319,6 +321,204 @@ paths:
             }
 
             main();
+
+  /messages:
+    servers: *DataPlaneServers
+    post:
+      operationId: createMessage
+      tags:
+        - Messages
+      summary: Messages
+      description: |
+        Anthropic-native Messages API. Send a structured list of input messages with text, image, or document content and receive a response from Claude.
+
+        This endpoint proxies the [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) and supports all Claude-compatible providers:
+        - **Anthropic** (direct)
+        - **AWS Bedrock** (Claude models)
+        - **Google Vertex AI** (Claude models)
+        - **Azure AI Foundry** (Anthropic models) — set `azure_foundry_url` in your provider to `https://{resource}.services.ai.azure.com/anthropic`
+
+        Native Anthropic features like extended thinking, prompt caching, streaming with `x-portkey-*` headers, and tool use are all fully supported.
+      parameters:
+        - $ref: "#/components/parameters/PortkeyTraceId"
+        - $ref: "#/components/parameters/PortkeySpanId"
+        - $ref: "#/components/parameters/PortkeyParentSpanId"
+        - $ref: "#/components/parameters/PortkeySpanName"
+        - $ref: "#/components/parameters/PortkeyMetadata"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMessageRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateMessageResponse"
+      security:
+        - Portkey-Key: []
+          Virtual-Key: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+        - Portkey-Key: []
+          Config: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+          Custom-Host: []
+
+      x-code-samples:
+        - lang: cURL
+          label: Anthropic Direct
+          source: |
+            curl https://api.portkey.ai/v1/messages \
+              -H "Content-Type: application/json" \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -d '{
+                "model": "claude-sonnet-4-6-20251101",
+                "max_tokens": 1024,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Hello, Claude!"
+                  }
+                ]
+              }'
+        - lang: cURL
+          label: Azure AI Foundry (Anthropic)
+          source: |
+            curl https://api.portkey.ai/v1/messages \
+              -H "Content-Type: application/json" \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -d '{
+                "model": "@your-azure-foundry-anthropic-provider/your-azure-deployment-name",
+                "max_tokens": 1024,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Hello, Claude!"
+                  }
+                ]
+              }'
+        - lang: python
+          label: Anthropic SDK via Portkey
+          source: |
+            import anthropic
+
+            client = anthropic.Anthropic(
+                api_key="dummy",
+                default_headers={"x-portkey-api-key": "YOUR_PORTKEY_API_KEY"},
+                base_url="https://api.portkey.ai"
+            )
+
+            message = client.messages.create(
+                model="@your-provider/your-deployment",
+                max_tokens=1024,
+                messages=[
+                    {"role": "user", "content": "Hello, Claude!"}
+                ]
+            )
+            print(message.content)
+        - lang: javascript
+          label: Anthropic SDK via Portkey
+          source: |
+            import Anthropic from "@anthropic-ai/sdk";
+
+            const client = new Anthropic({
+              apiKey: "dummy",
+              defaultHeaders: { "x-portkey-api-key": "YOUR_PORTKEY_API_KEY" },
+              baseURL: "https://api.portkey.ai",
+            });
+
+            const message = await client.messages.create({
+              model: "@your-provider/your-deployment",
+              max_tokens: 1024,
+              messages: [{ role: "user", content: "Hello, Claude!" }],
+            });
+
+            console.log(message.content);
+
+  /messages/count_tokens:
+    servers: *DataPlaneServers
+    post:
+      operationId: countMessageTokens
+      tags:
+        - Messages
+      summary: Count Message Tokens
+      description: |
+        Count the number of tokens that will be used by a Messages API request before actually sending it to Claude. Useful for cost estimation and staying within context window limits.
+
+        Supported on the same providers as the `/messages` endpoint: Anthropic, AWS Bedrock, Google Vertex AI, and Azure AI Foundry (Anthropic models).
+      parameters:
+        - $ref: "#/components/parameters/PortkeyTraceId"
+        - $ref: "#/components/parameters/PortkeySpanId"
+        - $ref: "#/components/parameters/PortkeyParentSpanId"
+        - $ref: "#/components/parameters/PortkeySpanName"
+        - $ref: "#/components/parameters/PortkeyMetadata"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CountMessageTokensRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountMessageTokensResponse"
+      security:
+        - Portkey-Key: []
+          Virtual-Key: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+        - Portkey-Key: []
+          Config: []
+        - Portkey-Key: []
+          Provider-Auth: []
+          Provider-Name: []
+          Custom-Host: []
+
+      x-code-samples:
+        - lang: cURL
+          label: Default
+          source: |
+            curl https://api.portkey.ai/v1/messages/count_tokens \
+              -H "Content-Type: application/json" \
+              -H "x-portkey-api-key: $PORTKEY_API_KEY" \
+              -H "x-portkey-virtual-key: $PORTKEY_PROVIDER_VIRTUAL_KEY" \
+              -d '{
+                "model": "claude-sonnet-4-6-20251101",
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Hello, Claude!"
+                  }
+                ]
+              }'
+        - lang: python
+          label: Default
+          source: |
+            import anthropic
+
+            client = anthropic.Anthropic(
+                api_key="dummy",
+                default_headers={"x-portkey-api-key": "YOUR_PORTKEY_API_KEY"},
+                base_url="https://api.portkey.ai"
+            )
+
+            response = client.messages.count_tokens(
+                model="@your-provider/your-deployment",
+                messages=[{"role": "user", "content": "Hello, Claude!"}]
+            )
+            print(response.input_tokens)
 
   /realtime:
     servers: *DataPlaneServers
@@ -23759,6 +23959,403 @@ components:
         type: string
 
   schemas:
+    # -------------------------------------------------------------------------
+    # Anthropic Messages API schemas
+    # -------------------------------------------------------------------------
+
+    AnthropicTextContent:
+      type: object
+      required:
+        - type
+        - text
+      properties:
+        type:
+          type: string
+          enum: [text]
+        text:
+          type: string
+
+    AnthropicImageSource:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [base64, url]
+        media_type:
+          type: string
+          enum: [image/jpeg, image/png, image/gif, image/webp]
+          description: Required when type is base64.
+        data:
+          type: string
+          description: Base64-encoded image data. Required when type is base64.
+        url:
+          type: string
+          description: URL of the image. Required when type is url.
+
+    AnthropicImageContent:
+      type: object
+      required:
+        - type
+        - source
+      properties:
+        type:
+          type: string
+          enum: [image]
+        source:
+          $ref: "#/components/schemas/AnthropicImageSource"
+
+    AnthropicDocumentSource:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [base64, url, text, content]
+        media_type:
+          type: string
+          enum: [application/pdf, text/plain]
+          description: Required when type is base64.
+        data:
+          type: string
+          description: Base64-encoded document data. Required when type is base64.
+        url:
+          type: string
+          description: URL of the document. Required when type is url.
+        text:
+          type: string
+          description: Plain text content. Required when type is text.
+
+    AnthropicDocumentContent:
+      type: object
+      required:
+        - type
+        - source
+      properties:
+        type:
+          type: string
+          enum: [document]
+        source:
+          $ref: "#/components/schemas/AnthropicDocumentSource"
+        title:
+          type: string
+        context:
+          type: string
+        citations:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+
+    AnthropicToolUseContent:
+      type: object
+      required:
+        - type
+        - id
+        - name
+        - input
+      properties:
+        type:
+          type: string
+          enum: [tool_use]
+        id:
+          type: string
+        name:
+          type: string
+        input:
+          type: object
+
+    AnthropicToolResultContent:
+      type: object
+      required:
+        - type
+        - tool_use_id
+      properties:
+        type:
+          type: string
+          enum: [tool_result]
+        tool_use_id:
+          type: string
+        content:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                oneOf:
+                  - $ref: "#/components/schemas/AnthropicTextContent"
+                  - $ref: "#/components/schemas/AnthropicImageContent"
+        is_error:
+          type: boolean
+
+    AnthropicThinkingContent:
+      type: object
+      required:
+        - type
+        - thinking
+        - signature
+      properties:
+        type:
+          type: string
+          enum: [thinking]
+        thinking:
+          type: string
+        signature:
+          type: string
+
+    AnthropicRedactedThinkingContent:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          enum: [redacted_thinking]
+        data:
+          type: string
+
+    AnthropicContentBlock:
+      oneOf:
+        - $ref: "#/components/schemas/AnthropicTextContent"
+        - $ref: "#/components/schemas/AnthropicImageContent"
+        - $ref: "#/components/schemas/AnthropicDocumentContent"
+        - $ref: "#/components/schemas/AnthropicToolUseContent"
+        - $ref: "#/components/schemas/AnthropicToolResultContent"
+        - $ref: "#/components/schemas/AnthropicThinkingContent"
+        - $ref: "#/components/schemas/AnthropicRedactedThinkingContent"
+
+    AnthropicMessage:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                $ref: "#/components/schemas/AnthropicContentBlock"
+
+    AnthropicSystemContent:
+      oneOf:
+        - type: string
+          description: Plain text system prompt.
+        - type: array
+          items:
+            type: object
+            required:
+              - type
+              - text
+            properties:
+              type:
+                type: string
+                enum: [text]
+              text:
+                type: string
+              cache_control:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [ephemeral]
+
+    AnthropicTool:
+      type: object
+      required:
+        - name
+        - input_schema
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        input_schema:
+          type: object
+          description: JSON Schema for the tool input.
+        cache_control:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [ephemeral]
+
+    AnthropicThinkingConfig:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [enabled, disabled, adaptive]
+        budget_tokens:
+          type: integer
+          description: Max tokens for thinking. Required when type is enabled.
+
+    CreateMessageRequest:
+      type: object
+      required:
+        - model
+        - messages
+        - max_tokens
+      description: |
+        Request body for the Anthropic-native Messages API (`POST /v1/messages`).
+
+        For Azure AI Foundry (Anthropic models), set your provider's `azure_foundry_url` to
+        `https://{resource}.services.ai.azure.com/anthropic` (strip the path to `/anthropic`).
+        Use the deployment name as the `model` value (or `@provider/deployment` format with Portkey).
+      properties:
+        model:
+          type: string
+          description: |
+            The model identifier. When using Portkey's provider/virtual-key routing, use the
+            `@provider-slug/deployment-name` format (e.g., `@my-azure-foundry-provider/my-claude-deployment`).
+          example: "claude-sonnet-4-6-20251101"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnthropicMessage"
+          description: List of input messages forming the conversation.
+        max_tokens:
+          type: integer
+          description: Maximum number of tokens to generate in the response.
+          example: 1024
+        system:
+          $ref: "#/components/schemas/AnthropicSystemContent"
+          description: Optional system prompt.
+        stream:
+          type: boolean
+          default: false
+          description: Set to true to stream the response using server-sent events.
+        temperature:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Sampling temperature between 0 and 1.
+        top_p:
+          type: number
+          description: Nucleus sampling probability.
+        top_k:
+          type: integer
+          description: Top-K sampling value.
+        stop_sequences:
+          type: array
+          items:
+            type: string
+          description: Custom stop sequences.
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnthropicTool"
+          description: Tool definitions available to the model.
+        tool_choice:
+          type: object
+          description: Controls which tool the model uses.
+          properties:
+            type:
+              type: string
+              enum: [auto, any, tool, none]
+            name:
+              type: string
+              description: Required when type is tool.
+        thinking:
+          $ref: "#/components/schemas/AnthropicThinkingConfig"
+          description: Extended thinking configuration.
+        metadata:
+          type: object
+          properties:
+            user_id:
+              type: string
+
+    AnthropicUsage:
+      type: object
+      properties:
+        input_tokens:
+          type: integer
+        output_tokens:
+          type: integer
+        cache_creation_input_tokens:
+          type: integer
+        cache_read_input_tokens:
+          type: integer
+
+    CreateMessageResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [message]
+        role:
+          type: string
+          enum: [assistant]
+        model:
+          type: string
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnthropicContentBlock"
+        stop_reason:
+          type: string
+          enum: [end_turn, max_tokens, stop_sequence, tool_use, pause_turn]
+        stop_sequence:
+          type: string
+          nullable: true
+        usage:
+          $ref: "#/components/schemas/AnthropicUsage"
+
+    CountMessageTokensRequest:
+      type: object
+      required:
+        - model
+        - messages
+      description: |
+        Request body for the Anthropic token counting endpoint (`POST /v1/messages/count_tokens`).
+        Returns the number of input tokens that a Messages API call would consume, without actually
+        calling the model.
+      properties:
+        model:
+          type: string
+          description: The model identifier (same format as CreateMessageRequest).
+          example: "claude-sonnet-4-6-20251101"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnthropicMessage"
+        system:
+          $ref: "#/components/schemas/AnthropicSystemContent"
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnthropicTool"
+        tool_choice:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [auto, any, tool, none]
+            name:
+              type: string
+        thinking:
+          $ref: "#/components/schemas/AnthropicThinkingConfig"
+
+    CountMessageTokensResponse:
+      type: object
+      properties:
+        input_tokens:
+          type: integer
+          description: The number of input tokens that would be consumed by the corresponding Messages API call.
+
+    # -------------------------------------------------------------------------
+    # End Anthropic Messages API schemas
+    # -------------------------------------------------------------------------
+
     ModelPricingConfig:
       type: object
       description: Complete pricing configuration for a model
@@ -41155,6 +41752,27 @@ x-code-samples:
         - type: object
           key: CreateChatCompletionStreamResponse
           path: streaming
+    - id: messages
+      title: Messages
+      description: |
+        Anthropic-native Messages API. Use with Anthropic, AWS Bedrock, Google Vertex AI, and
+        Azure AI Foundry (Anthropic models).
+
+        For Azure AI Foundry, set `azure_foundry_url` in your provider to
+        `https://{resource}.services.ai.azure.com/anthropic` (strip to `/anthropic`, not `/anthropic/v1/messages`).
+
+        Related guide: [Anthropic Messages API](https://docs.anthropic.com/en/api/messages)
+      navigationGroup: endpoints
+      sections:
+        - type: endpoint
+          key: createMessage
+          path: create
+        - type: endpoint
+          key: countMessageTokens
+          path: count-tokens
+        - type: object
+          key: CreateMessageResponse
+          path: object
     - id: realtime
       title: Realtime
       description: |
