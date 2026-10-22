@@ -350,7 +350,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateMessageRequest"
+              $ref: "#/components/schemas/CreateAnthropicMessageRequest"
       responses:
         "200":
           description: OK
@@ -2561,7 +2561,7 @@ paths:
                           "self-harm/intent",
                           "sexual/minors",
                           "violence/graphic"
-                        ]
+                          ]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -2597,7 +2597,7 @@ paths:
                           "SSN",
                           "CREDIT_CARD",
                           "NAME"
-                        ]
+                          ]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -2661,7 +2661,7 @@ paths:
                           "secrets",
                           "toxic_language",
                           "invisible_characters"
-                        ]
+                          ]
                         timeout: 5000
                     - id: "pillar.scanResponse"
                       parameters:
@@ -2736,7 +2736,7 @@ paths:
                           "violence_and_threats",
                           "selfharm",
                           "pii"
-                        ]
+                          ]
                         timeout: 5000
                   actions:
                     onFail: "block"
@@ -24197,7 +24197,7 @@ components:
           type: integer
           description: Max tokens for thinking. Required when type is enabled.
 
-    CreateMessageRequest:
+    CreateAnthropicMessageRequest:
       type: object
       required:
         - model
@@ -24322,7 +24322,7 @@ components:
       properties:
         model:
           type: string
-          description: The model identifier (same format as CreateMessageRequest).
+          description: The model identifier (same format as CreateAnthropicMessageRequest).
           example: "claude-sonnet-4-6-20251101"
         messages:
           type: array
