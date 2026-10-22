@@ -1,0 +1,22 @@
+openapi.yaml
+  s_972de66279bcd1::t_46ea6ba66b6c44 40607-40627
+  s_972de66279bcd1::t_523304647b1f5c 40296-40299
+  s_972de66279bcd1::t_1918ce855d290d 40348
+  s_972de66279bcd1::t_471e2607f133ed 145-146,22751-22991,40281-40295,40300-40347
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "0f922272c1b4536f432b772634c2a51f3f8caad7",
+  "prompts": {},
+  "sessions": {
+    "s_972de66279bcd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e777aa71-dd03-4102-b533-e8aefdb63c1d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}
