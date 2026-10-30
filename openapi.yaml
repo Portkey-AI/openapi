@@ -42061,7 +42061,7 @@ x-code-samples:
       navigationGroup: assistants
       sections:
         - type: endpoint
-          key: createMessage
+          key: createThreadMessage
           path: createMessage
         - type: endpoint
           key: listMessages
