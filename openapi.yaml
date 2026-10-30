@@ -7350,7 +7350,7 @@ paths:
               "has_more": false
             }
     post:
-      operationId: createMessage
+      operationId: createThreadMessage
       tags:
         - Assistants
       summary: Create a message.
@@ -42061,7 +42061,7 @@ x-code-samples:
       navigationGroup: assistants
       sections:
         - type: endpoint
-          key: createMessage
+          key: createThreadMessage
           path: createMessage
         - type: endpoint
           key: listMessages
