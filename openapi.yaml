@@ -7350,7 +7350,7 @@ paths:
               "has_more": false
             }
     post:
-      operationId: createMessage
+      operationId: createThreadMessage
       tags:
         - Assistants
       summary: Create a message.
