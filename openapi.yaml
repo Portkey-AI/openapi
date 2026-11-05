@@ -16758,6 +16758,11 @@ paths:
           in: query
           schema:
             type: string
+        - name: tags
+          in: query
+          schema:
+            type: string
+          description: 'JSON-encoded object of tag key/value pairs; only resources whose tags match are returned, e.g. {"env":"prod"}'
       responses:
         "200":
           description: OK
@@ -17011,6 +17016,11 @@ paths:
           schema:
             type: string
             maxLength: 255
+        - name: tags
+          in: query
+          schema:
+            type: string
+          description: 'JSON-encoded object of tag key/value pairs; only resources whose tags match are returned, e.g. {"env":"prod"}'
       responses:
         "200":
           description: OK
@@ -35990,6 +36000,12 @@ components:
           type: string
         description:
           type: string
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags attached to the integration
         object:
           type: string
           enum: [integration]
@@ -40182,6 +40198,12 @@ components:
                   type: string
                   example: req-0001
           additionalProperties: true
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags to attach to the MCP integration. Keys may contain only alphanumeric characters, underscores and hyphens.
         url:
           type: string
           format: uri
@@ -40236,6 +40258,12 @@ components:
         configurations:
           type: object
           nullable: true
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags attached to the MCP integration
         global_workspace_access:
           type: object
           nullable: true
@@ -40306,6 +40334,12 @@ components:
             - interactive
         configurations:
           type: object
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags attached to the MCP integration
         created_at:
           type: string
           format: date-time
@@ -40373,6 +40407,12 @@ components:
                   type: string
                   example: req-0001
           additionalProperties: true
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags for the MCP integration. Replaces existing tags; pass null to clear.
         url:
           type: string
           format: uri
@@ -40646,6 +40686,12 @@ components:
           type: string
           nullable: true
           maxLength: 500
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags to attach to the MCP server. Keys may contain only alphanumeric characters, underscores and hyphens.
         mcp_integration_id:
           type: string
           description: MCP Integration ID (UUID) or slug
@@ -40680,6 +40726,12 @@ components:
         description:
           type: string
           nullable: true
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags attached to the MCP server
         created_at:
           type: string
           format: date-time
@@ -40725,6 +40777,12 @@ components:
         description:
           type: string
           nullable: true
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags attached to the MCP server
         status:
           type: string
         created_at:
@@ -40782,6 +40840,12 @@ components:
           nullable: true
           maxLength: 500
 
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+          description: Key-value tags for the MCP server. Replaces existing tags; pass null to clear.
     McpServerTestResponse:
       type: object
       properties:
