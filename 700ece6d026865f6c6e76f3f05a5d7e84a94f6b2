@@ -1,0 +1,20 @@
+openapi.yaml
+  s_d61cf6361fb35d::t_c338c476d0162e 20084,20092
+  s_d61cf6361fb35d::t_5ef751e8bd5d3c 20155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "700ece6d026865f6c6e76f3f05a5d7e84a94f6b2",
+  "prompts": {},
+  "sessions": {
+    "s_d61cf6361fb35d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ee8765b-d1eb-47b5-ba60-1189085dac9b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}
