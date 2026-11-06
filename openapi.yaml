@@ -4148,17 +4148,15 @@ paths:
 
             response = client.post(
               "/ocr",
-              body={
-                "model": "mistral-ocr-latest",
-                "document": {
-                  "type": "document_url",
-                  "document_url": "https://example.com/document.pdf"
-                },
-                "include_image_base64": True
-              }
+              model="mistral-ocr-latest",
+              document={
+                "type": "document_url",
+                "document_url": "https://example.com/document.pdf"
+              },
+              include_image_base64=True
             )
 
-            for page in response["pages"]:
+            for page in response.pages:
               print(f"Page {page['index']}: {page['markdown'][:100]}")
         - lang: javascript
           label: Default
@@ -4214,17 +4212,15 @@ paths:
 
             response = client.post(
               "/ocr",
-              body={
-                "model": "mistral-ocr-latest",
-                "document": {
-                  "type": "document_url",
-                  "document_url": "https://example.com/document.pdf"
-                },
-                "include_image_base64": True
-              }
+              model="mistral-ocr-latest",
+              document={
+                "type": "document_url",
+                "document_url": "https://example.com/document.pdf"
+              },
+              include_image_base64=True
             )
 
-            for page in response["pages"]:
+            for page in response.pages:
               print(f"Page {page['index']}: {page['markdown'][:100]}")
         - lang: javascript
           label: Self-Hosted
