@@ -19398,12 +19398,12 @@ paths:
         - lang: curl
           label: Default
           source: |
-            curl -X GET "https://api.portkey.ai/v1/api_keys/{id}" \
+            curl -X GET "https://api.portkey.ai/v1/api-keys/{id}" \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
         - lang: curl
           label: Self-Hosted
           source: |
-            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/api_keys/{id}" \
+            curl -X GET "SELF_HOSTED_CONTROL_PLANE_URL/api-keys/{id}" \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
         - lang: python
           label: Self-Hosted
@@ -19495,12 +19495,12 @@ paths:
         - lang: curl
           label: Default
           source: |
-            curl -X DELETE "https://api.portkey.ai/v1/api_keys/{id}" \
+            curl -X DELETE "https://api.portkey.ai/v1/api-keys/{id}" \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
         - lang: curl
           label: Self-Hosted
           source: |
-            curl -X DELETE "SELF_HOSTED_CONTROL_PLANE_URL/api_keys/{id}" \
+            curl -X DELETE "SELF_HOSTED_CONTROL_PLANE_URL/api-keys/{id}" \
             -H "x-portkey-api-key: PORTKEY_API_KEY"
         - lang: python
           label: Self-Hosted
