@@ -1,0 +1,21 @@
+openapi.yaml
+  s_d61cf6361fb35d::t_c47e8c2ca009e5 139-140,20003-20050,20052-20405,23689-23696,40762-40835,40837-40840,40842-41028,41308-41327
+  s_d61cf6361fb35d::t_f554f53ef3f742 20051,40836,40841
+  s_d61cf6361fb35d::t_f8887abb1eda49 41328
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "2bc08cedb34fc4618216641ae720123c9ad1da2f",
+  "prompts": {},
+  "sessions": {
+    "s_d61cf6361fb35d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ee8765b-d1eb-47b5-ba60-1189085dac9b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "sk-portkey <sai.t@portkey.ai>"
+    }
+  }
+}
