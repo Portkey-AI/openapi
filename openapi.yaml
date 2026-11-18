@@ -17639,6 +17639,7 @@ paths:
       tags:
         - Logs Export
       summary: Update a logs export
+      description: The filters of an export created from log IDs can't be changed, the request returns `400`.
       parameters:
         - name: exportId
           in: path
@@ -17666,6 +17667,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UpdateExportResponse"
+        "400":
+          description: Invalid request, or an attempt to change the filters of an export created from log IDs
       x-code-samples:
         - lang: python
           label: Default
@@ -17863,6 +17866,16 @@ paths:
       tags:
         - Logs Export
       summary: Create log export
+      description: |
+        Creates a log export from a set of filters, or from an explicit list of log IDs.
+
+        **Export by log IDs.** Pass `filters: { "ids": [...] }` to export specific logs. This mode:
+        - needs an organisation admin API key (an organisation-service key); other keys get `403`,
+        - takes 1 to 50,000 log IDs (UUIDs) and nothing else in `filters`: no time range and no other filter,
+        - needs `workspace_id`, and does not accept `deployment_slug`,
+        - is available on Portkey SaaS only; organisations with an enterprise deployment get `403`.
+
+        Start the export with the start endpoint, then fetch the result with the download endpoint. Both need an organisation admin API key for an export created from log IDs.
       requestBody:
         content:
           application/json:
@@ -17872,7 +17885,10 @@ paths:
                 workspace_id:
                   type: string
                 filters:
-                  $ref: "#/components/schemas/GenerationsFilterSchema"
+                  description: 'Either a set of generation filters, or `{ "ids": [...] }` to export specific logs.'
+                  anyOf:
+                    - $ref: "#/components/schemas/GenerationsFilterSchema"
+                    - $ref: "#/components/schemas/LogExportIdsFilter"
                 requested_data:
                   $ref: "#/components/schemas/LogExportsRequestedData"
               required:
@@ -17885,6 +17901,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UpdateExportResponse"
+        "400":
+          description: Invalid request, for example log IDs combined with other filters or `deployment_slug`, an invalid ID, or an empty ID list
+        "403":
+          description: For an export by log IDs, the API key is not an organisation admin API key or the organisation has an enterprise deployment
       x-code-samples:
         - lang: python
           label: Default
@@ -18096,6 +18116,23 @@ paths:
             }
 
             main();
+        - lang: curl
+          label: By log IDs
+          source: |
+            curl -X POST "https://api.portkey.ai/v1/logs/exports" \
+            -H "x-portkey-api-key: PORTKEY_ADMIN_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "workspace_id": "WORKSPACE_ID",
+              "description": "Export of specific logs",
+              "requested_data": ["id", "organisation_id", "created_at", "request", "response"],
+              "filters": {
+                "ids": [
+                  "8a3f1c2e-1b2c-4d5e-8f90-123456789abc",
+                  "1b2c3d4e-1b2c-4d5e-8f90-123456789abc"
+                ]
+              }
+            }'
 
   /logs/exports/{exportId}/start:
     servers: *ControlPlaneServers
@@ -18103,6 +18140,7 @@ paths:
       tags:
         - Logs Export
       summary: Start log export
+      description: An export created from log IDs can only be started with an organisation admin API key, other keys get `403`.
       parameters:
         - name: exportId
           in: path
@@ -18116,6 +18154,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ExportTaskResponse"
+        "400":
+          description: The export is not in a state that can be started
+        "403":
+          description: The export was created from log IDs and the API key is not an organisation admin API key
       x-code-samples:
         - lang: python
           label: Default
@@ -18289,6 +18331,7 @@ paths:
       tags:
         - Logs Export
       summary: Download log export
+      description: Downloading an export created from log IDs needs an organisation admin API key, other keys get `401`.
       parameters:
         - name: exportId
           in: path
@@ -18302,6 +18345,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DownloadLogsResponse"
+        "400":
+          description: The export has not finished yet
+        "401":
+          description: The export was created from log IDs and the API key is not an organisation admin API key
       x-code-samples:
         - lang: python
           label: Default
@@ -18491,6 +18538,67 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuditLogObjectList"
+
+  /audit-logs/bulk:
+    servers: *ControlPlaneServers
+    post:
+      tags:
+        - Audit Logs
+      summary: Get Audit Logs by request IDs
+      description: |
+        Returns the audit logs for a list of request IDs in one call, instead of looking each ID up separately.
+
+        - Needs an organisation admin API key (an organisation-service key). Other keys get `403`.
+        - Send between 500 and 2,500 request IDs per call. For the last, smaller batch of a longer list, set `last_page` to `true` to send fewer than 500 (at least 1). More than 2,500 is always rejected.
+        - Results are always limited to the organisation of the API key. IDs that have no audit log are left out of `records`.
+        - Duplicate IDs are ignored.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditLogsBulkRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogObjectList"
+        "400":
+          description: Invalid request, for example fewer than 500 IDs without `last_page`, more than 2,500 IDs, or an ID that is not a UUID
+        "401":
+          description: Missing or invalid API key
+        "403":
+          description: The API key is not an organisation admin API key
+      security:
+        - Portkey-Key: []
+      x-code-samples:
+        - lang: curl
+          label: Default
+          source: |
+            curl -X POST "https://api.portkey.ai/v1/audit-logs/bulk" \
+            -H "x-portkey-api-key: PORTKEY_ADMIN_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "request_ids": [
+                "8a3f1c2e-1b2c-4d5e-8f90-123456789abc",
+                "1b2c3d4e-1b2c-4d5e-8f90-123456789abc"
+              ],
+              "last_page": true
+            }'
+        - lang: curl
+          label: Self-Hosted
+          source: |
+            curl -X POST "SELF_HOSTED_CONTROL_PLANE_URL/audit-logs/bulk" \
+            -H "x-portkey-api-key: PORTKEY_ADMIN_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "request_ids": [
+                "8a3f1c2e-1b2c-4d5e-8f90-123456789abc"
+              ],
+              "last_page": true
+            }'
 
   /api-keys/{type}/{sub-type}:
     servers: *ControlPlaneServers
@@ -37092,7 +37200,9 @@ components:
           type: string
           format: uuid
         filters:
-          $ref: "#/components/schemas/GenerationsFilterSchema"
+          anyOf:
+            - $ref: "#/components/schemas/GenerationsFilterSchema"
+            - $ref: "#/components/schemas/ExportIdsFileFilter"
         requested_data:
           $ref: "#/components/schemas/LogExportsRequestedData"
         status:
@@ -37132,6 +37242,30 @@ components:
         - created_by
         - workspace_id
         - object
+    LogExportIdsFilter:
+      type: object
+      description: Filter for an export of specific logs. It can't be combined with any other filter.
+      properties:
+        ids:
+          type: array
+          description: IDs of the logs to export
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          maxItems: 50000
+      required:
+        - ids
+      additionalProperties: false
+    ExportIdsFileFilter:
+      type: object
+      description: Filters of an export created from log IDs. The IDs themselves are not returned.
+      properties:
+        ids_file:
+          type: string
+          description: Reference to the stored list of log IDs
+      required:
+        - ids_file
     UpdateExportResponse:
       type: object
       properties:
@@ -37691,6 +37825,23 @@ components:
           - prompt_slug
           - metadata
 
+    AuditLogsBulkRequest:
+      type: object
+      properties:
+        request_ids:
+          type: array
+          description: Request IDs to look up. Send 500 to 2,500 IDs, or 1 to 2,500 when `last_page` is `true`.
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+          maxItems: 2500
+        last_page:
+          type: boolean
+          default: false
+          description: Set to `true` for the last, smaller batch of a longer list. It allows fewer than 500 request IDs.
+      required:
+        - request_ids
     AuditLogObjectList:
       type: object
       properties:
