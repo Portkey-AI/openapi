@@ -1,0 +1,19 @@
+openapi.yaml
+  s_e89a67bbd3d347::t_1c3494748404e3 17875,17901,17905-17909,17918,37242-37243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "1dbc376b3a2653df2bdd1cb65d99804481419149",
+  "prompts": {},
+  "sessions": {
+    "s_e89a67bbd3d347": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "779458b6-4395-4be8-92da-5c2672c2c4e8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Mahesh Vagicherla <maheshmahi19@outlook.com>"
+    }
+  }
+}
