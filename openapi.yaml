@@ -17872,7 +17872,7 @@ paths:
         **Export by log IDs.** Pass `filters: { "ids": [...] }` to export specific logs. This mode:
         - needs an organisation admin API key (an organisation-service key); other keys get `403`,
         - takes 1 to 50,000 log IDs (UUIDs) and nothing else in `filters`: no time range and no other filter,
-        - needs `workspace_id`, and does not accept `deployment_slug`,
+        - isn't tied to a workspace: leave out `workspace_id` (it is rejected for this mode), and don't send `deployment_slug`,
         - is available on Portkey SaaS only; organisations with an enterprise deployment get `403`.
 
         Start the export with the start endpoint, then fetch the result with the download endpoint. Both need an organisation admin API key for an export created from log IDs.
@@ -17898,14 +17898,15 @@ paths:
                 - properties:
                     filters:
                       $ref: "#/components/schemas/LogExportGenerationsFilter"
-                - required:
-                    - workspace_id
-                  properties:
+                - properties:
                     filters:
                       $ref: "#/components/schemas/LogExportIdsFilter"
                   not:
-                    required:
-                      - deployment_slug
+                    anyOf:
+                      - required:
+                          - workspace_id
+                      - required:
+                          - deployment_slug
       responses:
         "200":
           description: Successful response
@@ -17914,7 +17915,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/UpdateExportResponse"
         "400":
-          description: Invalid request, for example log IDs combined with other filters or `deployment_slug`, an invalid ID, or an empty ID list
+          description: Invalid request, for example log IDs combined with other filters, `workspace_id` or `deployment_slug`, an invalid ID, or an empty ID list
         "403":
           description: For an export by log IDs, the API key is not an organisation admin API key or the organisation has an enterprise deployment
       x-code-samples:
@@ -18135,7 +18136,6 @@ paths:
             -H "x-portkey-api-key: PORTKEY_ADMIN_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{
-              "workspace_id": "WORKSPACE_ID",
               "description": "Export of specific logs",
               "requested_data": ["id", "organisation_id", "created_at", "request", "response"],
               "filters": {
@@ -37239,6 +37239,8 @@ components:
         workspace_id:
           type: string
           format: uuid
+          nullable: true
+          description: The workspace of the export. `null` for an export created from log IDs, which isn't tied to a workspace.
         object:
           type: string
           enum: [export]
