@@ -1,0 +1,19 @@
+openapi.yaml
+  s_a562547cf46dbd::t_cc9cb14678683e 16761-16765,17019-17023,36003-36008,40201-40206,40261-40266,40337-40342,40410-40415,40689-40694,40729-40734,40780-40785,40843-40848
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "d0478dd8f084853545f6a6caf0583ba5bf6e5250",
+  "prompts": {},
+  "sessions": {
+    "s_a562547cf46dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "44d1dcc7-cf8e-43a5-ac7e-46fc2f96fa0f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "siva.durga <siva.durga@portkey.ai>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+openapi.yaml
+  s_b12164c8360ecb::t_324e1407992d95 19401,19406,19498,19503
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "6a8aa254e3127a261a3e48b918ba3ecdcd486aaa",
+  "prompts": {},
+  "sessions": {
+    "s_b12164c8360ecb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "65a26031-fffc-40d3-bd11-07d480348ede",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Rohit Agarwal <rohit@portkey.ai>"
+    }
+  }
+}
