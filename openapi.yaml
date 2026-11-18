@@ -17887,13 +17887,25 @@ paths:
                 filters:
                   description: 'Either a set of generation filters, or `{ "ids": [...] }` to export specific logs.'
                   anyOf:
-                    - $ref: "#/components/schemas/GenerationsFilterSchema"
+                    - $ref: "#/components/schemas/LogExportGenerationsFilter"
                     - $ref: "#/components/schemas/LogExportIdsFilter"
                 requested_data:
                   $ref: "#/components/schemas/LogExportsRequestedData"
               required:
                 - filters
                 - requested_data
+              anyOf:
+                - properties:
+                    filters:
+                      $ref: "#/components/schemas/LogExportGenerationsFilter"
+                - required:
+                    - workspace_id
+                  properties:
+                    filters:
+                      $ref: "#/components/schemas/LogExportIdsFilter"
+                  not:
+                    required:
+                      - deployment_slug
       responses:
         "200":
           description: Successful response
@@ -37242,6 +37254,13 @@ components:
         - created_by
         - workspace_id
         - object
+    LogExportGenerationsFilter:
+      description: Generation filters, such as a time range. It can't include `ids`; use the `ids` form to export specific logs.
+      allOf:
+        - $ref: "#/components/schemas/GenerationsFilterSchema"
+        - not:
+            required:
+              - ids
     LogExportIdsFilter:
       type: object
       description: Filter for an export of specific logs. It can't be combined with any other filter.
@@ -37842,6 +37861,16 @@ components:
           description: Set to `true` for the last, smaller batch of a longer list. It allows fewer than 500 request IDs.
       required:
         - request_ids
+      anyOf:
+        - required:
+            - last_page
+          properties:
+            last_page:
+              enum:
+                - true
+        - properties:
+            request_ids:
+              minItems: 500
     AuditLogObjectList:
       type: object
       properties:
